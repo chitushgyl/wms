@@ -217,31 +217,6 @@ function warm($warm_name,$min_warm,$max_warm){
 }
 
 
-/**对运费的处理工1作**/
-function freight_do($arr){
-    /** 处理下运费的关系
-     *  权重1，use_flag   优先，如果是N，说明这个区域不卖！！
-     *  权重2，postage_flag  如果是Y，则说明这个区域包邮
-     *  权重3，运费金额和减免都》0，才是收取运费
-     *
-     */
-    if($arr->use_flag =='Y'){
-        if($arr->postage_flag =='Y'){
-            $show='该区域全部包邮';
-        }else{
-            if($arr->freight>0 &&  $arr->free>0){
-                $show='该区域满'.number_format($arr->free/100,2).'元包邮，否则支付运费'.number_format($arr->freight/100,2);
-            }else{
-                $show='该区域全部包邮';
-            }
-        }
-    }else{
-        $show='该区域不支持购买';
-    }
-
-    return $show;
-}
-
 
 /**对二维数组的集合进行处理**/
 function array_dispose($send,$type){

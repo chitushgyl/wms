@@ -37,6 +37,11 @@ class IndexController extends CommonController{
                 $query->where($where_children);
                 $query->select($select);
                 $query->orderBy('sort','asc');
+                $query->with(['children' => function($query)use($where_children,$select) {
+                    $query->where($where_children);
+                    $query->select($select);
+                    $query->orderBy('sort','asc');
+                }]);
             }])->where($where_menu)->select($select)->orderBy('sort','asc')->get();
             foreach ($menu_info as $key => $value){
                 if ($value->an_name){
