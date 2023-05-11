@@ -58,7 +58,7 @@ class SystemMenuNew extends Model{
     }
 
     public function  allChildren(){
-        return $this->children()->with('allChildren');
+        return $this->with('allChildren');
     }
 
 }
