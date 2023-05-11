@@ -33,15 +33,15 @@ class IndexController extends CommonController{
         $select=['id','level','name','an_name','img','node','sort','url'];
 
         if($user_info->menu_id== 'all'){
-            $menu_info=SystemMenuNew::with(['children' => function($query)use($where_children,$select) {
+            $menu_info=SystemMenuNew::with(['allChildren' => function($query)use($where_children,$select) {
                 $query->where($where_children);
                 $query->select($select);
                 $query->orderBy('sort','asc');
-                $query->with(['children' => function($query)use($where_children,$select) {
-                    $query->where($where_children);
-                    $query->select($select);
-                    $query->orderBy('sort','asc');
-                }]);
+//                $query->with(['children' => function($query)use($where_children,$select) {
+//                    $query->where($where_children);
+//                    $query->select($select);
+//                    $query->orderBy('sort','asc');
+//                }]);
             }])->where($where_menu)->select($select)->orderBy('sort','asc')->get();
             foreach ($menu_info as $key => $value){
                 if ($value->an_name){
