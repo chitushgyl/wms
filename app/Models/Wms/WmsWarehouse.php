@@ -18,7 +18,7 @@ class WmsWarehouse extends Model{
 
     //指定主键字段 默认为id
     //protected $primaryKey = 'id';
-    
+
     //删除时间字段定义 自定义命名
     //const DELETED_AT = 'updated_at';
     //创建时间字段定义 自定义命名
@@ -61,6 +61,17 @@ class WmsWarehouse extends Model{
         //参数：关联模型名称，外键，主键
         //如果主键是id可以省略
         return $this->hasMany('App\Models\Wms\WmsWarehouseArea','warehouse_id','self_id');
+    }
+
+
+    public function children(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsWarehouse','pid','id');
+    }
+
+    public function  allChildren(){
+        return $this->children()->with('allChildren');
     }
 
 

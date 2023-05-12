@@ -45,10 +45,10 @@ class WarehouseController extends CommonController{
         $page                   =$request->input('page')??1;
         $use_flag               =$request->input('use_flag');
         $group_code             =$request->input('group_code');
-        $warehouse_address      =$request->input('warehouse_address');
         $warehouse_name         =$request->input('warehouse_name');
-        $warehouse_tel         =$request->input('warehouse_tel');
-        $warehouse_contacts     =$request->input('warehouse_contacts');
+        $pid                    =$request->input('pid');
+        $all_weight             =$request->input('all_weight');
+        $all_volume             =$request->input('all_volume');
 
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
@@ -56,21 +56,21 @@ class WarehouseController extends CommonController{
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
-            ['type'=>'like','name'=>'warehouse_address','value'=>$warehouse_address],
             ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
-            ['type'=>'like','name'=>'warehouse_tel','value'=>$warehouse_tel],
-            ['type'=>'like','name'=>'warehouse_contacts','value'=>$warehouse_contacts],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
         ];
 
         $where=get_list_where($search);
 
-        $select=['self_id','warehouse_name','city','warehouse_address','use_flag','group_code','group_name','warehouse_tel','warehouse_contacts','city'];
+        $select=['id','self_id','warehouse_name','pid','all_weight','all_volume','city','warehouse_address','use_flag','group_code','group_name','warehouse_tel','warehouse_contacts','city'];
 
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=WmsWarehouse::where($where)->count(); //总的数据量
-                $data['items']=WmsWarehouse::where($where)
+                $data['items']=WmsWarehouse::with(['allChildren' => function($query)use($select) {
+                    $query->select($select);
+                    $query->orderBy('sort','asc');
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -79,7 +79,10 @@ class WarehouseController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=WmsWarehouse::where($where)->count(); //总的数据量
-                $data['items']=WmsWarehouse::where($where)
+                $data['items']=WmsWarehouse::with(['allChildren' => function($query)use($select) {
+                    $query->select($select);
+                    $query->orderBy('sort','asc');
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
@@ -87,7 +90,10 @@ class WarehouseController extends CommonController{
 
             case 'more':
                 $data['total']=WmsWarehouse::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsWarehouse::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['items']=WmsWarehouse::with(['allChildren' => function($query)use($select) {
+                    $query->select($select);
+                    $query->orderBy('sort','asc');
+                }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -158,6 +164,9 @@ class WarehouseController extends CommonController{
         $city               =$request->input('city');
         $longitude          =$request->input('longitude');
         $dimensionality     =$request->input('dimensionality');
+        $pid                =$request->input('pid');
+        $all_weight         =$request->input('all_weight');
+        $all_volume         =$request->input('all_volume');
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='good_202007011336328472133661';
@@ -194,10 +203,13 @@ class WarehouseController extends CommonController{
             $data['city']                   = $city;
             $data['longitude']              = $longitude;
             $data['dimensionality']         = $dimensionality;
+            $data['pid']                    = $pid;
+            $data['all_weight']             = $all_weight;
+            $data['all_volume']             = $all_volume;
 
 
             $where2['self_id'] = $self_id;
-            $select_WmsWarehouse=['self_id','warehouse_name','citycode','city','warehouse_address','warehouse_tel','warehouse_contacts','group_code',
+            $select_WmsWarehouse=['self_id','warehouse_name','pid','all_weight','all_volume','citycode','city','warehouse_address','warehouse_tel','warehouse_contacts','group_code',
                 'group_name','longitude','dimensionality'
                 ];
             $old_info=WmsWarehouse::where($where2)->select($select_WmsWarehouse)->first();
