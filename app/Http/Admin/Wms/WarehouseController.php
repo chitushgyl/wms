@@ -69,7 +69,7 @@ class WarehouseController extends CommonController{
                 $data['total']=WmsWarehouse::where($where)->count(); //总的数据量
                 $data['items']=WmsWarehouse::with(['allChildren' => function($query)use($select) {
                     $query->select($select);
-                    $query->orderBy('sort','asc');
+                    $query->orderBy('id','asc');
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
@@ -81,7 +81,7 @@ class WarehouseController extends CommonController{
                 $data['total']=WmsWarehouse::where($where)->count(); //总的数据量
                 $data['items']=WmsWarehouse::with(['allChildren' => function($query)use($select) {
                     $query->select($select);
-                    $query->orderBy('sort','asc');
+                    $query->orderBy('id','asc');
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
@@ -92,7 +92,7 @@ class WarehouseController extends CommonController{
                 $data['total']=WmsWarehouse::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=WmsWarehouse::with(['allChildren' => function($query)use($select) {
                     $query->select($select);
-                    $query->orderBy('sort','asc');
+                    $query->orderBy('id','asc');
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
@@ -268,6 +268,175 @@ class WarehouseController extends CommonController{
         }
 
 
+    }
+
+    /**
+     * 一键生成仓库库位 /wms/warehouse/warehouseSign
+     * */
+    public function warehouseSign(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='wms_warehouse_sign';
+
+        $operationing->access_cause     ='创建/修改库区';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input              =$request->all();
+
+        /** 接收数据*/
+        $self_id            =$request->input('self_id');
+        $area_id            =$request->input('area_id');
+        $row_left           =$request->input('row_left');
+        $row_right          =$request->input('row_right');
+        $tier_left          =$request->input('tier_left');
+        $tier_right         =$request->input('tier_right');
+        $column_left        =$request->input('column_left');
+        $column_right       =$request->input('column_right');
+        $pid                =$request->input('pid');
+
+        /*** 虚拟数据
+        //        $input['self_id']           =$self_id='good_202007011336328472133661';
+        //        $input['area_id']           =$area_id='area_202011151042442192785461';
+        $input['row_left']              =$row_left='1';
+        $input['row_right']              =$row_right='1';
+        $input['tier_left']              =$tier_left='1';
+        $input['tier_right']              =$tier_right='4';
+        $input['column_left']              =$column_left='1';
+        $input['column_right']              =$column_right='12';
+         * **/
+
+//		DD($input);
+        $rules=[
+            'area_id'=>'required',
+        ];
+        $message=[
+            'area_id.required'=>'请选择所属库区',
+        ];
+
+        $validator=Validator::make($input,$rules,$message);
+
+        if($validator->passes()) {
+            /** 第二步效验，left的值必须小于right 的 值*/
+            if($row_left > $row_right){
+                $msg['code']=301;
+                $msg['msg']='库位排位1必须小于或等于库位排位2';
+                return $msg;
+            }
+
+            if($tier_left > $tier_right){
+                $msg['code']=302;
+                $msg['msg']='库位层1必须小于或等于库位层2';
+                return $msg;
+            }
+
+            if($column_left > $column_right){
+                $msg['code']=303;
+                $msg['msg']='库位列位1必须小于或等于库位列位2';
+                return $msg;
+            }
+
+
+            //现在要根据这个做笛卡尔积,先得到几个数组
+            $row        =$this->squares($row_left,$row_right);
+            $tier       =$this->squares($tier_left,$tier_right);
+            $column     =$this->squares($column_left,$column_right);
+
+            //初始化一些变量
+            $datalist=[];       //初始化数组为空
+            $cando='Y';         //错误数据的标记
+            $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
+            $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
+            $errorNum=50;       //控制错误数据的条数
+
+            foreach ($row as $k => $v){
+                foreach ($column as $kk => $vv){
+                    foreach ($tier as $kkk=>$vvv){
+                        $sign['row']=$v;
+                        $sign['column']=$vv;
+                        $sign['tier']=$vvv;
+                        $datalist[]=$sign;
+                    }
+                }
+            }
+            $select_WmsWarehouseArea=['area','warehouse_id','warehouse_name','group_code','group_name','warm_id'];
+            $info=WmsWarehouseArea::where('self_id','=',$area_id)->select($select_WmsWarehouseArea)->first();
+
+
+            foreach ($datalist as $k => $v){
+                $where=[
+                    ['row','=',$v['row']],
+                    ['tier','=',$v['tier']],
+                    ['column','=',$v['column']],
+                    ['delete_flag','=','Y'],
+                    ['area_id','=',$area_id],
+                ];
+
+                $exists=WmsWarehouseSign::where($where)->exists();
+                if($exists){
+                    $cando='N';
+                    if($abcd<$errorNum){
+                        $strs.='第'.$v['row'].'排，第'.$v['column'].'列，第'.$v['tier'].'层的'.'库位已存在'.'</br>';
+                        $abcd++;
+                    }
+
+                    // dump($v);
+                    //dd($strs);
+                    //break;
+                }
+
+                $datalist[$k]['self_id']				=generate_id('sign_');
+                $datalist[$k]['area_id']				=$area_id;
+                $datalist[$k]['area']					=$info->area;
+                $datalist[$k]['warehouse_id']			=$info->warehouse_id;
+                $datalist[$k]['warehouse_name']			=$info->warehouse_name;
+                $datalist[$k]['group_code']				=$info->group_code;
+                $datalist[$k]['group_name']				=$info->group_name;
+                $datalist[$k]['warm_id']				=$info->warm_id;
+                $datalist[$k]['create_user_id']     	=$user_info->admin_id;
+                $datalist[$k]['create_user_name']   	=$user_info->name;
+                $datalist[$k]['create_time']			=$datalist[$k]['update_time']=$now_time;
+
+
+
+            }
+            if($cando=='Y'){
+                $new_list = array_chunk($datalist,1000);
+//                dd($new_list);
+                foreach ($new_list as $value){
+                    $id=WmsWarehouseSign::insert($value);
+                }
+                if($id){
+                    $msg['code'] = 200;
+                    $msg['msg'] = "操作成功,创建了".count($datalist).'个库位';
+                    //dd($msg);
+                    return $msg;
+                }else{
+                    $msg['code'] = 302;
+                    $msg['msg'] = "操作失败";
+                    return $msg;
+                }
+
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = $strs;
+                return $msg;
+            }
+
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+
+            return $msg;
+        }
     }
 
     /***    仓库启用/禁用      /wms/warehouse/warehouseUseFlag

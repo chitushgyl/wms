@@ -30,6 +30,7 @@ Route::group([
     Route::any('/warehouse/warehousePage', 'WarehouseController@warehousePage');
     Route::any('/warehouse/createWarehouse', 'WarehouseController@createWarehouse');
     Route::any('/warehouse/getWarehouse', 'WarehouseController@getWarehouse');
+    Route::any('/warehouse/warehouseSign', 'WarehouseController@warehouseSign');
 
     Route::any('/warehouse/details', 'WarehouseController@details');
 
