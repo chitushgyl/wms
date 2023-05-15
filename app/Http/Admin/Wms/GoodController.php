@@ -163,7 +163,6 @@ class GoodController extends CommonController{
         $company_id         =$request->input('company_id');
         $external_sku_id    =$request->input('external_sku_id');
         $good_name          =$request->input('good_name');
-        $good_english_name  =$request->input('good_english_name');
         $wms_unit           =$request->input('wms_unit');
         $wms_target_unit    =$request->input('wms_target_unit');
         $wms_scale          =$request->input('wms_scale');
@@ -262,7 +261,6 @@ class GoodController extends CommonController{
 
             $data['external_sku_id']    = $external_sku_id;
             $data['good_name']          = $good_name;
-            $data['good_english_name']  = $good_english_name;
             $data['wms_unit']           = $wms_unit;
             $data['wms_target_unit']    = $wms_target_unit;
             $data['wms_scale']          = $wms_scale;

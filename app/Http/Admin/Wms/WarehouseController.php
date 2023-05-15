@@ -172,10 +172,8 @@ class WarehouseController extends CommonController{
 
         $rules=[
             'group_code'=>'required',
-            'warehouse_name'=>'required',
         ];
         $message=[
-            'warehouse_name.required'=>'请填写仓库名称',
             'group_code.required'=>'请选择所属公司',
         ];
         $validator=Validator::make($input,$rules,$message);
@@ -184,18 +182,12 @@ class WarehouseController extends CommonController{
 
             /** 现在开始可以做数据了**/
 
-            $data['warehouse_name']         = $warehouse_name;
-            $data['pid']                    = $pid;
-            $data['all_weight']             = $all_weight;
-            $data['all_volume']             = $all_volume;
-
-
             $where2['self_id'] = $self_id;
             $select_WmsWarehouse=['self_id','warehouse_name','pid','all_weight','all_volume','citycode','city','warehouse_address','warehouse_tel','warehouse_contacts','group_code',
                 'group_name','longitude','dimensionality'
                 ];
             $old_info=WmsWarehouse::where($where2)->select($select_WmsWarehouse)->first();
-
+            $data['children']               = $children;
 
             if($old_info){
                 $data['update_time'] =$now_time;
@@ -211,7 +203,6 @@ class WarehouseController extends CommonController{
                 $data['create_user_name']   = $user_info->name;
                 $data['group_code']         =$group_code;
                 $data['group_name']         =$group_name;
-                $data['children']               = $children;
 
                 self::loop($data,$pid);
 
