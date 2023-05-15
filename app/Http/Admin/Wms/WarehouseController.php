@@ -159,7 +159,7 @@ class WarehouseController extends CommonController{
         $group_code         =$request->input('group_code');
         $children           =json_decode($request->input('children'),true);
         $pid                =$request->input('pid');
-
+        dd($children);
         /*** 虚拟数据
         $input['self_id']           =$self_id='good_202007011336328472133661';
         $input['group_code']        =$group_code='1234';
