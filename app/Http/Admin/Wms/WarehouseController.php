@@ -272,7 +272,7 @@ class WarehouseController extends CommonController{
     public function loop($arr,$insertid){
                 $now_time = date('Y-m-d H:i:s');
             foreach ($arr as $k => $v){
-                var_dump($v);
+                dd($v);
                 dd($v['pid']);
                 if ($v['id']){
                     $update['update_time'] = $now_time;
