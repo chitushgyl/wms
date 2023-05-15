@@ -125,17 +125,17 @@ class MoneyController extends CommonController{
         }])->where($where)->select($select)->first();
         //DD($info->toArray());
 
-        
+
 
         if($info){
 
-			
+
 			foreach ($info->WmsMoneyList as $k=>$v){
 				$v->sign                =$v->area.'-'.$v->row.'-'.$v->column.'-'.$v->tier;
 				$v->good_describe      =unit_do($v->good_unit , $v->good_target_unit, $v->good_scale, $v->num);
 			}
-		
-		
+
+
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
             $info->total_show=$wms_money_type_show[$info->type];
             $info->money = number_format($info->money/100, 2);
@@ -270,6 +270,104 @@ class MoneyController extends CommonController{
             $msg['msg']="拉取不到数据";
             return $msg;
         }
+    }
+
+    /**
+     * 费用类型
+     * */
+    public function costTypeList(Request $request){
+        $data['page_info']      =config('page.listrows');
+        $data['button_info']    =$request->get('anniu');
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
+    /**
+     *
+     * */
+    public function costTypePage(Request $request){
+        $wms_money_type_show    =array_column(config('wms.wms_money_type'),'name','key');
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+
+        /**接收数据*/
+        $num            =$request->input('num')??10;
+        $page           =$request->input('page')??1;
+        $use_flag       =$request->input('use_flag');
+        $group_code     =$request->input('group_code');
+        $company_id     =$request->input('company_id');
+        $warehouse_id     =$request->input('warehouse_id');
+        $type           =$request->input('type');
+        $listrows       =$num;
+        $firstrow       =($page-1)*$listrows;
+
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'company_id','value'=>$company_id],
+            ['type'=>'=','name'=>'warehouse_id','value'=>$warehouse_id],
+            ['type'=>'=','name'=>'type','value'=>$type],
+        ];
+
+
+        $where=get_list_where($search);
+
+        $select=['self_id','type','group_code','group_name','warehouse_id','warehouse_name','time','create_user_name','create_time','use_flag','company_name','company_id',
+            'payee_affirm_flag','payment_affirm_flag','settle_flag','settle_id','money'];
+
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=WmsMoney::where($where)->count(); //总的数据量
+                $data['items']=WmsMoney::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=WmsMoney::where($where)->count(); //总的数据量
+                $data['items']=WmsMoney::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=WmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=WmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+        }
+        //dd($data['items']->toArray());
+
+        foreach ($data['items'] as $k=>$v) {
+            $v->money = number_format($v->money/100, 2);
+            $v->total_show=$wms_money_type_show[$v->type]??null;
+            $v->button_info=$button_info;
+
+        }
+
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+    }
+
+    /**
+     * 添加费用类型
+     * */
+    public function addCostType(Request $request){
+
     }
 
 }

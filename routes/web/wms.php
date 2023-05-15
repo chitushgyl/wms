@@ -300,3 +300,59 @@ Route::group([
 });
 
 
+/******系统设置模块*******/
+Route::group([
+    'prefix' => 'more','namespace'  => 'More',
+], function(){
+    /**菜单设置**/
+    Route::any('/more/billTypeList', 'BillTypeController@billTypeList');
+    Route::any('/more/billTypePage', 'BillTypeController@billTypePage');
+    Route::any('/more/createBillType', 'BillTypeController@createBillType');
+    Route::any('/more/addBillType', 'BillTypeController@addBillType');
+    Route::any('/more/delBillType', 'BillTypeController@delBillType');
+
+
+    Route::group([
+        "middleware"=>['daily'],
+    ], function(){
+        Route::any('/menu/addMenu', 'MenuController@addMenu');
+        Route::any('/menu/menuUseFlag', 'MenuController@menuUseFlag');
+    });
+
+
+    Route::any('/more/costTypeList', 'CostTypeController@costTypeList');
+    Route::any('/more/costTypePage', 'CostTypeController@costTypePage');
+    Route::any('/more/createCostType', 'CostTypeController@createCostType');
+    Route::any('/more/addCostType', 'CostTypeController@addCostType');
+    Route::any('/more/delCostType', 'CostTypeController@delCostType');
+
+
+    Route::any('/more/settleTypeList', 'SettleTypeController@settleTypeList');
+    Route::any('/more/settleTypePage', 'SettleTypeController@settleTypePage');
+    Route::any('/more/createSettleType', 'SettleTypeController@createSettleType');
+    Route::any('/more/addSettleType', 'SettleTypeController@addSettleType');
+    Route::any('/more/delSettleType', 'SettleTypeController@delSettleType');
+
+
+    Route::any('/more/customerBankList', 'CustomerBankController@customerBankList');
+    Route::any('/more/customerBankPage', 'CustomerBankController@customerBankPage');
+    Route::any('/more/createCustomerBank', 'CustomerBankController@createCustomerBank');
+    Route::any('/more/addCustomerBank', 'CustomerBankController@addCustomerBank');
+    Route::any('/more/delCustomerBank', 'CustomerBankController@delCustomerBank');
+
+
+    Route::any('/more/wmsPorterList', 'WmsPorterController@wmsPorterList');
+    Route::any('/more/wmsPorterPage', 'WmsPorterController@wmsPorterPage');
+    Route::any('/more/createWmsPorter', 'WmsPorterController@createWmsPorter');
+    Route::any('/more/addWmsPorter', 'WmsPorterController@addWmsPorter');
+    Route::any('/more/delWmsPorter', 'WmsPorterController@delWmsPorter');
+
+    Route::any('/more/wmsRailwayList', 'WmsRailwayController@wmsRailwayList');
+    Route::any('/more/wmsRailwayPage', 'WmsPorterController@wmsRailwayPage');
+    Route::any('/more/createWmsRailway', 'WmsPorterController@createWmsRailway');
+    Route::any('/more/addWmsRailway', 'WmsPorterController@addWmsRailway');
+    Route::any('/more/delWmsRailway', 'WmsPorterController@delWmsRailway');
+
+});
+
+
