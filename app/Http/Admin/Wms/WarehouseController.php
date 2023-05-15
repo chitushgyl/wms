@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\Wms;
+use App\Models\Wms\WmsLibrarySige;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -412,7 +413,7 @@ class WarehouseController extends CommonController{
                 $new_list = array_chunk($datalist,1000);
 //                dd($new_list);
                 foreach ($new_list as $value){
-                    $id=WmsWarehouseSign::insert($value);
+                    $id=WmsLibrarySige::insert($value);
                 }
                 if($id){
                     $msg['code'] = 200;
