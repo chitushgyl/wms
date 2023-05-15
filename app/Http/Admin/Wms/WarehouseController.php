@@ -157,7 +157,7 @@ class WarehouseController extends CommonController{
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $group_code         =$request->input('group_code');
-        $children           =$request->input('children');
+        $children           =json_decode($request->input('children'),true);
         $pid                =$request->input('pid');
 
         /*** 虚拟数据
