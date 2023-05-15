@@ -181,8 +181,7 @@ class WarehouseController extends CommonController{
 
             $where2['self_id'] = $self_id;
             $select_WmsWarehouse=['self_id','warehouse_name','pid','all_weight','all_volume','citycode','city','warehouse_address','warehouse_tel','warehouse_contacts','group_code',
-                'group_name','longitude','dimensionality'
-                ];
+                'group_name','longitude','dimensionality','remark'];
             $old_info=WmsWarehouse::where($where2)->select($select_WmsWarehouse)->first();
                 $data['pid'] = $pid;
                 $data['children'] = $children;
