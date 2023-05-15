@@ -301,7 +301,7 @@ class WarehouseController extends CommonController{
 
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        $area_id            =$request->input('area_id');
+        $warehouse_id       =$request->input('warehouse_id');
         $row_left           =$request->input('row_left');
         $row_right          =$request->input('row_right');
         $tier_left          =$request->input('tier_left');
@@ -323,10 +323,10 @@ class WarehouseController extends CommonController{
 
 //		DD($input);
         $rules=[
-            'area_id'=>'required',
+            'warehouse_id'=>'required',
         ];
         $message=[
-            'area_id.required'=>'请选择所属库区',
+            'warehouse_id.required'=>'请选择所属仓库',
         ];
 
         $validator=Validator::make($input,$rules,$message);
@@ -374,17 +374,13 @@ class WarehouseController extends CommonController{
                     }
                 }
             }
-            $select_WmsWarehouseArea=['area','warehouse_id','warehouse_name','group_code','group_name','warm_id'];
-            $info=WmsWarehouseArea::where('self_id','=',$area_id)->select($select_WmsWarehouseArea)->first();
 
-
+            $info = WmsWarehouse::where('self_id',$warehouse_id)->first();
             foreach ($datalist as $k => $v){
                 $where=[
-                    ['row','=',$v['row']],
-                    ['tier','=',$v['tier']],
-                    ['column','=',$v['column']],
+                    ['sign_name','=',$v['row'].'-'.$v['column'].'-'.$v['tier']],
                     ['delete_flag','=','Y'],
-                    ['area_id','=',$area_id],
+                    ['warehouse_id','=',$warehouse_id],
                 ];
 
                 $exists=WmsWarehouseSign::where($where)->exists();
@@ -401,13 +397,10 @@ class WarehouseController extends CommonController{
                 }
 
                 $datalist[$k]['self_id']				=generate_id('sign_');
-                $datalist[$k]['area_id']				=$area_id;
-                $datalist[$k]['area']					=$info->area;
                 $datalist[$k]['warehouse_id']			=$info->warehouse_id;
                 $datalist[$k]['warehouse_name']			=$info->warehouse_name;
                 $datalist[$k]['group_code']				=$info->group_code;
                 $datalist[$k]['group_name']				=$info->group_name;
-                $datalist[$k]['warm_id']				=$info->warm_id;
                 $datalist[$k]['create_user_id']     	=$user_info->admin_id;
                 $datalist[$k]['create_user_name']   	=$user_info->name;
                 $datalist[$k]['create_time']			=$datalist[$k]['update_time']=$now_time;
