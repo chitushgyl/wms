@@ -156,12 +156,9 @@ class WarehouseController extends CommonController{
 
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        $warehouse_name     =$request->input('warehouse_name');
         $group_code         =$request->input('group_code');
         $children           =$request->input('children');
         $pid                =$request->input('pid');
-        $all_weight         =$request->input('all_weight');
-        $all_volume         =$request->input('all_volume');
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='good_202007011336328472133661';
@@ -188,7 +185,6 @@ class WarehouseController extends CommonController{
                 ];
             $old_info=WmsWarehouse::where($where2)->select($select_WmsWarehouse)->first();
             $data['children']               = $children;
-
             if($old_info){
                 $data['update_time'] =$now_time;
                 $id = self::loop($data,$pid);
@@ -199,17 +195,49 @@ class WarehouseController extends CommonController{
                 $wehre222['self_id']=$group_code;
                 $group_name = SystemGroup::where($wehre222)->value('group_name');
 
-                $data['create_user_id']     =$user_info->admin_id;
-                $data['create_user_name']   = $user_info->name;
-                $data['group_code']         =$group_code;
-                $data['group_name']         =$group_name;
-
+//                $arr = [[
+//                    'id'=>'',
+//                    'pid'=>1,
+//                    'warehouse_name'=>'徐汇',
+//                    'all_weight'=>'40',
+//                    'all_volume'=>'40',
+//                    'remark'=>'40',
+//                    'group_code'=>'1234',
+//                    'group_name'=>'40',
+//                    'create_user_id'=>'40',
+//                    'create_user_name'=>'40',
+//                    'all_children'=>[[
+//                            'id'=>'',
+//                            'pid'=>null,
+//                            'warehouse_name'=>'徐家汇',
+//                            'all_weight'=>'40',
+//                            'all_volume'=>'40',
+//                            'remark'=>'40',
+//                            'group_code'=>'1234',
+//                            'group_name'=>'40',
+//                            'create_user_id'=>'40',
+//                            'create_user_name'=>'40',
+//                            'all_children'=>[],
+//                        ]],
+//                ],[
+//                    'id'=>'',
+//                    'pid'=>2,
+//                    'warehouse_name'=>'南翔',
+//                    'all_weight'=>'40',
+//                    'all_volume'=>'40',
+//                    'remark'=>'40',
+//                    'group_code'=>'1234',
+//                    'group_name'=>'40',
+//                    'create_user_id'=>'40',
+//                    'create_user_name'=>'40',
+//                    'all_children'=>[],
+//                ]];
                 $id = self::loop($data,$pid);
 
                 $operationing->access_cause='新建仓库';
                 $operationing->operation_type='create';
             }
-
+//            dd(123);
             $operationing->table_id=$old_info?$self_id:$data['self_id'];
             $operationing->old_info=$old_info;
             $operationing->new_info=$data;
@@ -244,15 +272,22 @@ class WarehouseController extends CommonController{
     public function loop($arr,$insertid){
                 $now_time = date('Y-m-d H:i:s');
             foreach ($arr as $k => $v){
+//                var_dump($v['pid']);
+//                dd($v['pid']);
                 if ($v['id']){
                     $update['update_time'] = $now_time;
                     $update['warehouse_name'] = $v['warehouse_name'];
                     $update['all_weight']     = $v['all_weight'];
                     $update['all_volume']     = $v['all_volume'];
-                    $id = WmsWarehouse::update($update);
+                    $update['remark']     = $v['remark'];
+                    WmsWarehouse::update($update);
                 }else{
                     $data['self_id']            = generate_id('warehouse_');
-                    $data['pid']                = $insertid;
+                    if (isset($v['pid'])){
+                        $data['pid']                = $v['pid'];
+                    }else{
+                        $data['pid']                = $insertid;
+                    }
                     $data['warehouse_name']     = $v['warehouse_name'];
                     $data['all_weight']         = $v['all_weight'];
                     $data['all_volume']         = $v['all_volume'];
@@ -263,16 +298,15 @@ class WarehouseController extends CommonController{
                     $data['create_user_name']   = $v['create_user_name'];
                     $data['create_time']  =  $data['update_time'] = $now_time;
                     $id = WmsWarehouse::insertGetId($data);
+                    if (count($v['all_children'])>0){
+                        self::loop($v['all_children'],$id);
+                    }else{
+                        break;
+                    }
+                }
 
-                }
-                if (count($v['children'])>0){
-                    self::loop($v['children'],$id);
-                }else{
-                    break;
-                }
 
             }
-            return $id;
 
     }
 
