@@ -71,6 +71,7 @@ class WarehouseController extends CommonController{
                 $data['total']=WmsWarehouse::where($where)->count(); //总的数据量
                 $data['items']=WmsWarehouse::with(['allChildren' => function($query)use($select) {
                     $query->select($select);
+                    $query->where('delete_flag','Y');
                     $query->orderBy('id','asc');
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -83,6 +84,7 @@ class WarehouseController extends CommonController{
                 $data['total']=WmsWarehouse::where($where)->count(); //总的数据量
                 $data['items']=WmsWarehouse::with(['allChildren' => function($query)use($select) {
                     $query->select($select);
+                    $query->where('delete_flag','Y');
                     $query->orderBy('id','asc');
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -94,6 +96,7 @@ class WarehouseController extends CommonController{
                 $data['total']=WmsWarehouse::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=WmsWarehouse::with(['allChildren' => function($query)use($select) {
                     $query->select($select);
+                    $query->where('delete_flag','Y');
                     $query->orderBy('id','asc');
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
