@@ -159,7 +159,7 @@ class WarehouseController extends CommonController{
         $group_code         =$request->input('group_code');
         $children           =json_decode($request->input('children'),true);
         $pid                =$request->input('pid');
-        dd($children);
+
         /*** 虚拟数据
         $input['self_id']           =$self_id='good_202007011336328472133661';
         $input['group_code']        =$group_code='1234';
@@ -184,10 +184,10 @@ class WarehouseController extends CommonController{
                 'group_name','longitude','dimensionality'
                 ];
             $old_info=WmsWarehouse::where($where2)->select($select_WmsWarehouse)->first();
-            $data['children']               = $children;
+
             if($old_info){
                 $data['update_time'] =$now_time;
-                $id = self::loop($data,$pid);
+                $id = self::loop($children,$pid);
 
                 $operationing->access_cause='修改仓库';
                 $operationing->operation_type='update';
@@ -232,7 +232,7 @@ class WarehouseController extends CommonController{
 //                    'create_user_name'=>'40',
 //                    'all_children'=>[],
 //                ]];
-                $id = self::loop($data,$pid);
+                $id = self::loop($children,$pid);
 
                 $operationing->access_cause='新建仓库';
                 $operationing->operation_type='create';
@@ -272,8 +272,6 @@ class WarehouseController extends CommonController{
     public function loop($arr,$insertid){
                 $now_time = date('Y-m-d H:i:s');
             foreach ($arr as $k => $v){
-                dd($v);
-                dd($v['pid']);
                 if ($v['id']){
                     $update['update_time'] = $now_time;
                     $update['warehouse_name'] = $v['warehouse_name'];
