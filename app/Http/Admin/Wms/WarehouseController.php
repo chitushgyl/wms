@@ -191,7 +191,7 @@ class WarehouseController extends CommonController{
 
             if($old_info){
                 $data['update_time'] =$now_time;
-                $id=WmsWarehouse::where($where2)->update($data);
+                self::loop($data,$pid);
 
                 $operationing->access_cause='修改仓库';
                 $operationing->operation_type='update';
