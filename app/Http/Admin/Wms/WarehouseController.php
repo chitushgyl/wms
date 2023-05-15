@@ -184,7 +184,8 @@ class WarehouseController extends CommonController{
                 'group_name','longitude','dimensionality'
                 ];
             $old_info=WmsWarehouse::where($where2)->select($select_WmsWarehouse)->first();
-
+                $data['pid'] = $pid;
+                $data['children'] = $children;
             if($old_info){
                 $data['update_time'] =$now_time;
                 $id = self::loop($children,$pid);
@@ -238,9 +239,9 @@ class WarehouseController extends CommonController{
                 $operationing->operation_type='create';
             }
 //            dd(123);
-            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->table_id=$old_info?$self_id:null;
             $operationing->old_info=$old_info;
-            $operationing->new_info=$data;
+            $operationing->new_info=(object)$data;
 
             if($id){
                 $msg['code']=200;
