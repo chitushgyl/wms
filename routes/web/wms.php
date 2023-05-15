@@ -31,14 +31,14 @@ Route::group([
     Route::any('/warehouse/createWarehouse', 'WarehouseController@createWarehouse');
     Route::any('/warehouse/getWarehouse', 'WarehouseController@getWarehouse');
     Route::any('/warehouse/warehouseSign', 'WarehouseController@warehouseSign');
-
+    Route::any('/warehouse/addWarehouse', 'WarehouseController@addWarehouse');
     Route::any('/warehouse/details', 'WarehouseController@details');
 
     Route::group([
         "middleware"=>['daily'],
     ], function(){
         Route::any('/warehouse/import', 'WarehouseController@import');
-        Route::any('/warehouse/addWarehouse', 'WarehouseController@addWarehouse');
+
         Route::any('/warehouse/warehouseUseFlag', 'WarehouseController@warehouseUseFlag');
         Route::any('/warehouse/warehouseDelFlag', 'WarehouseController@warehouseDelFlag');
     });

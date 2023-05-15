@@ -58,6 +58,7 @@ class WarehouseController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'pid','value'=>0],
         ];
 
         $where=get_list_where($search);
@@ -156,14 +157,7 @@ class WarehouseController extends CommonController{
         $self_id            =$request->input('self_id');
         $warehouse_name     =$request->input('warehouse_name');
         $group_code         =$request->input('group_code');
-        $warehouse_address  =$request->input('warehouse_address');
-        $warehouse_tel      =$request->input('warehouse_tel');
-        $warehouse_contacts =$request->input('warehouse_contacts');
-        $explain            =$request->input('explain');
-        $citycode           =$request->input('citycode');
-        $city               =$request->input('city');
-        $longitude          =$request->input('longitude');
-        $dimensionality     =$request->input('dimensionality');
+        $children           =$request->input('children');
         $pid                =$request->input('pid');
         $all_weight         =$request->input('all_weight');
         $all_volume         =$request->input('all_volume');
@@ -172,12 +166,7 @@ class WarehouseController extends CommonController{
         $input['self_id']           =$self_id='good_202007011336328472133661';
         $input['group_code']        =$group_code='1234';
         $input['warehouse_name']    =$warehouse_name='优惠券名称';
-        $input['warehouse_address']           =$warehouse_address='good_202007011336328472133661';
-        $input['warehouse_tel']        =$warehouse_tel='1234';
-        $input['warehouse_contacts']    =$warehouse_contacts='优惠券名称';
-        $input['explain']           =$explain='good_202007011336328472133661';
-        $input['longitude']        =$longitude='1234';
-        $input['dimensionality']    =$dimensionality='优惠券名称';
+
          **/
 
         $rules=[
@@ -195,14 +184,6 @@ class WarehouseController extends CommonController{
             /** 现在开始可以做数据了**/
 
             $data['warehouse_name']         = $warehouse_name;
-            $data['warehouse_address']      = $warehouse_address;
-            $data['warehouse_tel']          = $warehouse_tel;
-            $data['warehouse_contacts']     = $warehouse_contacts;
-            $data['explain']                = $explain;
-            $data['citycode']               = $citycode;
-            $data['city']                   = $city;
-            $data['longitude']              = $longitude;
-            $data['dimensionality']         = $dimensionality;
             $data['pid']                    = $pid;
             $data['all_weight']             = $all_weight;
             $data['all_volume']             = $all_volume;
@@ -213,8 +194,6 @@ class WarehouseController extends CommonController{
                 'group_name','longitude','dimensionality'
                 ];
             $old_info=WmsWarehouse::where($where2)->select($select_WmsWarehouse)->first();
-
-            //dd($data);
 
 
             if($old_info){
@@ -227,13 +206,13 @@ class WarehouseController extends CommonController{
                 $wehre222['self_id']=$group_code;
                 $group_name = SystemGroup::where($wehre222)->value('group_name');
 
-                $data['self_id']            = generate_id('warehouse_');
                 $data['create_user_id']     =$user_info->admin_id;
                 $data['create_user_name']   = $user_info->name;
                 $data['group_code']         =$group_code;
                 $data['group_name']         =$group_name;
-                $data['create_time']        =$data['update_time'] =$now_time;
-                $id=WmsWarehouse::insert($data);
+                $data['children']               = $children;
+
+                self::loop($data,$pid);
 
                 $operationing->access_cause='新建仓库';
                 $operationing->operation_type='create';
@@ -267,6 +246,40 @@ class WarehouseController extends CommonController{
             return $msg;
         }
 
+
+    }
+
+    public function loop($arr,$insertid){
+                $now_time = date('Y-m-d H:i:s');
+            foreach ($arr as $k => $v){
+                if ($v['id']){
+                    $update['update_time'] = $now_time;
+                    $update['warehouse_name'] = $v['warehouse_name'];
+                    $update['all_weight']     = $v['all_weight'];
+                    $update['all_volume']     = $v['all_volume'];
+                    WmsWarehouse::update($update);
+                }else{
+                    $data['self_id']            = generate_id('warehouse_');
+                    $data['pid']                = $insertid;
+                    $data['warehouse_name']     = $v['warehouse_name'];
+                    $data['all_weight']         = $v['all_weight'];
+                    $data['all_volume']         = $v['all_volume'];
+                    $data['remark']             = $v['remark'];
+                    $data['group_code']         = $v['group_code'];
+                    $data['group_name']         = $v['group_name'];
+                    $data['create_user_id']     = $v['create_user_id'];
+                    $data['create_user_name']   = $v['create_user_name'];
+                    $data['create_time']  =  $data['update_time'] = $now_time;
+                    $id = WmsWarehouse::insertGetId($data);
+
+                }
+                if (count($v['children'])>0){
+                    self::loop($v['children'],$id);
+                }else{
+                    break;
+                }
+
+            }
 
     }
 
