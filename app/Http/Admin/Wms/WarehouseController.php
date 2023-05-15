@@ -280,7 +280,7 @@ class WarehouseController extends CommonController{
                     $update['all_weight']     = $v['all_weight'];
                     $update['all_volume']     = $v['all_volume'];
                     $update['remark']     = $v['remark'];
-                    WmsWarehouse::update($update);
+                    $id = WmsWarehouse::update($update);
                 }else{
                     $data['self_id']            = generate_id('warehouse_');
                     if (isset($v['pid'])){
@@ -298,15 +298,16 @@ class WarehouseController extends CommonController{
                     $data['create_user_name']   = $v['create_user_name'];
                     $data['create_time']  =  $data['update_time'] = $now_time;
                     $id = WmsWarehouse::insertGetId($data);
-                    if (count($v['all_children'])>0){
-                        self::loop($v['all_children'],$id);
-                    }else{
-                        break;
-                    }
+
+                }
+                if (count($v['all_children'])>0){
+                    self::loop($v['all_children'],$id);
+                }else{
+                    break;
                 }
 
-
             }
+            return $id;
 
     }
 
