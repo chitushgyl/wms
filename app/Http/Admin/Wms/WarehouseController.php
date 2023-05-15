@@ -191,7 +191,7 @@ class WarehouseController extends CommonController{
 
             if($old_info){
                 $data['update_time'] =$now_time;
-                self::loop($data,$pid);
+                $id = self::loop($data,$pid);
 
                 $operationing->access_cause='修改仓库';
                 $operationing->operation_type='update';
@@ -204,7 +204,7 @@ class WarehouseController extends CommonController{
                 $data['group_code']         =$group_code;
                 $data['group_name']         =$group_name;
 
-                self::loop($data,$pid);
+                $id = self::loop($data,$pid);
 
                 $operationing->access_cause='新建仓库';
                 $operationing->operation_type='create';
@@ -249,7 +249,7 @@ class WarehouseController extends CommonController{
                     $update['warehouse_name'] = $v['warehouse_name'];
                     $update['all_weight']     = $v['all_weight'];
                     $update['all_volume']     = $v['all_volume'];
-                    WmsWarehouse::update($update);
+                    $id = WmsWarehouse::update($update);
                 }else{
                     $data['self_id']            = generate_id('warehouse_');
                     $data['pid']                = $insertid;
@@ -272,6 +272,7 @@ class WarehouseController extends CommonController{
                 }
 
             }
+            return $id;
 
     }
 
