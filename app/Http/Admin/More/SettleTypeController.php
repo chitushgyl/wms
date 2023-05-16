@@ -246,7 +246,7 @@ class SettleTypeController extends CommonController{
 
     /***    业务公司删除      /more/settleType/delSettleType
      */
-    public function groupDelFlag(Request $request,Status $status){
+    public function delSettleType(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
         $table_name='wms_settle_type';

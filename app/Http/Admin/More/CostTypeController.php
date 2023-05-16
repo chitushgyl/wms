@@ -55,7 +55,7 @@ class CostTypeController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'like','name'=>'company_name','value'=>$company_name],
+            ['type'=>'like','name'=>'cost_name','value'=>$cost_name],
         ];
 
         $where=get_list_where($search);

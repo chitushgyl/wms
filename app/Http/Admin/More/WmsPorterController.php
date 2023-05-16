@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\More;
+use App\Models\Wms\WmsPorter;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -13,9 +14,9 @@ use App\Models\Wms\WmsGroup;
 use App\Models\Group\SystemGroup;
 
 class WmsPorterController extends CommonController{
-    /***    业务公司列表      /wms/group/groupList
+    /***    业务公司列表      /more/wmsPorter/wmsPorterList
      */
-    public function  groupList(Request $request){
+    public function  wmsPorterList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
         $abc='业务公司';
@@ -33,11 +34,10 @@ class WmsPorterController extends CommonController{
     }
 
     //业务公司列表分页加载数据
-    /***    业务公司分页      /wms/group/groupPage
+    /***    业务公司分页      /more/wmsPorter/wmsPorterPage
      */
-    public function groupPage(Request $request){
+    public function wmsPorterPage(Request $request){
         /** 接收中间件参数**/
-        $wms_cost_type_show    =array_column(config('wms.wms_cost_type'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
 
@@ -46,7 +46,7 @@ class WmsPorterController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $company_name     =$request->input('company_name');
+        $porter         =$request->input('porter');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -54,18 +54,17 @@ class WmsPorterController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'like','name'=>'company_name','value'=>$company_name],
+            ['type'=>'like','name'=>'porter','value'=>$porter],
         ];
 
         $where=get_list_where($search);
 
-        $select=['self_id','company_name','use_flag','group_name','contacts','address','tel',
-            'preentry_type','preentry_price','out_type','out_price','storage_type','storage_price','total_type','total_price','pay_type'];
+        $select=['self_id','porter','use_flag','group_name','group_code','delete_flag','create_time','create_user_id','create_user_name'];
 
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=WmsGroup::where($where)->count(); //总的数据量
-                $data['items']=WmsGroup::where($where)
+                $data['total']=WmsPorter::where($where)->count(); //总的数据量
+                $data['items']=WmsPorter::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -73,16 +72,16 @@ class WmsPorterController extends CommonController{
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=WmsGroup::where($where)->count(); //总的数据量
-                $data['items']=WmsGroup::where($where)
+                $data['total']=WmsPorter::where($where)->count(); //总的数据量
+                $data['items']=WmsPorter::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=WmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['total']=WmsPorter::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=WmsPorter::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -91,34 +90,6 @@ class WmsPorterController extends CommonController{
 //dump($wms_cost_type_show);
 
         foreach ($data['items'] as $k=>$v) {
-            $v->preentry_price = number_format($v->preentry_price/100, 2);
-            $v->out_price = number_format($v->out_price/100, 2);
-            $v->storage_price = number_format($v->storage_price/100, 2);
-            $v->total_price = number_format($v->total_price/100, 2);
-
-            if(array_key_exists($v->preentry_type, $wms_cost_type_show)){
-                $v->preentry_type_show=$wms_cost_type_show[$v->preentry_type]??null;
-            }else{
-                $v->preentry_type_show='未设置入库收费';
-            }
-            if(array_key_exists($v->out_type, $wms_cost_type_show)){
-                $v->out_type_show=$wms_cost_type_show[$v->out_type]??null;
-            }else{
-                $v->out_type_show='未设置出库收费';
-            }
-
-            if(array_key_exists($v->storage_type, $wms_cost_type_show)){
-                $v->storage_type_show=$wms_cost_type_show[$v->storage_type]??null;
-            }else{
-                $v->storage_type_show='未设置仓储收费';
-            }
-
-            if(array_key_exists($v->total_type, $wms_cost_type_show)){
-                $v->total_type_show=$wms_cost_type_show[$v->total_type]??null;
-            }else{
-                $v->total_type_show='未设置分拣收费';
-            }
-
             $v->button_info=$button_info;
 
         }
