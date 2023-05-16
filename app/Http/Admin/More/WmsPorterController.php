@@ -247,8 +247,8 @@ class WmsPorterController extends CommonController{
     public function delWmsPorter(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_group';
-        $medol_name='wmsGroup';
+        $table_name='wms_porter';
+        $medol_name='wmsPorter';
         $self_id=$request->input('self_id');
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';
