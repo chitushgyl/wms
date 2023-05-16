@@ -158,8 +158,8 @@ class BillTypeController extends CommonController{
             'company_name'=>'required',
         ];
         $message=[
-            'system_group.required'=>'所属公司不能为空',
-            'company_name.required'=>'公司名称不能为空',
+            'group_code.required'=>'所属公司不能为空',
+            'bill_name.required'=>'单位不能为空',
         ];
         $validator=Validator::make($input,$rules,$message);
 
