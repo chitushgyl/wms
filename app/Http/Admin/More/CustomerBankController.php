@@ -13,9 +13,9 @@ use App\Models\Wms\WmsGroup;
 use App\Models\Group\SystemGroup;
 
 class CustomerBankController extends CommonController{
-    /***    业务公司列表      /wms/group/groupList
+    /***    业务公司列表      /more/customerBank/customerBankList
      */
-    public function  groupList(Request $request){
+    public function  customerBankList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
         $abc='业务公司';
