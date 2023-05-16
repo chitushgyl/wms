@@ -220,6 +220,24 @@ class BillTypeController extends CommonController{
 
     }
 
+    /***    拿去车辆数据     /more/billType/getBillType
+     */
+    public function  getCar(Request $request){
+        $group_code=$request->input('group_code');
+        //$input['group_code'] =  $group_code = '1234';
+        $where=[
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+            ['group_code','=',$group_code],
+        ];
+        $data['info']=WmsBillType::where($where)->get();
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
     /***    业务公司启用禁用      /wms/group/groupUseFlag
      */
     public function groupUseFlag(Request $request,Status $status){

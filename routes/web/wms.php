@@ -310,6 +310,7 @@ Route::group([
     Route::any('/billType/createBillType', 'BillTypeController@createBillType');
     Route::any('/billType/addBillType', 'BillTypeController@addBillType');
     Route::any('/billType/delBillType', 'BillTypeController@delBillType');
+    Route::any('/billType/getBillType', 'BillTypeController@getBillType');
 
 
     Route::group([

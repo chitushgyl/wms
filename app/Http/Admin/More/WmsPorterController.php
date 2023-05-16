@@ -104,22 +104,18 @@ class WmsPorterController extends CommonController{
 
     }
 
-    /***    业务公司创建      /wms/group/createGroup
+    /***    业务公司创建      /more/wmsPorter/createWmsPorter
      */
-    public function createGroup(Request $request){
-        $data['wms_cost_type_show']    =config('wms.wms_cost_type');
+    public function createWmsPorter(Request $request){
         /** 接收数据*/
         $self_id=$request->input('self_id');
         $where=[
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $data['info']=WmsGroup::where($where)->first();
+        $data['info']=WmsPorter::where($where)->first();
         if($data['info']){
-            $data['info']->preentry_price=$data['info']->preentry_price/100;
-            $data['info']->out_price=$data['info']->out_price/100;
-            $data['info']->storage_price=$data['info']->storage_price/100;
-            $data['info']->total_price=$data['info']->total_price/100;
+
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -130,12 +126,12 @@ class WmsPorterController extends CommonController{
 
     }
 
-    /***    业务公司添加进入数据库      /wms/group/addGroup
+    /***    业务公司添加进入数据库      /more/wmsPorter/addWmsPorter
      */
-    public function addGroup(Request $request){
+    public function addWmsPorter(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
-        $table_name     ='wms_group';
+        $table_name     ='wms_porter';
 
         $operationing->access_cause     ='创建/修改业务公司';
         $operationing->table            =$table_name;
@@ -146,69 +142,31 @@ class WmsPorterController extends CommonController{
         $input              =$request->all();
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        $company_name       =$request->input('company_name');
+        $porter             =$request->input('porter');
         $group_code         =$request->input('group_code');
-        $contacts           =$request->input('contacts');
-        $tel       	        =$request->input('tel');
-        $address            =$request->input('address');
-        $preentry_type      =$request->input('preentry_type');
-        $preentry_price     =$request->input('preentry_price');
-        $out_type       	=$request->input('out_type');
-        $out_price          =$request->input('out_price');
-        $storage_type       =$request->input('storage_type');
-        $storage_price      =$request->input('storage_price');
-        $total_type       	=$request->input('total_type');
-        $total_price        =$request->input('total_price');
-        $pay_type           =$request->input('pay_type');//结算方式
 
-        /*** 虚拟数据
-        $input['self_id']           =$self_id='group_202006040950004008768595';
-        $input['company_name']      =$company_name='A公司';
-        $input['group_code']           =$group_code='1234';
-        $input['preentry_type']     =$preentry_type     ='pull';
-        $input['preentry_price']    =$preentry_price   ='152';
-        $input['out_type']          =$out_type  ='pull';
-        $input['out_price']         =$out_price  ='152';
-        $input['storage_type']      =$storage_type  ='pull';
-        $input['storage_price']     =$storage_price  ='152';
-        $input['total_type']        =$total_type  ='pull';
-        $input['total_price']       =$total_price  ='152';
-        $input['pay_type']       =$pay_type  ='152';
-         ***/
-//        dd($input);
+
         $rules=[
             'group_code'=>'required',
-            'company_name'=>'required',
+            'porter'=>'required',
         ];
         $message=[
-            'system_group.required'=>'所属公司不能为空',
-            'company_name.required'=>'公司名称不能为空',
+            'group_code.required'=>'所属公司不能为空',
+            'porter.required'=>'名称不能为空',
         ];
         $validator=Validator::make($input,$rules,$message);
 
         if($validator->passes()){
 
-            $data['company_name']               = $company_name;
-            $data['contacts']                   = $contacts;
-            $data['address']                    = $address;
-            $data['tel']                        = $tel;
-            $data['preentry_type']      		=$preentry_type;
-            $data['preentry_price']           	=$preentry_price*100;
-            $data['out_type']      		        =$out_type;
-            $data['out_price']           	    =$out_price*100;
-            $data['storage_type']      		    =$storage_type;
-            $data['storage_price']           	=$storage_price*100;
-            $data['total_type']      		    =$total_type;
-            $data['total_price']           	    =$total_price*100;
-            $data['pay_type']           	    =$pay_type;
+            $data['porter']                     = $porter;
 
             $wheres['self_id'] = $self_id;
-            $old_info=WmsGroup::where($wheres)->first();
+            $old_info=WmsPorter::where($wheres)->first();
 
             if($old_info){
                 //dd(1111);
                 $data['update_time']=$now_time;
-                $id=WmsGroup::where($wheres)->update($data);
+                $id=WmsPorter::where($wheres)->update($data);
 
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
@@ -216,13 +174,13 @@ class WmsPorterController extends CommonController{
 
             }else{
 
-                $data['self_id']=generate_id('company_');		//优惠券表ID
+                $data['self_id']=generate_id('porter_');		//优惠券表ID
                 $data['group_code'] = $group_code;
                 $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
                 $data['create_user_id']=$user_info->admin_id;
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsGroup::insert($data);
+                $id=WmsPorter::insert($data);
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
 
@@ -284,9 +242,9 @@ class WmsPorterController extends CommonController{
         return $msg;
     }
 
-    /***    业务公司删除      /wms/group/groupDelFlag
+    /***    业务公司删除      /more/wmsPorter/delWmsPorter
      */
-    public function groupDelFlag(Request $request,Status $status){
+    public function delWmsPorter(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
         $table_name='wms_group';

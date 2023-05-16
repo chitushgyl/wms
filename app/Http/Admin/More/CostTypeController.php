@@ -47,7 +47,7 @@ class CostTypeController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $company_name     =$request->input('company_name');
+        $cost_name     =$request->input('cost_name');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
