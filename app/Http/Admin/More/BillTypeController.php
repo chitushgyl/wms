@@ -108,7 +108,6 @@ class BillTypeController extends CommonController{
     /***    业务公司创建      /more/billType/createBillType
      */
     public function createBillType(Request $request){
-        $data['wms_cost_type_show']    =config('wms.wms_cost_type');
         /** 接收数据*/
         $self_id=$request->input('self_id');
         $where=[
