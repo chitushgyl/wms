@@ -349,10 +349,10 @@ Route::group([
     Route::any('/wmsPorter/delWmsPorter', 'WmsPorterController@delWmsPorter');
 
     Route::any('/wmsRailway/wmsRailwayList', 'WmsRailwayController@wmsRailwayList');
-    Route::any('/wmsRailway/wmsRailwayPage', 'WmsPorterController@wmsRailwayPage');
-    Route::any('/wmsRailway/createWmsRailway', 'WmsPorterController@createWmsRailway');
-    Route::any('/wmsRailway/addWmsRailway', 'WmsPorterController@addWmsRailway');
-    Route::any('/wmsRailway/delWmsRailway', 'WmsPorterController@delWmsRailway');
+    Route::any('/wmsRailway/wmsRailwayPage', 'WmsRailwayController@wmsRailwayPage');
+    Route::any('/wmsRailway/createWmsRailway', 'WmsRailwayController@createWmsRailway');
+    Route::any('/wmsRailway/addWmsRailway', 'WmsRailwayController@addWmsRailway');
+    Route::any('/wmsRailway/delWmsRailway', 'WmsRailwayController@delWmsRailway');
 
 });
 
