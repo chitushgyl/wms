@@ -60,21 +60,7 @@ class WarehouseController extends CommonController {
             ['type'=>'=','name'=>'warehouse_name','value'=>$warehouse_name],
             ['type'=>'=','name'=>'use_flag','value'=>$use_flag],
         ];
-        if ($pro){
-            $search[] = ['type'=>'like','name'=>'pro','value'=>$pro];
-        }
-        if ($city) {
-            $search[] = ['type'=>'like','name'=>'city','value'=>$city];
-        }
-        if ($area) {
-            $search[] = ['type'=>'like','name'=>'area','value'=>$area];
-        }
-        if ($warehouse_name) {
-            $search[] = ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name];
-        }
-        if ($area) {
-            $search[] = ['type'=>'=','name'=>'use_flag','value'=>$use_flag];
-        }
+
         $where = get_list_where($search);
         $select = ['self_id','warehouse_name','pro','city','area','address','all_address','areanumber','price','company_name','contact','tel','create_time','update_time','delete_flag','use_flag',
             'wtype','picture','remark','license','rent_type','store_price','area_price','handle_price','property_price','sorting_price','describe','group_code','group_name'];

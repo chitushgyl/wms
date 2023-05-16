@@ -107,7 +107,7 @@ class SettleTypeController extends CommonController{
 
     /***    业务公司创建      /more/settleType/createSettleType
      */
-    public function createGroup(Request $request){
+    public function createSettleType(Request $request){
 
         /** 接收数据*/
         $self_id=$request->input('self_id');
