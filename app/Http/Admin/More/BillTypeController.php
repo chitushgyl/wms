@@ -222,7 +222,7 @@ class BillTypeController extends CommonController{
 
     /***    拿去车辆数据     /more/billType/getBillType
      */
-    public function  getCar(Request $request){
+    public function  getBillType(Request $request){
         $group_code=$request->input('group_code');
         //$input['group_code'] =  $group_code = '1234';
         $where=[
