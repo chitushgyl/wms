@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\More;
+use App\Models\Wms\WmsBillType;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -13,9 +14,9 @@ use App\Models\Wms\WmsGroup;
 use App\Models\Group\SystemGroup;
 
 class BillTypeController extends CommonController{
-    /***    业务公司列表      /wms/group/groupList
+    /***    业务公司列表      /more/billType/billTypeList
      */
-    public function  groupList(Request $request){
+    public function  billTypeList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
         $abc='业务公司';
@@ -33,9 +34,9 @@ class BillTypeController extends CommonController{
     }
 
     //业务公司列表分页加载数据
-    /***    业务公司分页      /wms/group/groupPage
+    /***    业务公司分页      /more/billType/billTypePage
      */
-    public function groupPage(Request $request){
+    public function billTypePage(Request $request){
         /** 接收中间件参数**/
         $wms_cost_type_show    =array_column(config('wms.wms_cost_type'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
@@ -54,18 +55,17 @@ class BillTypeController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'like','name'=>'company_name','value'=>$company_name],
         ];
 
         $where=get_list_where($search);
 
-        $select=['self_id','company_name','use_flag','group_name','contacts','address','tel',
-            'preentry_type','preentry_price','out_type','out_price','storage_type','storage_price','total_type','total_price','pay_type'];
+        $select=['self_id','bill_name','use_flag','group_name','group_code','delete_flag','create_time',
+            'update_time'];
 
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=WmsGroup::where($where)->count(); //总的数据量
-                $data['items']=WmsGroup::where($where)
+                $data['total']=WmsBillType::where($where)->count(); //总的数据量
+                $data['items']=WmsBillType::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -73,52 +73,24 @@ class BillTypeController extends CommonController{
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=WmsGroup::where($where)->count(); //总的数据量
-                $data['items']=WmsGroup::where($where)
+                $data['total']=WmsBillType::where($where)->count(); //总的数据量
+                $data['items']=WmsBillType::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=WmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['total']=WmsBillType::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=WmsBillType::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
         }
-//dump($wms_cost_type_show);
+
 
         foreach ($data['items'] as $k=>$v) {
-            $v->preentry_price = number_format($v->preentry_price/100, 2);
-            $v->out_price = number_format($v->out_price/100, 2);
-            $v->storage_price = number_format($v->storage_price/100, 2);
-            $v->total_price = number_format($v->total_price/100, 2);
-
-            if(array_key_exists($v->preentry_type, $wms_cost_type_show)){
-                $v->preentry_type_show=$wms_cost_type_show[$v->preentry_type]??null;
-            }else{
-                $v->preentry_type_show='未设置入库收费';
-            }
-            if(array_key_exists($v->out_type, $wms_cost_type_show)){
-                $v->out_type_show=$wms_cost_type_show[$v->out_type]??null;
-            }else{
-                $v->out_type_show='未设置出库收费';
-            }
-
-            if(array_key_exists($v->storage_type, $wms_cost_type_show)){
-                $v->storage_type_show=$wms_cost_type_show[$v->storage_type]??null;
-            }else{
-                $v->storage_type_show='未设置仓储收费';
-            }
-
-            if(array_key_exists($v->total_type, $wms_cost_type_show)){
-                $v->total_type_show=$wms_cost_type_show[$v->total_type]??null;
-            }else{
-                $v->total_type_show='未设置分拣收费';
-            }
-
             $v->button_info=$button_info;
 
         }
@@ -133,9 +105,9 @@ class BillTypeController extends CommonController{
 
     }
 
-    /***    业务公司创建      /wms/group/createGroup
+    /***    业务公司创建      /more/billType/createBillType
      */
-    public function createGroup(Request $request){
+    public function createBillType(Request $request){
         $data['wms_cost_type_show']    =config('wms.wms_cost_type');
         /** 接收数据*/
         $self_id=$request->input('self_id');
@@ -143,12 +115,9 @@ class BillTypeController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $data['info']=WmsGroup::where($where)->first();
+        $data['info']=WmsBillType::where($where)->first();
         if($data['info']){
-            $data['info']->preentry_price=$data['info']->preentry_price/100;
-            $data['info']->out_price=$data['info']->out_price/100;
-            $data['info']->storage_price=$data['info']->storage_price/100;
-            $data['info']->total_price=$data['info']->total_price/100;
+
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -159,9 +128,9 @@ class BillTypeController extends CommonController{
 
     }
 
-    /***    业务公司添加进入数据库      /wms/group/addGroup
+    /***    业务公司添加进入数据库      /more/billType/addBillType
      */
-    public function addGroup(Request $request){
+    public function addBillType(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='wms_group';
@@ -175,34 +144,13 @@ class BillTypeController extends CommonController{
         $input              =$request->all();
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        $company_name       =$request->input('company_name');
+        $bill_name       =$request->input('bill_name');
         $group_code         =$request->input('group_code');
-        $contacts           =$request->input('contacts');
-        $tel       	        =$request->input('tel');
-        $address            =$request->input('address');
-        $preentry_type      =$request->input('preentry_type');
-        $preentry_price     =$request->input('preentry_price');
-        $out_type       	=$request->input('out_type');
-        $out_price          =$request->input('out_price');
-        $storage_type       =$request->input('storage_type');
-        $storage_price      =$request->input('storage_price');
-        $total_type       	=$request->input('total_type');
-        $total_price        =$request->input('total_price');
-        $pay_type           =$request->input('pay_type');//结算方式
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
         $input['company_name']      =$company_name='A公司';
         $input['group_code']           =$group_code='1234';
-        $input['preentry_type']     =$preentry_type     ='pull';
-        $input['preentry_price']    =$preentry_price   ='152';
-        $input['out_type']          =$out_type  ='pull';
-        $input['out_price']         =$out_price  ='152';
-        $input['storage_type']      =$storage_type  ='pull';
-        $input['storage_price']     =$storage_price  ='152';
-        $input['total_type']        =$total_type  ='pull';
-        $input['total_price']       =$total_price  ='152';
-        $input['pay_type']       =$pay_type  ='152';
          ***/
 //        dd($input);
         $rules=[
@@ -217,27 +165,15 @@ class BillTypeController extends CommonController{
 
         if($validator->passes()){
 
-            $data['company_name']               = $company_name;
-            $data['contacts']                   = $contacts;
-            $data['address']                    = $address;
-            $data['tel']                        = $tel;
-            $data['preentry_type']      		=$preentry_type;
-            $data['preentry_price']           	=$preentry_price*100;
-            $data['out_type']      		        =$out_type;
-            $data['out_price']           	    =$out_price*100;
-            $data['storage_type']      		    =$storage_type;
-            $data['storage_price']           	=$storage_price*100;
-            $data['total_type']      		    =$total_type;
-            $data['total_price']           	    =$total_price*100;
-            $data['pay_type']           	    =$pay_type;
+            $data['bill_name']               = $bill_name;
 
             $wheres['self_id'] = $self_id;
-            $old_info=WmsGroup::where($wheres)->first();
+            $old_info=WmsBillType::where($wheres)->first();
 
             if($old_info){
                 //dd(1111);
                 $data['update_time']=$now_time;
-                $id=WmsGroup::where($wheres)->update($data);
+                $id=WmsBillType::where($wheres)->update($data);
 
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
@@ -245,13 +181,13 @@ class BillTypeController extends CommonController{
 
             }else{
 
-                $data['self_id']=generate_id('company_');		//优惠券表ID
+                $data['self_id']=generate_id('bill_');		//优惠券表ID
                 $data['group_code'] = $group_code;
                 $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
                 $data['create_user_id']=$user_info->admin_id;
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsGroup::insert($data);
+                $id=WmsBillType::insert($data);
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
 
@@ -313,13 +249,13 @@ class BillTypeController extends CommonController{
         return $msg;
     }
 
-    /***    业务公司删除      /wms/group/groupDelFlag
+    /***    业务公司删除      /more/billType/delBillType
      */
-    public function groupDelFlag(Request $request,Status $status){
+    public function delBillType(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_group';
-        $medol_name='wmsGroup';
+        $table_name='wms_bill_type';
+        $medol_name='WmsBillType';
         $self_id=$request->input('self_id');
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';
