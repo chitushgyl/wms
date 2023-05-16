@@ -155,7 +155,7 @@ class BillTypeController extends CommonController{
 //        dd($input);
         $rules=[
             'group_code'=>'required',
-            'company_name'=>'required',
+            'bill_name'=>'required',
         ];
         $message=[
             'group_code.required'=>'所属公司不能为空',

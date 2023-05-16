@@ -154,7 +154,7 @@ class CostTypeController extends CommonController{
 
         $rules=[
             'group_code'=>'required',
-            'company_name'=>'required',
+            'cost_name'=>'required',
         ];
         $message=[
             'group_code.required'=>'所属公司不能为空',

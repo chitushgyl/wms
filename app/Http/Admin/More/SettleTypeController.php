@@ -13,9 +13,9 @@ use App\Models\Wms\WmsGroup;
 use App\Models\Group\SystemGroup;
 
 class SettleTypeController extends CommonController{
-    /***    业务公司列表      /wms/group/groupList
+    /***    业务公司列表      /more/settleType/settleTypeList
      */
-    public function  groupList(Request $request){
+    public function  settleTypeList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
         $abc='业务公司';
@@ -33,9 +33,9 @@ class SettleTypeController extends CommonController{
     }
 
     //业务公司列表分页加载数据
-    /***    业务公司分页      /wms/group/groupPage
+    /***    业务公司分页      /more/settleType/settleTypePage
      */
-    public function groupPage(Request $request){
+    public function settleTypePage(Request $request){
         /** 接收中间件参数**/
         $wms_cost_type_show    =array_column(config('wms.wms_cost_type'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
