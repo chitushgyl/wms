@@ -108,7 +108,7 @@ class WmsRailwayController extends CommonController{
 
     /***    业务公司创建      /more/wmsRailway/createWmsRailway
      */
-    public function createGroup(Request $request){
+    public function createWmsRailway(Request $request){
 
         /** 接收数据*/
         $self_id=$request->input('self_id');
