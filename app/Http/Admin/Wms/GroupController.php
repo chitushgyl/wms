@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Admin\Wms;
+use App\Models\Wms\CompanyContact;
+use App\Models\Wms\ContactAddress;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -91,33 +93,6 @@ class GroupController extends CommonController{
 //dump($wms_cost_type_show);
 
         foreach ($data['items'] as $k=>$v) {
-            $v->preentry_price = number_format($v->preentry_price/100, 2);
-            $v->out_price = number_format($v->out_price/100, 2);
-            $v->storage_price = number_format($v->storage_price/100, 2);
-            $v->total_price = number_format($v->total_price/100, 2);
-
-            if(array_key_exists($v->preentry_type, $wms_cost_type_show)){
-                $v->preentry_type_show=$wms_cost_type_show[$v->preentry_type]??null;
-            }else{
-                $v->preentry_type_show='未设置入库收费';
-            }
-            if(array_key_exists($v->out_type, $wms_cost_type_show)){
-                $v->out_type_show=$wms_cost_type_show[$v->out_type]??null;
-            }else{
-                $v->out_type_show='未设置出库收费';
-            }
-
-            if(array_key_exists($v->storage_type, $wms_cost_type_show)){
-                $v->storage_type_show=$wms_cost_type_show[$v->storage_type]??null;
-            }else{
-                $v->storage_type_show='未设置仓储收费';
-            }
-
-            if(array_key_exists($v->total_type, $wms_cost_type_show)){
-                $v->total_type_show=$wms_cost_type_show[$v->total_type]??null;
-            }else{
-                $v->total_type_show='未设置分拣收费';
-            }
 
             $v->button_info=$button_info;
 
@@ -145,10 +120,8 @@ class GroupController extends CommonController{
         ];
         $data['info']=WmsGroup::where($where)->first();
 		if($data['info']){
-            $data['info']->preentry_price=$data['info']->preentry_price/100;
-            $data['info']->out_price=$data['info']->out_price/100;
-            $data['info']->storage_price=$data['info']->storage_price/100;
-            $data['info']->total_price=$data['info']->total_price/100;
+            $data['contact'] = CompanyContact::where('company_id',$self_id)->get();
+            $data['address'] = ContactAddress::where('company_id',$self_id)->get();
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -175,20 +148,20 @@ class GroupController extends CommonController{
         $input              =$request->all();
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        $company_name       =$request->input('company_name');
+        $company_name       =$request->input('company_name');//名称
         $group_code         =$request->input('group_code');
-        $contacts           =$request->input('contacts');
-        $tel       	        =$request->input('tel');
-        $address            =$request->input('address');
-        $preentry_type      =$request->input('preentry_type');
-        $preentry_price     =$request->input('preentry_price');
-        $out_type       	=$request->input('out_type');
-        $out_price          =$request->input('out_price');
-        $storage_type       =$request->input('storage_type');
-        $storage_price      =$request->input('storage_price');
-        $total_type       	=$request->input('total_type');
-        $total_price        =$request->input('total_price');
-        $pay_type           =$request->input('pay_type');//结算方式
+        $tel       	        =$request->input('tel');//固定电话
+        $area               =$request->input('area');//地区
+        $address            =$request->input('address');//地址
+
+        $company_num        =$request->input('company_num');//客户编号
+        $level              =$request->input('level');//客户等级
+        $balance            =$request->input('balance');//余额
+        $credit_limit       =$request->input('credit_limit');//信用额度
+        $remark             =$request->input('remark');//备注
+        $wechat             =$request->input('wechat');//微信
+        $contacts           =$request->input('contacts');//联系人
+        $contact_address    =$request->input('contact_address');//收货地址
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -216,20 +189,20 @@ class GroupController extends CommonController{
         $validator=Validator::make($input,$rules,$message);
 
         if($validator->passes()){
+            $contact_list = [];
+            $address_list = [];
 
             $data['company_name']               = $company_name;
-            $data['contacts']                   = $contacts;
+            $data['company_num']                = $company_num;
+            $data['area']                       = $area;
             $data['address']                    = $address;
             $data['tel']                        = $tel;
-            $data['preentry_type']      		=$preentry_type;
-            $data['preentry_price']           	=$preentry_price*100;
-            $data['out_type']      		        =$out_type;
-            $data['out_price']           	    =$out_price*100;
-            $data['storage_type']      		    =$storage_type;
-            $data['storage_price']           	=$storage_price*100;
-            $data['total_type']      		    =$total_type;
-            $data['total_price']           	    =$total_price*100;
-            $data['pay_type']           	    =$pay_type;
+            $data['level']           	        = $level;
+            $data['balance']           	        = $balance;
+            $data['credit_limit']           	= $credit_limit;
+            $data['remark']           	        = $remark;
+            $data['wechat']           	        = $wechat;
+
 
             $wheres['self_id'] = $self_id;
             $old_info=WmsGroup::where($wheres)->first();
@@ -238,7 +211,54 @@ class GroupController extends CommonController{
                 //dd(1111);
                 $data['update_time']=$now_time;
                 $id=WmsGroup::where($wheres)->update($data);
-
+                foreach ($contacts as $k => $v){
+                    if ($v['self_id']){
+                        $contact['name'] = $v['name'];
+                        $contact['tel'] = $v['tel'];
+                        $contact['wechat'] = $v['wechat'];
+                        $contact['email'] = $v['email'];
+                        CompanyContact::where('self_id',$v['self_id'])->update($contact);
+                    }else{
+                        $contact['self_id'] = generate_id('tel_');
+                        $contact['company_id'] = $data['self_id'];
+                        $contact['name'] = $v['name'];
+                        $contact['tel'] = $v['tel'];
+                        $contact['wechat'] = $v['wechat'];
+                        $contact['email'] = $v['email'];
+                        $contact['group_code'] = $group_code;
+                        $contact['group_name'] = $data['group_name'];
+                        $contact['create_user_id'] = $user_info->admin_id;
+                        $contact['create_user_name'] = $user_info->name;
+                        $contact_list[] = $contact;
+                    }
+                }
+                foreach ($contact_address as $k => $v){
+                    if ($v['self_id']){
+                        $area['name'] = $v['name'];
+                        $area['tel'] = $v['tel'];
+                        $area['address'] = $v['address'];
+                        $area['default_flag'] = $v['default_flag'];
+                        ContactAddress::where('self_id',$v['self_id'])->update($contact);
+                    }else{
+                        $area['self_id'] = generate_id('address_');
+                        $area['company_id'] = $data['self_id'];
+                        $area['name'] = $v['name'];
+                        $area['tel'] = $v['tel'];
+                        $area['address'] = $v['address'];
+                        $area['default_flag'] = $v['default_flag'];
+                        $area['group_code'] = $group_code;
+                        $area['group_name'] = $data['group_name'];
+                        $area['create_user_id'] = $user_info->admin_id;
+                        $area['create_user_name'] = $user_info->name;
+                        $address_list[] = $area;
+                    }
+                }
+                if (count($contact_list)>0){
+                    CompanyContact::insert($contact_list);
+                }
+                if (count($address_list)>0){
+                    ContactAddress::insert($address_list);
+                }
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
 
@@ -252,6 +272,38 @@ class GroupController extends CommonController{
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
                 $id=WmsGroup::insert($data);
+
+                if ($contacts){
+                    foreach ($contacts as $k => $v){
+                        $contact['self_id'] = generate_id('tel_');
+                        $contact['company_id'] = $data['self_id'];
+                        $contact['name'] = $v['name'];
+                        $contact['tel'] = $v['tel'];
+                        $contact['wechat'] = $v['wechat'];
+                        $contact['email'] = $v['email'];
+                        $contact['group_code'] = $group_code;
+                        $contact['group_name'] = $data['group_name'];
+                        $contact['create_user_id'] = $user_info->admin_id;
+                        $contact['create_user_name'] = $user_info->name;
+                        $contact_list[] = $contact;
+                    }
+
+                }
+                if ($contact_address){
+                    foreach ($contact_address as $k => $v){
+                        $area['self_id'] = generate_id('address_');
+                        $area['company_id'] = $data['self_id'];
+                        $area['name'] = $v['name'];
+                        $area['tel'] = $v['tel'];
+                        $area['address'] = $v['address'];
+                        $area['default_flag'] = $v['default_flag'];
+                        $area['group_code'] = $group_code;
+                        $area['group_name'] = $data['group_name'];
+                        $area['create_user_id'] = $user_info->admin_id;
+                        $area['create_user_name'] = $user_info->name;
+                        $address_list[] = $area;
+                    }
+                }
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
 

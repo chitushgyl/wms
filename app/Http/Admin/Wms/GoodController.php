@@ -160,13 +160,12 @@ class GoodController extends CommonController{
 
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        $company_id         =$request->input('company_id');
-        $external_sku_id    =$request->input('external_sku_id');
-        $good_name          =$request->input('good_name');
-        $wms_unit           =$request->input('wms_unit');
-        $wms_target_unit    =$request->input('wms_target_unit');
-        $wms_scale          =$request->input('wms_scale');
-        $wms_spec           =$request->input('wms_spec');
+        $company_id         =$request->input('company_id');//客户
+        $external_sku_id    =$request->input('external_sku_id');//sku编码
+        $good_name          =$request->input('good_name');//商品名称
+        $wms_unit           =$request->input('wms_unit');//商品
+        $wms_spec           =$request->input('wms_spec');//规格
+        $sale_price         =$request->input('sale_price');//单价
         $wms_length         =$request->input('wms_length');
         $wms_wide           =$request->input('wms_wide');
         $wms_high           =$request->input('wms_high');
@@ -174,7 +173,9 @@ class GoodController extends CommonController{
         $wms_out_unit       =$request->input('wms_out_unit');
         $period             =$request->input('period');
         $period_value       =$request->input('period_value');
-        $sale_price         =$request->input('sale_price');//单价
+        $wms_target_unit    =$request->input('wms_target_unit');
+        $wms_scale          =$request->input('wms_scale');
+
 
 
         /*** 虚拟数据
