@@ -96,6 +96,7 @@ Route::group([
     /**业务往来公司管理**/
     Route::any('/group/groupList', 'GroupController@groupList');
     Route::any('/group/groupPage', 'GroupController@groupPage');
+    Route::any('/group/addGroup', 'GroupController@addGroup');
     Route::any('/group/createGroup', 'GroupController@createGroup');
 	Route::any('/group/getCompany', 'GroupController@getCompany');
     Route::any('/group/execl', 'GroupController@execl');
@@ -105,7 +106,7 @@ Route::group([
         "middleware"=>['daily'],
     ], function(){
 
-        Route::any('/group/addGroup', 'GroupController@addGroup');
+
         Route::any('/group/groupUseFlag', 'GroupController@groupUseFlag');
         Route::any('/group/groupDelFlag', 'GroupController@groupDelFlag');
     });
