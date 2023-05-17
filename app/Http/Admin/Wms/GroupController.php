@@ -191,6 +191,8 @@ class GroupController extends CommonController{
         if($validator->passes()){
             $contact_list = [];
             $address_list = [];
+            $contact = [];
+            $area = [];
 
             $data['company_name']               = $company_name;
             $data['company_num']                = $company_num;
