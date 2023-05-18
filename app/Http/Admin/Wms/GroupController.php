@@ -192,7 +192,7 @@ class GroupController extends CommonController{
             $contact_list = [];
             $address_list = [];
             $contact = [];
-            $area = [];
+            $address_area = [];
 
             $data['company_name']               = $company_name;
             $data['company_num']                = $company_num;
@@ -219,6 +219,7 @@ class GroupController extends CommonController{
                         $contact['tel'] = $v['tel'];
                         $contact['wechat'] = $v['wechat'];
                         $contact['email'] = $v['email'];
+                        $contact['delete_flag'] = $v['delete_flag'];
                         CompanyContact::where('self_id',$v['self_id'])->update($contact);
                     }else{
                         $contact['self_id'] = generate_id('tel_');
@@ -236,23 +237,24 @@ class GroupController extends CommonController{
                 }
                 foreach ($contact_address as $k => $v){
                     if ($v['self_id']){
-                        $area['name'] = $v['name'];
-                        $area['tel'] = $v['tel'];
-                        $area['address'] = $v['address'];
-                        $area['default_flag'] = $v['default_flag'];
+                        $address_area['name'] = $v['name'];
+                        $address_area['tel'] = $v['tel'];
+                        $address_area['address'] = $v['address'];
+                        $address_area['default_flag'] = $v['default_flag'];
+                        $address_area['delete_flag'] = $v['delete_flag'];
                         ContactAddress::where('self_id',$v['self_id'])->update($contact);
                     }else{
-                        $area['self_id'] = generate_id('address_');
-                        $area['company_id'] = $data['self_id'];
-                        $area['name'] = $v['name'];
-                        $area['tel'] = $v['tel'];
-                        $area['address'] = $v['address'];
-                        $area['default_flag'] = $v['default_flag'];
-                        $area['group_code'] = $group_code;
-                        $area['group_name'] = $data['group_name'];
-                        $area['create_user_id'] = $user_info->admin_id;
-                        $area['create_user_name'] = $user_info->name;
-                        $address_list[] = $area;
+                        $address_area['self_id'] = generate_id('address_');
+                        $address_area['company_id'] = $data['self_id'];
+                        $address_area['name'] = $v['name'];
+                        $address_area['tel'] = $v['tel'];
+                        $address_area['address'] = $v['address'];
+                        $address_area['default_flag'] = $v['default_flag'];
+                        $address_area['group_code'] = $group_code;
+                        $address_area['group_name'] = $data['group_name'];
+                        $address_area['create_user_id'] = $user_info->admin_id;
+                        $address_area['create_user_name'] = $user_info->name;
+                        $address_list[] = $address_area;
                     }
                 }
                 if (count($contact_list)>0){
@@ -293,17 +295,17 @@ class GroupController extends CommonController{
                 }
                 if ($contact_address){
                     foreach ($contact_address as $k => $v){
-                        $area['self_id'] = generate_id('address_');
-                        $area['company_id'] = $data['self_id'];
-                        $area['name'] = $v['name'];
-                        $area['tel'] = $v['tel'];
-                        $area['address'] = $v['address'];
-                        $area['default_flag'] = $v['default_flag'];
-                        $area['group_code'] = $group_code;
-                        $area['group_name'] = $data['group_name'];
-                        $area['create_user_id'] = $user_info->admin_id;
-                        $area['create_user_name'] = $user_info->name;
-                        $address_list[] = $area;
+                        $address_area['self_id'] = generate_id('address_');
+                        $address_area['company_id'] = $data['self_id'];
+                        $address_area['name'] = $v['name'];
+                        $address_area['tel'] = $v['tel'];
+                        $address_area['address'] = $v['address'];
+                        $address_area['default_flag'] = $v['default_flag'];
+                        $address_area['group_code'] = $group_code;
+                        $address_area['group_name'] = $data['group_name'];
+                        $address_area['create_user_id'] = $user_info->admin_id;
+                        $address_area['create_user_name'] = $user_info->name;
+                        $address_list[] = $address_area;
                     }
                 }
                 $operationing->access_cause='新建业务公司';
