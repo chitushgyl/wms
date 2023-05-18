@@ -163,7 +163,7 @@ class WmsRailwayController extends CommonController{
             $data['railway']                    = $railway;
 
             $wheres['self_id'] = $self_id;
-            $old_info=WmsGroup::where($wheres)->first();
+            $old_info=WmsRailway::where($wheres)->first();
 
             if($old_info){
                 //dd(1111);
