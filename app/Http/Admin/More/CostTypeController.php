@@ -280,16 +280,16 @@ class CostTypeController extends CommonController{
 
 
     }
-    /***    业务公司获取     /wms/group/getCompany
+    /***    业务公司获取     /more/costType/getCostType
      */
-    public function getCompany(Request $request){
+    public function getCostType(Request $request){
         $group_code=$request->input('group_code');
         $where=[
             ['delete_flag','=','Y'],
             ['group_code','=',$group_code],
         ];
         $selset_WmsGroup=['self_id','company_name','group_code','group_name'];
-        $data['info']=WmsGroup::where($where)->select($selset_WmsGroup)->get();
+        $data['info']=WmsCostType::where($where)->select($selset_WmsGroup)->get();
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
