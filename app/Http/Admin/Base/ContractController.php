@@ -40,7 +40,7 @@ class contractController extends CommonController{
      */
     public function contractPage(Request $request){
         /** 接收中间件参数**/
-        $wms_cost_type_show    =array_column(config('wms.wms_cost_type'),'name','key');
+        $settle_type    =config('wms.settle_type');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
 
@@ -112,7 +112,7 @@ class contractController extends CommonController{
     /***    业务公司创建      /base/contract/createContract
      */
     public function createContract(Request $request){
-
+        $data['type']    =config('wms.settle_type');
         /** 接收数据*/
         $self_id=$request->input('self_id');
         $where=[
