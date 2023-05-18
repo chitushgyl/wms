@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Admin\Wms;
+namespace App\Http\Admin\Base;
 use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
 use App\Models\Wms\WmsContract;
