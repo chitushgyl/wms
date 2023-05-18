@@ -218,19 +218,23 @@ class contractController extends CommonController{
                 $id=WmsContract::where($wheres)->update($data);
                 foreach ($other_money as $k => $v){
                     if ($v['self_id']){
-                        $contact['name'] = $v['name'];
-                        $contact['tel'] = $v['tel'];
-                        $contact['wechat'] = $v['wechat'];
-                        $contact['email'] = $v['email'];
+                        $contact['money_type'] = $v['money_type'];
+                        $contact['price'] = $v['price'];
+                        $contact['bill_id'] = $v['bill_id'];
+                        $contact['in_flag'] = $v['in_flag'];
+                        $contact['out_flag'] = $v['out_flag'];
+                        $contact['change_flag'] = $v['change_flag'];
                         $contact['delete_flag'] = $v['delete_flag'];
                         CompanyContact::where('self_id',$v['self_id'])->update($contact);
                     }else{
-                        $contact['self_id'] = generate_id('tel_');
-                        $contact['company_id'] = $data['self_id'];
-                        $contact['name'] = $v['name'];
-                        $contact['tel'] = $v['tel'];
-                        $contact['wechat'] = $v['wechat'];
-                        $contact['email'] = $v['email'];
+                        $contact['self_id'] = generate_id('other_');
+                        $contact['contract_id'] = $data['self_id'];
+                        $contact['money_type'] = $v['money_type'];
+                        $contact['price'] = $v['price'];
+                        $contact['bill_id'] = $v['bill_id'];
+                        $contact['in_flag'] = $v['in_flag'];
+                        $contact['out_flag'] = $v['out_flag'];
+                        $contact['change_flag'] = $v['change_flag'];
                         $contact['group_code'] = $group_code;
                         $contact['group_name'] = $data['group_name'];
                         $contact['create_user_id'] = $user_info->admin_id;
@@ -257,12 +261,14 @@ class contractController extends CommonController{
 
                 if ($other_money){
                     foreach ($other_money as $k => $v){
-                        $contact['self_id'] = generate_id('tel_');
-                        $contact['company_id'] = $data['self_id'];
-                        $contact['name'] = $v['name'];
-                        $contact['tel'] = $v['tel'];
-                        $contact['wechat'] = $v['wechat'];
-                        $contact['email'] = $v['email'];
+                        $contact['self_id'] = generate_id('other_');
+                        $contact['contract_id'] = $data['self_id'];
+                        $contact['money_type'] = $v['money_type'];
+                        $contact['price'] = $v['price'];
+                        $contact['bill_id'] = $v['bill_id'];
+                        $contact['in_flag'] = $v['in_flag'];
+                        $contact['out_flag'] = $v['out_flag'];
+                        $contact['change_flag'] = $v['change_flag'];
                         $contact['group_code'] = $group_code;
                         $contact['group_name'] = $data['group_name'];
                         $contact['create_user_id'] = $user_info->admin_id;
