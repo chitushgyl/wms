@@ -327,6 +327,7 @@ Route::group([
     Route::any('/costType/createCostType', 'CostTypeController@createCostType');
     Route::any('/costType/addCostType', 'CostTypeController@addCostType');
     Route::any('/costType/delCostType', 'CostTypeController@delCostType');
+    Route::any('/costType/getCostType', 'CostTypeController@getCostType');
 
 
     Route::any('/settleType/settleTypeList', 'SettleTypeController@settleTypeList');
