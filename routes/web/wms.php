@@ -358,3 +358,60 @@ Route::group([
 });
 
 
+/******系统设置模块*******/
+Route::group([
+    'prefix' => 'base',"middleware"=>['loginCheck','group'],'namespace'=> 'Base',
+], function(){
+    /**菜单设置**/
+    Route::any('/contract/contractList', 'ContractController@contractList');
+    Route::any('/contract/contractPage', 'ContractController@contractPage');
+    Route::any('/contract/createContract', 'ContractController@createContract');
+    Route::any('/contract/addContract', 'ContractController@addContract');
+    Route::any('/contract/delContract', 'ContractController@delContract');
+    Route::any('/contract/getContract', 'ContractController@getContract');
+
+
+    Route::group([
+        "middleware"=>['daily'],
+    ], function(){
+        Route::any('/menu/addMenu', 'MenuController@addMenu');
+        Route::any('/menu/menuUseFlag', 'MenuController@menuUseFlag');
+    });
+
+
+    Route::any('/costType/costTypeList', 'CostTypeController@costTypeList');
+    Route::any('/costType/costTypePage', 'CostTypeController@costTypePage');
+    Route::any('/costType/createCostType', 'CostTypeController@createCostType');
+    Route::any('/costType/addCostType', 'CostTypeController@addCostType');
+    Route::any('/costType/delCostType', 'CostTypeController@delCostType');
+
+
+    Route::any('/settleType/settleTypeList', 'SettleTypeController@settleTypeList');
+    Route::any('/settleType/settleTypePage', 'SettleTypeController@settleTypePage');
+    Route::any('/settleType/createSettleType', 'SettleTypeController@createSettleType');
+    Route::any('/settleType/addSettleType', 'SettleTypeController@addSettleType');
+    Route::any('/settleType/delSettleType', 'SettleTypeController@delSettleType');
+
+
+    Route::any('/customerBank/customerBankList', 'CustomerBankController@customerBankList');
+    Route::any('/customerBank/customerBankPage', 'CustomerBankController@customerBankPage');
+    Route::any('/customerBank/createCustomerBank', 'CustomerBankController@createCustomerBank');
+    Route::any('/customerBank/addCustomerBank', 'CustomerBankController@addCustomerBank');
+    Route::any('/customerBank/delCustomerBank', 'CustomerBankController@delCustomerBank');
+
+
+    Route::any('/wmsPorter/wmsPorterList', 'WmsPorterController@wmsPorterList');
+    Route::any('/wmsPorter/wmsPorterPage', 'WmsPorterController@wmsPorterPage');
+    Route::any('/wmsPorter/createWmsPorter', 'WmsPorterController@createWmsPorter');
+    Route::any('/wmsPorter/addWmsPorter', 'WmsPorterController@addWmsPorter');
+    Route::any('/wmsPorter/delWmsPorter', 'WmsPorterController@delWmsPorter');
+
+    Route::any('/wmsRailway/wmsRailwayList', 'WmsRailwayController@wmsRailwayList');
+    Route::any('/wmsRailway/wmsRailwayPage', 'WmsRailwayController@wmsRailwayPage');
+    Route::any('/wmsRailway/createWmsRailway', 'WmsRailwayController@createWmsRailway');
+    Route::any('/wmsRailway/addWmsRailway', 'WmsRailwayController@addWmsRailway');
+    Route::any('/wmsRailway/delWmsRailway', 'WmsRailwayController@delWmsRailway');
+
+});
+
+

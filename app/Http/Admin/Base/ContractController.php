@@ -2,6 +2,7 @@
 namespace App\Http\Admin\Wms;
 use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
+use App\Models\Wms\WmsContract;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -14,10 +15,10 @@ use App\Http\Controllers\DetailsController as Details;
 use App\Models\Wms\WmsGroup;
 use App\Models\Group\SystemGroup;
 
-class GroupController extends CommonController{
-    /***    业务公司列表      /wms/group/groupList
+class contractController extends CommonController{
+    /***    业务公司列表      /base/contract/contractList
      */
-    public function  groupList(Request $request){
+    public function  contractList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
         $abc='业务公司';
@@ -35,9 +36,9 @@ class GroupController extends CommonController{
     }
 
     //业务公司列表分页加载数据
-    /***    业务公司分页      /wms/group/groupPage
+    /***    业务公司分页      /base/contract/contractPage
      */
-    public function groupPage(Request $request){
+    public function contractPage(Request $request){
         /** 接收中间件参数**/
         $wms_cost_type_show    =array_column(config('wms.wms_cost_type'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
@@ -61,13 +62,13 @@ class GroupController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','company_name','use_flag','group_name','area','address','tel','company_num','level','balance','credit_limit',
-            'remark','wechat','contacts','contact_address','group_code'];
+        $select=['self_id','company_name','use_flag','group_name','company_id','warehouse_num','bill_id','sale_price','remark','insufficient','start_time',
+            'end_time','contract_num','cold_settle','cycle','group_code','delete_flag','create_time','delete_flag','type'];
 
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=WmsGroup::where($where)->count(); //总的数据量
-                $data['items']=WmsGroup::where($where)
+                $data['total']=WmsContract::where($where)->count(); //总的数据量
+                $data['items']=WmsContract::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -75,22 +76,22 @@ class GroupController extends CommonController{
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=WmsGroup::where($where)->count(); //总的数据量
-                $data['items']=WmsGroup::where($where)
+                $data['total']=WmsContract::where($where)->count(); //总的数据量
+                $data['items']=WmsContract::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=WmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['total']=WmsContract::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=WmsContract::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
         }
-//dump($wms_cost_type_show);
+
 
         foreach ($data['items'] as $k=>$v) {
 
@@ -108,9 +109,9 @@ class GroupController extends CommonController{
 
     }
 
-    /***    业务公司创建      /wms/group/createGroup
+    /***    业务公司创建      /base/contract/createContract
      */
-    public function createGroup(Request $request){
+    public function createContract(Request $request){
 
         /** 接收数据*/
         $self_id=$request->input('self_id');
@@ -118,10 +119,9 @@ class GroupController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $data['info']=WmsGroup::where($where)->first();
-		if($data['info']){
-            $data['contact'] = CompanyContact::where('company_id',$self_id)->get();
-            $data['address'] = ContactAddress::where('company_id',$self_id)->get();
+        $data['info']=WmsContract::where($where)->first();
+        if($data['info']){
+
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -132,9 +132,9 @@ class GroupController extends CommonController{
 
     }
 
-    /***    业务公司添加进入数据库      /wms/group/addGroup
+    /***    业务公司添加进入数据库      /base/contract/addContract
      */
-    public function addGroup(Request $request){
+    public function addContract(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='wms_group';
@@ -147,21 +147,23 @@ class GroupController extends CommonController{
         $user_info = $request->get('user_info');//接收中间件产生的参数
         $input              =$request->all();
         /** 接收数据*/
+
         $self_id            =$request->input('self_id');
-        $company_name       =$request->input('company_name');//名称
+        $company_id         =$request->input('company_id');
+        $company_name       =$request->input('company_name');//客户名称
         $group_code         =$request->input('group_code');
-        $tel       	        =$request->input('tel');//固定电话
-        $area               =$request->input('area');//地区
-        $address            =$request->input('address');//地址
+        $insufficient       =$request->input('insufficient');//不足n吨按n算
+        $bill_id       	    =$request->input('bill_id');//计费单位
+        $start_time         =$request->input('start_time');//开始时间
+        $end_time           =$request->input('end_time');//结束时间
 
         $company_num        =$request->input('company_num');//客户编号
-        $level              =$request->input('level');//客户等级
-        $balance            =$request->input('balance');//余额
-        $credit_limit       =$request->input('credit_limit');//信用额度
+        $cold_settle        =$request->input('cold_settle');//冷藏算法
+        $cycle              =$request->input('cycle');//周期
+        $sale_price         =$request->input('sale_price');//冷藏单价
         $remark             =$request->input('remark');//备注
-        $wechat             =$request->input('wechat');//微信
-        $contacts           =$request->input('contacts');//联系人
-        $contact_address    =$request->input('contact_address');//收货地址
+        $other_money        =$request->input('other_money');//其他费用
+        $type               =$request->input('type');//零仓bulk  包仓contract
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -176,7 +178,7 @@ class GroupController extends CommonController{
         $input['total_type']        =$total_type  ='pull';
         $input['total_price']       =$total_price  ='152';
         $input['pay_type']       =$pay_type  ='152';
-	***/
+         ***/
 //        dd($input);
         $rules=[
             'group_code'=>'required',
@@ -184,7 +186,7 @@ class GroupController extends CommonController{
         ];
         $message=[
             'system_group.required'=>'所属公司不能为空',
-            'company_name.required'=>'公司名称不能为空',
+            'company_name.required'=>'客户公司名称不能为空',
         ];
         $validator=Validator::make($input,$rules,$message);
 
@@ -194,26 +196,27 @@ class GroupController extends CommonController{
             $contact = [];
             $address_area = [];
 
+            $data['company_id']                 = $company_id;
             $data['company_name']               = $company_name;
             $data['company_num']                = $company_num;
-            $data['area']                       = $area;
-            $data['address']                    = $address;
-            $data['tel']                        = $tel;
-            $data['level']           	        = $level;
-            $data['balance']           	        = $balance;
-            $data['credit_limit']           	= $credit_limit;
+            $data['insufficient']               = $insufficient;
+            $data['bill_id']                    = $bill_id;
+            $data['start_time']                 = $start_time;
+            $data['end_time']        	        = $end_time;
+            $data['cold_settle']            	= $cold_settle;
             $data['remark']           	        = $remark;
-            $data['wechat']           	        = $wechat;
-
+            $data['cycle']           	        = $cycle;
+            $data['sale_price']        	        = $sale_price;
+            $data['type']        	            = $type;
 
             $wheres['self_id'] = $self_id;
-            $old_info=WmsGroup::where($wheres)->first();
+            $old_info=WmsContract::where($wheres)->first();
 
             if($old_info){
                 //dd(1111);
                 $data['update_time']=$now_time;
-                $id=WmsGroup::where($wheres)->update($data);
-                foreach ($contacts as $k => $v){
+                $id=WmsContract::where($wheres)->update($data);
+                foreach ($other_money as $k => $v){
                     if ($v['self_id']){
                         $contact['name'] = $v['name'];
                         $contact['tel'] = $v['tel'];
@@ -235,33 +238,8 @@ class GroupController extends CommonController{
                         $contact_list[] = $contact;
                     }
                 }
-                foreach ($contact_address as $k => $v){
-                    if ($v['self_id']){
-                        $address_area['name'] = $v['name'];
-                        $address_area['tel'] = $v['tel'];
-                        $address_area['address'] = $v['address'];
-                        $address_area['default_flag'] = $v['default_flag'];
-                        $address_area['delete_flag'] = $v['delete_flag'];
-                        ContactAddress::where('self_id',$v['self_id'])->update($contact);
-                    }else{
-                        $address_area['self_id'] = generate_id('address_');
-                        $address_area['company_id'] = $data['self_id'];
-                        $address_area['name'] = $v['name'];
-                        $address_area['tel'] = $v['tel'];
-                        $address_area['address'] = $v['address'];
-                        $address_area['default_flag'] = $v['default_flag'];
-                        $address_area['group_code'] = $group_code;
-                        $address_area['group_name'] = $data['group_name'];
-                        $address_area['create_user_id'] = $user_info->admin_id;
-                        $address_area['create_user_name'] = $user_info->name;
-                        $address_list[] = $address_area;
-                    }
-                }
                 if (count($contact_list)>0){
                     CompanyContact::insert($contact_list);
-                }
-                if (count($address_list)>0){
-                    ContactAddress::insert($address_list);
                 }
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
@@ -269,16 +247,16 @@ class GroupController extends CommonController{
 
             }else{
 
-                $data['self_id']=generate_id('company_');		//优惠券表ID
+                $data['self_id']=generate_id('L');		//优惠券表ID
                 $data['group_code'] = $group_code;
                 $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
                 $data['create_user_id']=$user_info->admin_id;
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsGroup::insert($data);
+                $id=WmsContract::insert($data);
 
-                if ($contacts){
-                    foreach ($contacts as $k => $v){
+                if ($other_money){
+                    foreach ($other_money as $k => $v){
                         $contact['self_id'] = generate_id('tel_');
                         $contact['company_id'] = $data['self_id'];
                         $contact['name'] = $v['name'];
@@ -291,25 +269,8 @@ class GroupController extends CommonController{
                         $contact['create_user_name'] = $user_info->name;
                         $contact_list[] = $contact;
                     }
+                }
 
-                }
-                if ($contact_address){
-                    foreach ($contact_address as $k => $v){
-                        $address_area['self_id'] = generate_id('address_');
-                        $address_area['company_id'] = $data['self_id'];
-                        $address_area['name'] = $v['name'];
-                        $address_area['tel'] = $v['tel'];
-                        $address_area['address'] = $v['address'];
-                        $address_area['default_flag'] = $v['default_flag'];
-                        $address_area['group_code'] = $group_code;
-                        $address_area['group_name'] = $data['group_name'];
-                        $address_area['create_user_id'] = $user_info->admin_id;
-                        $address_area['create_user_name'] = $user_info->name;
-                        $address_list[] = $address_area;
-                    }
-                }
-                ContactAddress::insert($address_list);
-                CompanyContact::insert($contact_list);
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
 
@@ -402,8 +363,8 @@ class GroupController extends CommonController{
     }
     /***    业务公司获取     /wms/group/getCompany
      */
-	public function getCompany(Request $request){
-		$group_code=$request->input('group_code');
+    public function getCompany(Request $request){
+        $group_code=$request->input('group_code');
         $where=[
             ['delete_flag','=','Y'],
             ['group_code','=',$group_code],
@@ -411,12 +372,12 @@ class GroupController extends CommonController{
         $selset_WmsGroup=['self_id','company_name','group_code','group_name'];
         $data['info']=WmsGroup::where($where)->select($selset_WmsGroup)->get();
 
-	    $msg['code']=200;
+        $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
         //dd($msg);
         return $msg;
-	}
+    }
 
     /***    业务公司导入     /wms/group/import
      */
@@ -601,27 +562,27 @@ class GroupController extends CommonController{
                         $list['total_type']      		='no';
                         $list['total_price']           	=0;
                     }else{
-						if(strpos($v['total_price'],'元/')!== false){
-							$abc= explode('元/',$v['total_price']);
-							//dd($abc);
-							switch ($abc[1]){
-								case '托':
-									$list['total_type']      		='pull';
-									break;
-								case 'KG':
-									$list['total_type']      		='weight';
-									break;
-								case '立方':
-									$list['total_type']      		='bulk';
-									break;
+                        if(strpos($v['total_price'],'元/')!== false){
+                            $abc= explode('元/',$v['total_price']);
+                            //dd($abc);
+                            switch ($abc[1]){
+                                case '托':
+                                    $list['total_type']      		='pull';
+                                    break;
+                                case 'KG':
+                                    $list['total_type']      		='weight';
+                                    break;
+                                case '立方':
+                                    $list['total_type']      		='bulk';
+                                    break;
 
-							}
-							$list['total_price']           	=$abc[0]*100;
+                            }
+                            $list['total_price']           	=$abc[0]*100;
 
-						}else{
-							$list['total_type']      		='no';
-							$list['total_price']           	=0;
-						}
+                        }else{
+                            $list['total_type']      		='no';
+                            $list['total_price']           	=0;
+                        }
 
 
                     }
