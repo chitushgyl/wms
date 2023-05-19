@@ -65,7 +65,7 @@ class GoodController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','use_flag','good_name','good_english_name','external_sku_id','wms_unit','wms_target_unit','wms_scale','wms_spec',
+        $select=['self_id','use_flag','good_type','good_name','good_english_name','external_sku_id','wms_unit','wms_target_unit','wms_scale','wms_spec',
             'wms_length','wms_wide','wms_high','wms_weight','wms_out_unit','company_name','group_name','period_value','period','sale_price'];
 
         switch ($group_info['group_id']){
@@ -165,6 +165,7 @@ class GoodController extends CommonController{
         $good_name          =$request->input('good_name');//商品名称
         $wms_unit           =$request->input('wms_unit');//商品
         $wms_spec           =$request->input('wms_spec');//规格
+        $good_type          =$request->input('good_type');//商品类型
         $sale_price         =$request->input('sale_price');//单价
         $wms_length         =$request->input('wms_length');
         $wms_wide           =$request->input('wms_wide');
@@ -175,6 +176,7 @@ class GoodController extends CommonController{
         $period_value       =$request->input('period_value');
         $wms_target_unit    =$request->input('wms_target_unit');
         $wms_scale          =$request->input('wms_scale');
+        $remark             =$request->input('remark');
 
 
 
@@ -200,7 +202,7 @@ class GoodController extends CommonController{
             'company_id'=>'required',
             'external_sku_id'=>'required',
             'good_name'=>'required',
-            'wms_unit'=>'required',
+//            'wms_unit'=>'required',
             //'wms_out_unit'=>'required',
 //            'period'=>'required',
 //            'period_value'=>'required',
@@ -209,7 +211,7 @@ class GoodController extends CommonController{
             'company_id.required'=>'请选择业务公司',
             'external_sku_id.required'=>'请输入商品编号',
             'good_name.required'=>'请填写商品名称',
-            'wms_unit.required'=>'请填写入库单位',
+//            'wms_unit.required'=>'请填写入库单位',
             //'wms_out_unit.required'=>'商品规格不能为空',
 //            'period.required'=>'请选择有效期单位',
 //            'period_value.required'=>'请输入有效期时间',
@@ -275,6 +277,8 @@ class GoodController extends CommonController{
             $data['period_value']       = $period_value;
             $data['type']               = 'wms';
             $data['sale_price']         = $sale_price;
+            $data['good_type']          = $good_type;
+            $data['remark']             = $remark;
 
             $wheres['self_id'] = $self_id;
             $old_info=ErpShopGoodsSku::where($wheres)->first();
