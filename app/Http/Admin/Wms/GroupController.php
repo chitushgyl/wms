@@ -223,7 +223,7 @@ class GroupController extends CommonController{
                         CompanyContact::where('self_id',$v['self_id'])->update($contact);
                     }else{
                         $contact['self_id'] = generate_id('tel_');
-                        $contact['company_id'] = $data['self_id'];
+                        $contact['company_id'] = $self_id;
                         $contact['name'] = $v['name'];
                         $contact['tel'] = $v['tel'];
                         $contact['wechat'] = $v['wechat'];
@@ -245,7 +245,7 @@ class GroupController extends CommonController{
                         ContactAddress::where('self_id',$v['self_id'])->update($contact);
                     }else{
                         $address_area['self_id'] = generate_id('address_');
-                        $address_area['company_id'] = $data['self_id'];
+                        $address_area['company_id'] = $self_id;
                         $address_area['name'] = $v['name'];
                         $address_area['tel'] = $v['tel'];
                         $address_area['address'] = $v['address'];
