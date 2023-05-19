@@ -229,7 +229,7 @@ class GroupController extends CommonController{
                         $contact['wechat'] = $v['wechat'];
                         $contact['email'] = $v['email'];
                         $contact['group_code'] = $group_code;
-                        $contact['group_name'] = $data['group_name'];
+                        $contact['group_name'] = $old_info->group_name;
                         $contact['create_user_id'] = $user_info->admin_id;
                         $contact['create_user_name'] = $user_info->name;
                         $contact_list[] = $contact;
@@ -251,7 +251,7 @@ class GroupController extends CommonController{
                         $address_area['address'] = $v['address'];
                         $address_area['default_flag'] = $v['default_flag'];
                         $address_area['group_code'] = $group_code;
-                        $address_area['group_name'] = $data['group_name'];
+                        $address_area['group_name'] = $old_info->group_name;
                         $address_area['create_user_id'] = $user_info->admin_id;
                         $address_area['create_user_name'] = $user_info->name;
                         $address_list[] = $address_area;
