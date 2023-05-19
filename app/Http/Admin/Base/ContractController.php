@@ -2,6 +2,7 @@
 namespace App\Http\Admin\Base;
 use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
+use App\Models\Wms\ContractDetailed;
 use App\Models\Wms\WmsContract;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
@@ -164,6 +165,7 @@ class contractController extends CommonController{
         $remark             =$request->input('remark');//备注
         $other_money        =$request->input('other_money');//其他费用
         $type               =$request->input('type');//零仓bulk  包仓contract
+        $contact_details    =$request->input('contract_details');//包仓明细
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -209,6 +211,18 @@ class contractController extends CommonController{
             $data['sale_price']        	        = $sale_price;
             $data['type']        	            = $type;
 
+            //包仓明细
+            if($type == 'contract'){
+                $details['start_time']  = $contact_details['start_time'];
+                $details['end_time']    = $contact_details['end_time'];
+                $details['price']       = $contact_details['price'];
+                $details['number']      = $contact_details['number'];
+                $details['yuan_money']  = $contact_details['yuan_money'];
+                $details['total_money'] = $contact_details['total_money'];
+                $details['settle_flag'] = $contact_details['settle_flag'];
+                $details['stop_money']  = $contact_details['stop_money'];
+            }
+
             $wheres['self_id'] = $self_id;
             $old_info=WmsContract::where($wheres)->first();
 
@@ -245,6 +259,29 @@ class contractController extends CommonController{
                 if (count($contact_list)>0){
                     CompanyContact::insert($contact_list);
                 }
+                if($type == 'contract'){
+                    if ($contact_details['self_id']){
+                        $details['update_time'] = $now_time;
+                        ContractDetailed::where('self_id',$contact_details['self_id'])->update($details);
+                    }else{
+                        $details['self_id']     = generate_id('BM');
+                        $details['start_time']  = $contact_details['start_time'];
+                        $details['end_time']    = $contact_details['end_time'];
+                        $details['price']       = $contact_details['price'];
+                        $details['number']      = $contact_details['number'];
+                        $details['yuan_money']  = $contact_details['yuan_money'];
+                        $details['total_money'] = $contact_details['total_money'];
+                        $details['settle_flag'] = $contact_details['settle_flag'];
+                        $details['stop_money']  = $contact_details['stop_money'];
+                        $details['group_code']  = $group_code;
+                        $details['group_name']  = $data['group_name'];
+                        $details['create_user_id']  = $user_info->admin_id;
+                        $details['create_user_name']  = $user_info->name;
+                        $details['create_time']  = $details['update_time'] = $now_time;
+                        ContractDetailed::insert($details);
+                    }
+
+                }
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
 
@@ -275,6 +312,27 @@ class contractController extends CommonController{
                         $contact['create_user_name'] = $user_info->name;
                         $contact_list[] = $contact;
                     }
+                }
+
+                if($type == 'contract'){
+                   
+                        $details['self_id']     = generate_id('BM');
+                        $details['start_time']  = $contact_details['start_time'];
+                        $details['end_time']    = $contact_details['end_time'];
+                        $details['price']       = $contact_details['price'];
+                        $details['number']      = $contact_details['number'];
+                        $details['yuan_money']  = $contact_details['yuan_money'];
+                        $details['total_money'] = $contact_details['total_money'];
+                        $details['settle_flag'] = $contact_details['settle_flag'];
+                        $details['stop_money']  = $contact_details['stop_money'];
+                        $details['group_code']  = $group_code;
+                        $details['group_name']  = $data['group_name'];
+                        $details['create_user_id']  = $user_info->admin_id;
+                        $details['create_user_name']  = $user_info->name;
+                        $details['create_time']  = $details['update_time'] = $now_time;
+                        ContractDetailed::insert($details);
+
+
                 }
 
                 $operationing->access_cause='新建业务公司';
@@ -367,16 +425,16 @@ class contractController extends CommonController{
 
 
     }
-    /***    业务公司获取     /wms/group/getCompany
+    /***    业务公司获取     /base/contract/getContract
      */
-    public function getCompany(Request $request){
+    public function getContract(Request $request){
         $group_code=$request->input('group_code');
         $where=[
             ['delete_flag','=','Y'],
             ['group_code','=',$group_code],
         ];
-        $selset_WmsGroup=['self_id','company_name','group_code','group_name'];
-        $data['info']=WmsGroup::where($where)->select($selset_WmsGroup)->get();
+
+        $data['info']=WmsContract::where($where)->get();
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
