@@ -3,6 +3,7 @@ namespace App\Http\Admin\Base;
 use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
 use App\Models\Wms\ContractDetailed;
+use App\Models\Wms\ContractOtherMoney;
 use App\Models\Wms\WmsContract;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
@@ -290,6 +291,7 @@ class contractController extends CommonController{
                             ContractDetailed::where('self_id',$value['self_id'])->update($details);
                         }else{
                             $details['self_id']     = generate_id('BM');
+                            $details['contract_id']     = $data['self_id'];
                             $details['start_time']  = $value['start_time'];
                             $details['end_time']    = $value['end_time'];
                             $details['price']       = $value['price'];
@@ -346,6 +348,7 @@ class contractController extends CommonController{
                     //包仓明细
                     foreach($contact_details as $key => $value){
                         $details['self_id']     = generate_id('BM');
+                        $details['contract_id']     = $data['self_id'];
                         $details['start_time']  = $value['start_time'];
                         $details['end_time']    = $value['end_time'];
                         $details['price']       = $value['price'];
@@ -365,7 +368,9 @@ class contractController extends CommonController{
                         ContractDetailed::insert($detail_list);
                     }
                 }
-
+                if (count($contact_list)>0){
+                    ContractOtherMoney::insert($contact_list);
+                }
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
 
