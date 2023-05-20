@@ -219,7 +219,7 @@ class contractController extends CommonController{
             $data['number']        	            = $number;
             $data['total_money']        	    = $total_money;
             $data['warehouse_id']        	    = $warehouse_id;
-            
+
             $wheres['self_id'] = $self_id;
             $old_info=WmsContract::where($wheres)->first();
 
