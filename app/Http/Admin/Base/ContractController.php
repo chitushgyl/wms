@@ -166,6 +166,11 @@ class contractController extends CommonController{
         $other_money        =$request->input('other_money');//其他费用
         $type               =$request->input('type');//零仓bulk  包仓contract
         $contact_details    =$request->input('contract_details');//包仓明细
+        $contract_type      =$request->input('contract_type');//包仓类型
+        $contract_settle_type =$request->input('contract_settle_type');//包仓算法
+        $number             =$request->input('number');//数量
+        $total_money        =$request->input('total_money');//总金额
+        $warehouse_id       =$request->input('warehouse_id');//仓库
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -209,8 +214,12 @@ class contractController extends CommonController{
             $data['cycle']           	        = $cycle;
             $data['sale_price']        	        = $sale_price;
             $data['type']        	            = $type;
-
-
+            $data['contract_type']        	    = $contract_type;
+            $data['contract_settle_type']       = $contract_settle_type;
+            $data['number']        	            = $number;
+            $data['total_money']        	    = $total_money;
+            $data['warehouse_id']        	    = $warehouse_id;
+            
             $wheres['self_id'] = $self_id;
             $old_info=WmsContract::where($wheres)->first();
 
