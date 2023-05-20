@@ -123,7 +123,9 @@ class contractController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-
+        $where1=[
+            ['delete_flag','=','Y'],
+        ];
         $data['info']=WmsContract::with(['ContractOtherMoney' => function($query) use($where1){
             $query->where($where1);
         }])
