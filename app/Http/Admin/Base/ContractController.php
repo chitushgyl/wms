@@ -257,7 +257,7 @@ class contractController extends CommonController{
                         $contact['out_flag'] = $v['out_flag'];
                         $contact['change_flag'] = $v['change_flag'];
                         $contact['delete_flag'] = $v['delete_flag'];
-                        CompanyContact::where('self_id',$v['self_id'])->update($contact);
+                        ContractOtherMoney::where('self_id',$v['self_id'])->update($contact);
                     }else{
                         $contact['self_id'] = generate_id('other_');
                         $contact['contract_id'] = $data['self_id'];
@@ -275,7 +275,7 @@ class contractController extends CommonController{
                     }
                 }
                 if (count($contact_list)>0){
-                    CompanyContact::insert($contact_list);
+                    ContractOtherMoney::insert($contact_list);
                 }
                 if($type == 'contract'){
                     //包仓明细

@@ -674,14 +674,24 @@ class LibraryController extends CommonController{
         $input=$request->all();
         /** 接收数据*/
         //dd($input);
-        $warehouse_id       =$request->input('warehouse_id');
-        $company_id         =$request->input('company_id');
-        $library_sige       =json_decode($request->input('library_sige'), true);
+//        $warehouse_id       = $request->input('warehouse_id');
+        $entry_time         = $request->input('entry_time');//入库时间
+        $company_id         = $request->input('company_id');
+        $company_name         = $request->input('company_name');//客户名称
+        $library_sige       = json_decode($request->input('library_sige'), true);
         $voucher            = json_decode($request->input('voucher'),true);
-        $car_number         = $request->input('car_number');
-        $cupboard_num            = $request->input('$cupboard_num');
-        $voucher            = $request->input('voucher');
-        $voucher            = $request->input('voucher');
+        $contract_num       = $request->input('contract_num');//合同编号
+        $porter_num         = $request->input('porter_num');//搬运工单号
+        $car_number         = $request->input('car_number');//车牌号
+        $cupboard_num       = $request->input('cupboard_num');//柜号
+        $total_num          = $request->input('total_num');//总件数
+        $total_weight       = $request->input('total_weight');//总吨数
+        $total_money        = $request->input('total_money');//总金额
+        $total_plate_num    = $request->input('total_plate_num');//总板数
+        $remark             = $request->input('remark');//总板数
+        $railway            = $request->input('railway');//月台号
+        $insufficient       = $request->input('insufficient');//不足N吨按吨算
+        $other_money        = $request->input('other_money');//其他费用
 	//dd($library_sige);
         /*** 虚拟数据
         $input['group_code']=$group_code='1234';
@@ -718,13 +728,13 @@ class LibraryController extends CommonController{
          **/
         $rules=[
             'group_code'=>'required',
-            'warehouse_id'=>'required',
+//            'warehouse_id'=>'required',
             'company_id'=>'required',
             'library_sige'=>'required',
         ];
         $message=[
             'group_code.required'=>'请填写公司',
-            'warehouse_id.required'=>'请填写仓库',
+//            'warehouse_id.required'=>'请填写仓库',
             'company_id.required'=>'请填写业务公司',
             'library_sige.required'=>'商品必须',
         ];
@@ -980,6 +990,21 @@ class LibraryController extends CommonController{
             $data['check_time']         =$now_time;
             $data['bulk']               =$bulk;
             $data['weight']             =$weight;
+            $data['entry_time']         =$entry_time;
+            $data['contract_num']       =$contract_num;
+            $data['porter_num']         =$porter_num;
+            $data['car_number']         =$car_number;
+            $data['cupboard_num']       =$cupboard_num;
+            $data['total_num']          =$total_num;
+            $data['total_weight']       =$total_weight;
+            $data['total_money']        =$total_money;
+            $data['total_plate_num']    =$total_plate_num;
+            $data['remark']             =$remark;
+            $data['railway']            =$railway;
+            $data['insufficient']       =$insufficient;
+            $data['other_money']        =$other_money;
+
+
             $data['voucher']            =img_for($voucher,'in');
             $data['order_status']       = 'S';
            //dd($data);
