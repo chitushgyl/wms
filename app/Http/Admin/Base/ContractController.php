@@ -116,6 +116,7 @@ class contractController extends CommonController{
         $data['type']    =config('wms.settle_type');
         $data['contract_settle_type'] = config('wms.contract_settle_type');
         $data['contract_type'] = config('wms.contract_type');
+        $data['contract_warehouse_type'] = config('wms.contract_warehouse_type');
         /** 接收数据*/
         $self_id=$request->input('self_id');
         $type   =$request->input('type');
