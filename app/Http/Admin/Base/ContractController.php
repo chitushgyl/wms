@@ -74,7 +74,8 @@ class contractController extends CommonController{
                 $data['total']=WmsContract::where($where)->count(); //总的数据量
                 $data['items']=WmsContract::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
 
@@ -83,7 +84,8 @@ class contractController extends CommonController{
                 $data['total']=WmsContract::where($where)->count(); //总的数据量
                 $data['items']=WmsContract::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='N';
                 break;
 
@@ -91,7 +93,8 @@ class contractController extends CommonController{
                 $data['total']=WmsContract::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=WmsContract::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
         }
