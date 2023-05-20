@@ -7,14 +7,14 @@
  */
 namespace App\Models\Wms;
 use  Illuminate\Database\Eloquent\Model;
-class WmsContract extends Model{
+class ContractOtherMoney extends Model{
     //软删除
     //   use SoftDeletes;
     //模型的连接名称（单独连接其他数据库）
     //protected $connection = 'connection-name';
 
     //指定数据库表 如果表名后带s则不需要 不带则需要
-    protected $table = 'wms_contract';
+    protected $table = 'contract_other_money';
 
     //指定主键字段 默认为id
     //protected $primaryKey = 'id';
@@ -51,17 +51,11 @@ class WmsContract extends Model{
     ];
 
 //一对一
-    public function ContractOtherMoney(){
-        //参数：关联模型名称，外键，主键
-        //如果主键是id可以省略
-        return $this->hasMany('App\Models\Wms\ContractOtherMoney','contract_id','self_id');
-    }
-
-    public function ContractDetailed(){
-        //参数：关联模型名称，外键，主键
-        //如果主键是id可以省略
-        return $this->hasMany('App\Models\Wms\ContractDetailed','contract_id','self_id');
-    }
+    //public function wmsOutOrder(){
+    //    //参数：关联模型名称，外键，主键
+    //    //如果主键是id可以省略
+    //    return $this->hasMany('App\Models\Wms\WmsOutOrder','total_id','self_id');
+    //}
 
 
 

@@ -114,13 +114,24 @@ class contractController extends CommonController{
      */
     public function createContract(Request $request){
         $data['type']    =config('wms.settle_type');
+        $data['contract_settle_type'] = config('wms.contract_settle_type');
+        $data['contract_type'] = config('wms.contract_type');
         /** 接收数据*/
         $self_id=$request->input('self_id');
+        $type   =$request->input('type');
         $where=[
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $data['info']=WmsContract::where($where)->first();
+
+        $data['info']=WmsContract::with(['ContractOtherMoney' => function($query) use($where1){
+            $query->where($where1);
+        }])
+            ->with(['ContractDetailed' => function($query) use($where1){
+                $query->where($where1);
+            }])
+            ->where($where)->first();
+
         if($data['info']){
 
         }
@@ -327,7 +338,6 @@ class contractController extends CommonController{
                 if($type == 'contract'){
                     //包仓明细
                     foreach($contact_details as $key => $value){
-
                         $details['self_id']     = generate_id('BM');
                         $details['start_time']  = $value['start_time'];
                         $details['end_time']    = $value['end_time'];
