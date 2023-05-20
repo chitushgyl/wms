@@ -273,7 +273,7 @@ class contractController extends CommonController{
                         $contact['out_flag'] = $v['out_flag'];
                         $contact['change_flag'] = $v['change_flag'];
                         $contact['group_code'] = $group_code;
-                        $contact['group_name'] = $data['group_name'];
+                        $contact['group_name'] = $old_info->group_name;
                         $contact['create_user_id'] = $user_info->admin_id;
                         $contact['create_user_name'] = $user_info->name;
                         $contact_list[] = $contact;
@@ -308,7 +308,7 @@ class contractController extends CommonController{
                             $details['settle_flag'] = $value['settle_flag'];
                             $details['stop_money']  = $value['stop_money'];
                             $details['group_code']  = $group_code;
-                            $details['group_name']  = $data['group_name'];
+                            $details['group_name']  = $old_info->group_name;
                             $details['create_user_id']  = $user_info->admin_id;
                             $details['create_user_name']  = $user_info->name;
                             $details['create_time']  = $details['update_time'] = $now_time;
