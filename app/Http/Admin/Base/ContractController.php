@@ -41,6 +41,10 @@ class contractController extends CommonController{
     /***    业务公司分页      /base/contract/contractPage
      */
     public function contractPage(Request $request){
+        $settle_type1    =array_column(config('wms.settle_type'),'name','key');
+        $contract_settle_type = array_column(config('wms.contract_settle_type'),'name','key');
+        $contract_type = array_column(config('wms.contract_type'),'name','key');
+        $contract_warehouse_type = array_column(config('wms.contract_warehouse_type'),'name','key');
         /** 接收中间件参数**/
         $settle_type    =config('wms.settle_type');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
@@ -101,7 +105,10 @@ class contractController extends CommonController{
 
 
         foreach ($data['items'] as $k=>$v) {
-
+            $v->type = $contract_type[$v->type]??null;
+            $v->contract_type = $contract_warehouse_type[$v->contract_type]??null;
+            $v->cold_settle = $settle_type1[$v->cold_settle]??null;
+            $v->contract_settle_type = $contract_settle_type[$v->contract_settle_type]??null;
             $v->button_info=$button_info;
 
         }
