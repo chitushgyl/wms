@@ -194,9 +194,8 @@ class contractController extends CommonController{
 
         if($validator->passes()){
             $contact_list = [];
-            $address_list = [];
             $contact = [];
-            $address_area = [];
+            $detail_list = [];
 
             $data['company_id']                 = $company_id;
             $data['company_name']               = $company_name;
@@ -211,17 +210,6 @@ class contractController extends CommonController{
             $data['sale_price']        	        = $sale_price;
             $data['type']        	            = $type;
 
-            //包仓明细
-            if($type == 'contract'){
-                $details['start_time']  = $contact_details['start_time'];
-                $details['end_time']    = $contact_details['end_time'];
-                $details['price']       = $contact_details['price'];
-                $details['number']      = $contact_details['number'];
-                $details['yuan_money']  = $contact_details['yuan_money'];
-                $details['total_money'] = $contact_details['total_money'];
-                $details['settle_flag'] = $contact_details['settle_flag'];
-                $details['stop_money']  = $contact_details['stop_money'];
-            }
 
             $wheres['self_id'] = $self_id;
             $old_info=WmsContract::where($wheres)->first();
@@ -260,27 +248,40 @@ class contractController extends CommonController{
                     CompanyContact::insert($contact_list);
                 }
                 if($type == 'contract'){
-                    if ($contact_details['self_id']){
-                        $details['update_time'] = $now_time;
-                        ContractDetailed::where('self_id',$contact_details['self_id'])->update($details);
-                    }else{
-                        $details['self_id']     = generate_id('BM');
-                        $details['start_time']  = $contact_details['start_time'];
-                        $details['end_time']    = $contact_details['end_time'];
-                        $details['price']       = $contact_details['price'];
-                        $details['number']      = $contact_details['number'];
-                        $details['yuan_money']  = $contact_details['yuan_money'];
-                        $details['total_money'] = $contact_details['total_money'];
-                        $details['settle_flag'] = $contact_details['settle_flag'];
-                        $details['stop_money']  = $contact_details['stop_money'];
-                        $details['group_code']  = $group_code;
-                        $details['group_name']  = $data['group_name'];
-                        $details['create_user_id']  = $user_info->admin_id;
-                        $details['create_user_name']  = $user_info->name;
-                        $details['create_time']  = $details['update_time'] = $now_time;
-                        ContractDetailed::insert($details);
+                    //包仓明细
+                    foreach($contact_details as $key => $value){
+                        if($value['self_id']){
+                            $details['start_time']  = $value['start_time'];
+                            $details['end_time']    = $value['end_time'];
+                            $details['price']       = $value['price'];
+                            $details['number']      = $value['number'];
+                            $details['yuan_money']  = $value['yuan_money'];
+                            $details['total_money'] = $value['total_money'];
+                            $details['settle_flag'] = $value['settle_flag'];
+                            $details['stop_money']  = $value['stop_money'];
+                            $details['update_time'] = $now_time;
+                            ContractDetailed::where('self_id',$value['self_id'])->update($details);
+                        }else{
+                            $details['self_id']     = generate_id('BM');
+                            $details['start_time']  = $value['start_time'];
+                            $details['end_time']    = $value['end_time'];
+                            $details['price']       = $value['price'];
+                            $details['number']      = $value['number'];
+                            $details['yuan_money']  = $value['yuan_money'];
+                            $details['total_money'] = $value['total_money'];
+                            $details['settle_flag'] = $value['settle_flag'];
+                            $details['stop_money']  = $value['stop_money'];
+                            $details['group_code']  = $group_code;
+                            $details['group_name']  = $data['group_name'];
+                            $details['create_user_id']  = $user_info->admin_id;
+                            $details['create_user_name']  = $user_info->name;
+                            $details['create_time']  = $details['update_time'] = $now_time;
+                            $detail_list[] = $details;
+                        }
                     }
-
+                    if (count($detail_list)>0){
+                        ContractDetailed::insert($detail_list);
+                    }
                 }
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
@@ -315,24 +316,28 @@ class contractController extends CommonController{
                 }
 
                 if($type == 'contract'){
-                   
+                    //包仓明细
+                    foreach($contact_details as $key => $value){
+
                         $details['self_id']     = generate_id('BM');
-                        $details['start_time']  = $contact_details['start_time'];
-                        $details['end_time']    = $contact_details['end_time'];
-                        $details['price']       = $contact_details['price'];
-                        $details['number']      = $contact_details['number'];
-                        $details['yuan_money']  = $contact_details['yuan_money'];
-                        $details['total_money'] = $contact_details['total_money'];
-                        $details['settle_flag'] = $contact_details['settle_flag'];
-                        $details['stop_money']  = $contact_details['stop_money'];
+                        $details['start_time']  = $value['start_time'];
+                        $details['end_time']    = $value['end_time'];
+                        $details['price']       = $value['price'];
+                        $details['number']      = $value['number'];
+                        $details['yuan_money']  = $value['yuan_money'];
+                        $details['total_money'] = $value['total_money'];
+                        $details['settle_flag'] = $value['settle_flag'];
+                        $details['stop_money']  = $value['stop_money'];
                         $details['group_code']  = $group_code;
                         $details['group_name']  = $data['group_name'];
                         $details['create_user_id']  = $user_info->admin_id;
                         $details['create_user_name']  = $user_info->name;
                         $details['create_time']  = $details['update_time'] = $now_time;
-                        ContractDetailed::insert($details);
-
-
+                        $detail_list[] = $details;
+                    }
+                    if (count($detail_list)>0){
+                        ContractDetailed::insert($detail_list);
+                    }
                 }
 
                 $operationing->access_cause='新建业务公司';
