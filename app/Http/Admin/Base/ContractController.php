@@ -52,6 +52,7 @@ class contractController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $company_name     =$request->input('company_name');
+        $type     =$request->input('type');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -60,6 +61,7 @@ class contractController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'company_name','value'=>$company_name],
+            ['type'=>'=','name'=>'type','value'=>$type],
         ];
 
         $where=get_list_where($search);
