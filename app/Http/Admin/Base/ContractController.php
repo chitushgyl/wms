@@ -195,6 +195,7 @@ class contractController extends CommonController{
         $number             =$request->input('number');//数量
         $total_money        =$request->input('total_money');//总金额
         $warehouse_id       =$request->input('warehouse_id');//仓库
+        $warehouse_name     =$request->input('warehouse_name');//仓库
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -243,6 +244,7 @@ class contractController extends CommonController{
             $data['number']        	            = $number;
             $data['total_money']        	    = $total_money;
             $data['warehouse_id']        	    = $warehouse_id;
+            $data['warehouse_name']        	    = $warehouse_name;
 
             $wheres['self_id'] = $self_id;
             $old_info=WmsContract::where($wheres)->first();
