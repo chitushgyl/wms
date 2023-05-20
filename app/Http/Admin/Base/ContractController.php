@@ -265,7 +265,7 @@ class contractController extends CommonController{
                         ContractOtherMoney::where('self_id',$v['self_id'])->update($contact);
                     }else{
                         $contact['self_id'] = generate_id('other_');
-                        $contact['contract_id'] = $data['self_id'];
+                        $contact['contract_id'] = $self_id;
                         $contact['money_type'] = $v['money_type'];
                         $contact['price'] = $v['price'];
                         $contact['bill_id'] = $v['bill_id'];
@@ -298,7 +298,7 @@ class contractController extends CommonController{
                             ContractDetailed::where('self_id',$value['self_id'])->update($details);
                         }else{
                             $details['self_id']     = generate_id('BM');
-                            $details['contract_id']     = $data['self_id'];
+                            $details['contract_id']     = $self_id;
                             $details['start_time']  = $value['start_time'];
                             $details['end_time']    = $value['end_time'];
                             $details['price']       = $value['price'];
