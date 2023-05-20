@@ -113,13 +113,17 @@ class contractController extends CommonController{
     /***    业务公司创建      /base/contract/createContract
      */
     public function createContract(Request $request){
-        $data['type']    =config('wms.settle_type');
-        $data['contract_settle_type'] = config('wms.contract_settle_type');
-        $data['contract_type'] = config('wms.contract_type');
-        $data['contract_warehouse_type'] = config('wms.contract_warehouse_type');
         /** 接收数据*/
         $self_id=$request->input('self_id');
         $type   =$request->input('type');
+        if ($type == 'bulk'){
+            $data['type']    =config('wms.settle_type');
+        }else{
+            $data['contract_settle_type'] = config('wms.contract_settle_type');
+            $data['contract_type'] = config('wms.contract_type');
+            $data['contract_warehouse_type'] = config('wms.contract_warehouse_type');
+        }
+
         $where=[
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
