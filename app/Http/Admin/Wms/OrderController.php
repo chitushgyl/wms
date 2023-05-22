@@ -161,11 +161,19 @@ class OrderController extends CommonController{
         /** 接收数据*/
         $input              = $request->all();
         $company_id         = $request->input('company_id');
+        $company_name         = $request->input('company_name');
         $warehouse_id       = $request->input('warehouse_id');
         $shop_id            = $request->input('shop_id');
         $goods              = json_decode($request->input('goods'),true);
         $delivery_time      = $request->input('delivery_time');
-        $recipt_code      = $request->input('recipt_code');
+        $recipt_code        = $request->input('recipt_code');
+        $out_time           = $request->input('out_time');//出库时间
+        $car_number         = $request->input('car_number');//车牌号
+        $total_weight       = $request->input('total_weight');//总吨重
+        $total_number       = $request->input('total_number');//总件数
+        $total_price        = $request->input('total_price');//总金额
+        $total_plate        = $request->input('total_plate');//总板数
+        $remark             = $request->input('remark');
         /***
         $input['goods']=$goods=[
         '0'=>[

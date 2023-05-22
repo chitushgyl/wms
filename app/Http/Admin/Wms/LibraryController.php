@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\Wms;
+use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsLibraryChange;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
@@ -674,7 +675,7 @@ class LibraryController extends CommonController{
         $input=$request->all();
         /** 接收数据*/
         //dd($input);
-//        $warehouse_id       = $request->input('warehouse_id');
+        $warehouse_id       = $request->input('warehouse_id');
         $entry_time         = $request->input('entry_time');//入库时间
         $company_id         = $request->input('company_id');
         $company_name         = $request->input('company_name');//客户名称
@@ -705,6 +706,11 @@ class LibraryController extends CommonController{
                 'expire_time'=>'2019-02-05',
                 'now_num'=>'21',
                 'can_use'=>'Y',
+                'plate_number'=>'Y',//板数
+                'singe_plate_number'=>'Y',//每板数量
+                'singe_weight'=>'Y',//件重
+                'count_number'=>'Y',//计费数量
+
             ],
 
            '1'=>[
@@ -722,6 +728,10 @@ class LibraryController extends CommonController{
                 'expire_time'=>'2019-02-05',
                 'now_num'=>'21',
                 'can_use'=>'Y',
+        'plate_number'=>'Y',
+        'singe_plate_number'=>'Y',
+        'singe_weight'=>'Y',
+        'count_number'=>'Y',
             ],
 
          ];
@@ -741,7 +751,7 @@ class LibraryController extends CommonController{
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()){
             //二次效验！！！！
-            $rulesssss=['sku_id'=>'商品名称','production_date'=>'开始有效期','expire_time'=>'到期时间','now_num'=>'商品数量','can_use'=>'是否可用'];
+            $rulesssss=['sku_id'=>'商品名称','now_num'=>'件数'];
 
             $rule=array_keys($rulesssss);
             $rule_count=count($rule);
@@ -947,7 +957,11 @@ class LibraryController extends CommonController{
                     $list["grounding_status"]   ='N';
                     $list["good_remark"]        =$v['good_remark'];
                     $list["good_lot"]           =$v['good_lot'];
-                    $list["in_library_state"]     =$v['in_library_state'];
+                    $list["in_library_state"]   =$v['in_library_state'];
+                    $list["plate_number"]       =$v['plate_number'];
+                    $list["singe_plate_number"] =$v['singe_plate_number'];
+                    $list["singe_weight"]       =$v['singe_weight'];
+                    $list["count_number"]       =$v['count_number'];
 
                     $list['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
                     $list['weight']             = $getGoods->wms_weight*$v['now_num'];
@@ -1003,12 +1017,12 @@ class LibraryController extends CommonController{
             $data['railway']            =$railway;
             $data['insufficient']       =$insufficient;
             $data['other_money']        =$other_money;
-
-
             $data['voucher']            =img_for($voucher,'in');
             $data['order_status']       = 'S';
            //dd($data);
+
             $id=WmsLibraryOrder::insert($data);
+
             $operationing->table_id=$data['self_id'];
             $operationing->old_info=null;
             $operationing->new_info=$data;
@@ -1019,7 +1033,21 @@ class LibraryController extends CommonController{
                 $change->change($datalist,'preentry');
 //                $money->moneyCompute($data,$datalist,$now_time,$company_info,$user_info,'in');
                 //计算费用
-
+                foreach($other_money as $key => $value){
+                    $money['self_id'] = generate_id('LM');
+                    $money['price']   = $value['price'];
+                    $money['money_id']   = $value['money_id'];
+                    $money['number']   = $value['number'];
+                    $money['total_price']   = $value['total_price'];
+                    $money['bill_id']   = $value['bill_id'];
+                    $money['group_code']   = $data['group_code'];
+                    $money['group_name']   = $data['group_name'];
+                    $money['create_user_id']   = $data['create_user_id'];
+                    $money['create_user_name']   = $value['create_user_name'];
+                    $money['create_time']   = $money['update_time'] = $now_time;
+                    $money_list[] = $money;
+                }
+                InoutOtherMoney::insert($money_list);
 
                 $msg['code']=200;
                 $msg['msg']='操作成功，您一共手工入库'.$count.'条数据，共计'.$pull_count.'托盘';
