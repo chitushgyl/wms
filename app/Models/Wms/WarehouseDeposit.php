@@ -7,14 +7,14 @@
  */
 namespace App\Models\Wms;
 use  Illuminate\Database\Eloquent\Model;
-class WmsLibraryOrder extends Model{
+class WarehouseDeposit extends Model{
     //软删除
- //   use SoftDeletes;
+    //   use SoftDeletes;
     //模型的连接名称（单独连接其他数据库）
     //protected $connection = 'connection-name';
 
     //指定数据库表 如果表名后带s则不需要 不带则需要
-    protected $table = 'wms_library_order';
+    protected $table = 'warehouse_deposit';
 
     //指定主键字段 默认为id
     //protected $primaryKey = 'id';
@@ -39,42 +39,24 @@ class WmsLibraryOrder extends Model{
     //protected $perPage = 15;
 
     //隐藏字段
-    protected $hidden = ['id'];
+    //protected $hidden = ['id'];
 
     protected $fillable = [
         'id'
     ];
 
     protected $guarded=[
-       // 'id'
+        // 'id'
         //写进去的字段不被注入
     ];
 
 //一对一
-//    public function userCapital(){
-//        //参数：关联模型名称，外键，主键
-//        //如果主键是id可以省略
-//        return $this->hasOne('App\Models\User\UserCapital','user_id','self_id');
-//    }
+    //public function wmsOutOrder(){
+    //    //参数：关联模型名称，外键，主键
+    //    //如果主键是id可以省略
+    //    return $this->hasMany('App\Models\Wms\WmsOutOrder','total_id','self_id');
+    //}
 
-//一对一
-    public function wmsLibrarySige(){
-        //参数：关联模型名称，外键，主键
-        //如果主键是id可以省略
-        return $this->hasMany('App\Models\Wms\WmsLibrarySige','order_id','self_id');
-    }
-
-    public function InoutOtherMoney(){
-        //参数：关联模型名称，外键，主键
-        //如果主键是id可以省略
-        return $this->hasMany('App\Models\Wms\InoutOtherMoney','order_id','self_id');
-    }
-
-    public function wmsGroup(){
-        //参数：关联模型名称，外键，主键
-        //如果主键是id可以省略
-        return $this->hasMany('App\Models\Wms\WmsGroup','company_id','self_id');
-    }
 
 
 }

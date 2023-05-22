@@ -1085,6 +1085,9 @@ class LibraryController extends CommonController{
             ->with(['InoutOtherMoney' => function($query) use($where1){
             $query->where($where1);
         }])
+            ->with(['wmsGroup' => function($query) use($where1){
+                $query->where($where1);
+            }])
             ->where($where)->first();
         if($data['info']){
 
