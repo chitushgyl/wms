@@ -944,7 +944,7 @@ class LibraryController extends CommonController{
                     $list['create_time']        =$now_time;
                     $list["update_time"]        =$now_time;
                     $list['create_user_id']     = $user_info->admin_id;
-                    $list['create_user_name']   = $v['name'];
+                    $list['create_user_name']   = $user_info->name;
                     $list["grounding_status"]   ='N';
                     $list["good_remark"]        =$v['good_remark'];
                     $list["good_lot"]           =$v['good_lot'];
