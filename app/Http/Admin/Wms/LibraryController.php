@@ -948,7 +948,7 @@ class LibraryController extends CommonController{
                     $list["grounding_status"]   ='N';
                     $list["good_remark"]        =$v['good_remark'];
                     $list["good_lot"]           =$v['good_lot'];
-                    $list["in_library_state"]   =$v['in_library_state'];
+//                    $list["in_library_state"]   =$v['in_library_state'];
                     $list["plate_number"]       =$v['plate_number'];
                     $list["singe_plate_number"] =$v['singe_plate_number'];
                     $list["singe_weight"]       =$v['singe_weight'];
