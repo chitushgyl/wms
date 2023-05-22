@@ -1029,6 +1029,7 @@ class LibraryController extends CommonController{
                 foreach($other_money as $key => $value){
                     $money['self_id'] = generate_id('LM');
                     $money['price']   = $value['price'];
+                    $money['order_id'] = $data['self_id'];
                     $money['money_id']   = $value['money_id'];
                     $money['number']   = $value['number'];
                     $money['total_price']   = $value['total_price'];
@@ -1078,7 +1079,7 @@ class LibraryController extends CommonController{
         $where1=[
             ['delete_flag','=','Y'],
         ];
-        $data['info']=WmsLibraryOrder::with(['WmsLibrarySige' => function($query) use($where1){
+        $data['info']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query) use($where1){
             $query->where($where1);
         }])
             ->with(['InoutOtherMoney' => function($query) use($where1){
