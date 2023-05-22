@@ -956,7 +956,7 @@ class LibraryController extends CommonController{
                     $list["count_number"]       =$v['count_number'];
 
                     $list['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
-                    $list['weight']             = $getGoods->wms_weight*$v['now_num'];
+                    $list['weight']             = $v['singe_weight']*$v['now_num'];
                     $bulk+=  $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
                     $weight+=  $getGoods->wms_weight*$v['now_num'];
 
