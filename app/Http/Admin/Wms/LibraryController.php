@@ -830,8 +830,7 @@ class LibraryController extends CommonController{
                 ['delete_flag','=','Y'],
                 ['self_id','=', $company_id],
             ];
-            $company_select=['self_id','company_name',
-                'preentry_type','preentry_price','out_type','out_price','storage_type','storage_price','total_type','total_price'];
+            $company_select=['self_id','company_name'];
 
             $company_info = WmsGroup::where($where_pack2)->select($company_select)->first();
 
