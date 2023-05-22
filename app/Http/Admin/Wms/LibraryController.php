@@ -681,6 +681,7 @@ class LibraryController extends CommonController{
         $company_name         = $request->input('company_name');//客户名称
         $library_sige       = json_decode($request->input('library_sige'), true);
         $voucher            = json_decode($request->input('voucher'),true);
+        $contract_id        = $request->input('contract_id');//合同编号
         $contract_num       = $request->input('contract_num');//合同编号
         $porter_num         = $request->input('porter_num');//搬运工单号
         $car_number         = $request->input('car_number');//车牌号
@@ -996,6 +997,7 @@ class LibraryController extends CommonController{
             $data['bulk']               =$bulk;
             $data['weight']             =$weight;
             $data['entry_time']         =$entry_time;
+            $data['contract_id']       =$contract_id;
             $data['contract_num']       =$contract_num;
             $data['porter_num']         =$porter_num;
             $data['car_number']         =$car_number;
