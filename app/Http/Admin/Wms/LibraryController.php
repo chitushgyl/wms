@@ -1009,7 +1009,7 @@ class LibraryController extends CommonController{
             $data['remark']             =$remark;
             $data['railway']            =$railway;
             $data['insufficient']       =$insufficient;
-            $data['other_money']        =$other_money;
+//            $data['other_money']        =$other_money;
             $data['voucher']            =img_for($voucher,'in');
             $data['order_status']       = 'S';
            //dd($data);
