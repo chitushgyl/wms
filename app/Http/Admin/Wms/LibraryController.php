@@ -1065,6 +1065,36 @@ class LibraryController extends CommonController{
 
     }
 
+    /**
+     * 添加/编辑
+     * */
+    public function createLibrary(Request $request){
+        /** 接收数据*/
+        $self_id=$request->input('self_id');
+        $where=[
+            ['delete_flag','=','Y'],
+            ['self_id','=',$self_id],
+        ];
+        $where1=[
+            ['delete_flag','=','Y'],
+        ];
+        $data['info']=WmsLibraryOrder::with(['WmsLibrarySige' => function($query) use($where1){
+            $query->where($where1);
+        }])
+            ->with(['InoutOtherMoney' => function($query) use($where1){
+            $query->where($where1);
+        }])
+            ->where($where)->first();
+        if($data['info']){
+
+        }
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+    }
+
     /***    入库详情     /wms/library/details
      */
     public function  details(Request $request,Details $details){
