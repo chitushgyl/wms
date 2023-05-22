@@ -873,20 +873,11 @@ class LibraryController extends CommonController{
                     }
                 }
 
-//dump($getGoods);
-                //$where2k['warehouse_id']=$warehouse_id;
-                $where2k['self_id']=$v['warehouse_sign_id'];
-                $warehouse_select=['warehouse_id','warehouse_name','self_id','area_id','area','row','column','tier','group_code','group_name'];
-                $getWmsWarehouse=WmsWarehouseSign::where($where2k)->select($warehouse_select)->first();
 
-//dd($getWmsWarehouse);
-//                if(empty($getWmsWarehouse)){
-//                    if($abcd<$errorNum){
-//                        $strs .= '数据中的第'.$a."行库位不存在".'</br>';
-//                        $cando='N';
-//                        $abcd++;
-//                    }
-//                }
+//                $where2k['self_id']=$v['warehouse_sign_id'];
+//                $warehouse_select=['warehouse_id','warehouse_name','self_id','area_id','area','row','column','tier','group_code','group_name'];
+//                $getWmsWarehouse=WmsWarehouseSign::where($where2k)->select($warehouse_select)->first();
+
 
                 /** 计算商品的有效期**/
                 $expire_time=null;
@@ -931,8 +922,8 @@ class LibraryController extends CommonController{
                     $list["wms_high"]           =$getGoods->wms_high;
                     $list["wms_weight"]         =$getGoods->wms_weight;
                     $list["good_info"]          =json_encode($getGoods,JSON_UNESCAPED_UNICODE);
-//                    $list["warehouse_id"]       =$getWmsWarehouse->warehouse_id;
-//                    $list["warehouse_name"]     =$getWmsWarehouse->warehouse_name;
+                    $list["warehouse_id"]       =$v['warehouse_id'];
+                    $list["warehouse_name"]     =$v['warehouse_name'];
 //                    $list['warehouse_sign_id']  =$getWmsWarehouse->self_id;
 //                    $list['area_id']            =$getWmsWarehouse->area_id;
 //                    $list['area']               =$getWmsWarehouse->area;
