@@ -1036,7 +1036,7 @@ class LibraryController extends CommonController{
                     $money['group_code']   = $data['group_code'];
                     $money['group_name']   = $data['group_name'];
                     $money['create_user_id']   = $data['create_user_id'];
-                    $money['create_user_name']   = $value['create_user_name'];
+                    $money['create_user_name']   = $data['create_user_name'];
                     $money['create_time']   = $money['update_time'] = $now_time;
                     $money_list[] = $money;
                 }
