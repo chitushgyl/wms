@@ -693,7 +693,7 @@ class LibraryController extends CommonController{
         $remark             = $request->input('remark');//总板数
         $railway            = $request->input('railway');//月台号
         $insufficient       = $request->input('insufficient');//不足N吨按吨算
-        $other_money        = $request->input('other_money');//其他费用
+        $other_money        = json_decode($request->input('other_money'),true);//其他费用
 	//dd($library_sige);
         /*** 虚拟数据
         $input['group_code']=$group_code='1234';
