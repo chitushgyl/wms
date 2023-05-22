@@ -803,6 +803,18 @@ class LibraryController extends CommonController{
                         }
                 }
 
+                $where_pack=[
+                    ['delete_flag','=','Y'],
+                    ['self_id','=', $warehouse_id],
+                ];
+
+                $warehouse_info = WmsWarehouse::where($where_pack)->select('warehouse_name','group_code','group_name')->first();
+                if(empty($warehouse_info)){
+                    $msg['code'] = 304;
+                    $msg['msg'] = '仓库不存在';
+                    return $msg;
+                }
+
             }
 
 
@@ -813,17 +825,6 @@ class LibraryController extends CommonController{
             }
 
             /** 开始检查其他数据对不对    **/
-            $where_pack=[
-                ['delete_flag','=','Y'],
-                ['self_id','=', $warehouse_id],
-            ];
-
-            $warehouse_info = WmsWarehouse::where($where_pack)->select('warehouse_name','group_code','group_name')->first();
-            if(empty($warehouse_info)){
-                $msg['code'] = 304;
-                $msg['msg'] = '仓库不存在';
-                return $msg;
-            }
 
             $where_pack2=[
                 ['delete_flag','=','Y'],
