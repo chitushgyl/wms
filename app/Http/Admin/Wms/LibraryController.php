@@ -905,7 +905,7 @@ class LibraryController extends CommonController{
                     $pull[] = '';
 
 		    //dd($getGoods->toArray());
-                    $list["self_id"]            =generate_id('LSID_');
+                    $list["self_id"]            =generate_id('R');
                     $list["order_id"]           =$seld;
                     $list["sku_id"]             =$getGoods->self_id;
                     $list["external_sku_id"]    =$getGoods->external_sku_id;

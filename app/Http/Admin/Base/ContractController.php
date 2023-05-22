@@ -105,10 +105,10 @@ class contractController extends CommonController{
 
 
         foreach ($data['items'] as $k=>$v) {
-            $v->type = $contract_type[$v->type]??null;
-            $v->contract_type = $contract_warehouse_type[$v->contract_type]??null;
-            $v->cold_settle = $settle_type1[$v->cold_settle]??null;
-            $v->contract_settle_type = $contract_settle_type[$v->contract_settle_type]??null;
+            $v->type_show = $contract_type[$v->type]??null;
+            $v->contract_type_show = $contract_warehouse_type[$v->contract_type]??null;
+            $v->cold_settle_show = $settle_type1[$v->cold_settle]??null;
+            $v->contract_settle_type_show = $contract_settle_type[$v->contract_settle_type]??null;
             $v->button_info=$button_info;
 
         }
