@@ -356,6 +356,7 @@ Route::group([
     Route::any('/wmsRailway/createWmsRailway', 'WmsRailwayController@createWmsRailway');
     Route::any('/wmsRailway/addWmsRailway', 'WmsRailwayController@addWmsRailway');
     Route::any('/wmsRailway/delWmsRailway', 'WmsRailwayController@delWmsRailway');
+    Route::any('/wmsRailway/getRailway', 'WmsRailwayController@getRailway');
 
 });
 
@@ -413,7 +414,7 @@ Route::group([
     Route::any('/wmsRailway/createWmsRailway', 'WmsRailwayController@createWmsRailway');
     Route::any('/wmsRailway/addWmsRailway', 'WmsRailwayController@addWmsRailway');
     Route::any('/wmsRailway/delWmsRailway', 'WmsRailwayController@delWmsRailway');
-    Route::any('/wmsRailway/getRailway', 'WmsRailwayController@getRailway');
+
 
 });
 
