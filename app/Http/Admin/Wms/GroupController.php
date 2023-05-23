@@ -408,8 +408,8 @@ class GroupController extends CommonController{
             ['delete_flag','=','Y'],
             ['group_code','=',$group_code],
         ];
-        $selset_WmsGroup=['self_id','company_name','group_code','group_name'];
-        $data['info']=WmsGroup::where($where)->select($selset_WmsGroup)->get();
+
+        $data['info']=WmsGroup::where($where)->get();
 
 	    $msg['code']=200;
         $msg['msg']="数据拉取成功";

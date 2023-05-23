@@ -242,7 +242,13 @@ class OrderController extends CommonController{
             $order_2['create_user_id']      =$user_info->admin_id;
             $order_2['create_user_name']    =$user_info->name;
             $order_2['create_time']         =$order_2['update_time']            =$now_time;
-            $order_2['delivery_time']       =$delivery_time;
+            $order_2['out_time']            =$out_time;
+            $order_2['car_number']          =$car_number;
+            $order_2['total_weight']        =$total_weight;
+            $order_2['total_number']        =$total_number;
+            $order_2['total_price']         =$total_price;
+            $order_2['total_plate']         =$total_plate;
+            $order_2['remark']              =$remark;
 
             $list=[];
             foreach($goods as $k =>$v){
