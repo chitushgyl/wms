@@ -67,8 +67,6 @@ class LibraryController extends CommonController{
                 'name'=>'导入凭证']
             ];
 
-
-
         //dd($data['button_info']->toArray());
 
         $msg['code']=200;
@@ -115,11 +113,13 @@ class LibraryController extends CommonController{
 
         $select=['self_id','order_status','grounding_status','group_name','group_code','warehouse_name','warehouse_id','storehouse_user_name','check_user_name','count','type','company_name','company_id','create_user_name',
             'check_time','create_time'];
-
+        $sigeSelect = [];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=WmsLibraryOrder::where($where)->count(); //总的数据量
-                $data['items']=WmsLibraryOrder::where($where)
+                $data['items']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($sigeSelect){
+                    $query->select($sigeSelect);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -128,7 +128,9 @@ class LibraryController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=WmsLibraryOrder::where($where)->count(); //总的数据量
-                $data['items']=WmsLibraryOrder::where($where)
+                $data['items']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($sigeSelect){
+                    $query->select($sigeSelect);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='N';
@@ -136,7 +138,9 @@ class LibraryController extends CommonController{
 
             case 'more':
                 $data['total']=WmsLibraryOrder::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsLibraryOrder::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['items']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($sigeSelect){
+                    $query->select($sigeSelect);
+                }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
