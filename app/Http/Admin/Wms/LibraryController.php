@@ -543,6 +543,7 @@ class LibraryController extends CommonController{
     public function getLibrarySige(Request $request){
         /** 接收数据*/
         $company_id       =$request->input('company_id');
+        $group_code       =$request->input('group_code');
 
         /*** 虚拟数据**/
         //$warehouse_id='ware_202006012159456407842832';
@@ -552,6 +553,7 @@ class LibraryController extends CommonController{
             ['use_flag','=','Y'],
             ['now_num','>',0],
             ['company_id','=',$company_id],
+            ['group_code','=',$group_code],
         ];
 
         //dd($where);
