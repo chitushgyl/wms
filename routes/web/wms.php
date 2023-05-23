@@ -175,6 +175,7 @@ Route::group([
     Route::any('/library/freeLibrarySku', 'LibraryController@freeLibrarySku');
     Route::any('/library/cancelGrounding', 'LibraryController@cancelGrounding');
     Route::any('/library/createLibrary', 'LibraryController@createLibrary');
+    Route::any('/library/getLibrarySige', 'LibraryController@getLibrarySige');
     Route::group([
         "middleware"=>['daily'],
     ], function(){
