@@ -537,6 +537,33 @@ class LibraryController extends CommonController{
 
     }
 
+    /**
+     * 获取商品库存
+     * */
+    public function getLibrarySige(Request $request){
+        /** 接收数据*/
+        $company_id       =$request->input('company_id');
+
+        /*** 虚拟数据**/
+        //$warehouse_id='ware_202006012159456407842832';
+
+        $where=[
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+            ['now_num','>',0],
+            ['company_id','=',$company_id],
+        ];
+
+        //dd($where);
+        $data['info']=WmsLibrarySige::where($where)->get();
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+
+        //dd($msg);
+        return $msg;
+    }
+
     /***    审核入库详情      /wms/library/getLibrary
      */
     public function getLibrary(Request $request){
