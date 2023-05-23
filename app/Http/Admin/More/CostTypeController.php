@@ -60,7 +60,7 @@ class CostTypeController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','cost_name','use_flag','group_name','group_code','create_time','update_time',
+        $select=['self_id','cost_name','use_flag','group_name','group_code','create_time','update_time','bill_id','bill_name',
             'use_flag','delete_flag','create_user_id','create_user_name','price','type','remark','system_flag'];
 
         switch ($group_info['group_id']){
@@ -150,6 +150,8 @@ class CostTypeController extends CommonController{
         $type       	    =$request->input('type');//单位
         $remark             =$request->input('remark');//描述
         $system_flag        =$request->input('system_flag');//系统费用 Y  N
+        $bill_id            =$request->input('bill_id');//系统费用 Y  N
+        $bill_name          =$request->input('bill_name');//系统费用 Y  N
 
         $rules=[
             'group_code'=>'required',
@@ -168,6 +170,8 @@ class CostTypeController extends CommonController{
             $data['type']                    = $type;
             $data['remark']                  = $remark;
             $data['system_flag']      		 =$system_flag;
+            $data['bill_id']      		     =$bill_id;
+            $data['bill_name']      		 =$bill_name;
 
 
             $wheres['self_id'] = $self_id;
