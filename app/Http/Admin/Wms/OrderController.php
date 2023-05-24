@@ -174,6 +174,7 @@ class OrderController extends CommonController{
         $total_price        = $request->input('total_price');//总金额
         $total_plate        = $request->input('total_plate');//总板数
         $remark             = $request->input('remark');
+        $more_money         = $request->input('more_money');
         /***
         $input['goods']=$goods=[
         '0'=>[
@@ -188,11 +189,9 @@ class OrderController extends CommonController{
          * **/
         $rules = [
             'company_id' => 'required',
-            'shop_id' => 'required',
         ];
         $message = [
             'company_id.required' => '请选择公司',
-            'shop_id.required' => '请选择门店',
         ];
         $validator = Validator::make($input, $rules, $message);
 
@@ -284,6 +283,20 @@ class OrderController extends CommonController{
                 $list['total_price']        = $v['total_price'];
                 $list['remarks']            = $v['remark'];
                 $list['out_library_state']  = $v['out_library_state'];
+
+                $list['singe_weight']       = $v['singe_weight'];//件重
+                $list['plate_num']          = $v['plate_num'];//板数
+                $list['count_num']          = $v['count_num'];//计费数量
+                $list['inventory_num']      = $v['inventory_num'];//库存数量
+                $list['inventory_weight']   = $v['inventory_weight'];//库存重量
+                $list['inventory_count_num']= $v['inventory_count_num'];//库存计费数量
+                $list['entry_time']         = $v['entry_time'];//入库时间
+                $list['warehouse_id']       = $v['warehouse_id'];//仓库
+                $list['warehouse_name']     = $v['warehouse_name'];
+                $list['produce_time']       = $v['produce_time'];//生产时间
+                $list['expire_time']        = $v['expire_time'];//过期时间
+                $list['cabinet_no']         = $v['cabinet_no'];//柜号
+
                 $datalist[]=$list;
 
             }
@@ -291,6 +304,8 @@ class OrderController extends CommonController{
             $count=count($goods);
             WmsOutOrderList::insert($datalist);
             $id= WmsOutOrder::insert($order_2);
+
+
 
             if($id){
                 $msg['code']=200;
