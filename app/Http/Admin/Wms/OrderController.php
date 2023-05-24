@@ -251,12 +251,9 @@ class OrderController extends CommonController{
 
                 //dd($vv);
                 $list['self_id']            =generate_id('list_');
-//                $list['shop_id']            = $shop_id;
-//                $list['shop_name']          = $shop_info->name;
                 $list['good_name']          = $sku_info->good_name;
                 $list['spec']               = $sku_info->wms_spec;
                 $list['num']                = $v['num'];
-                $list['good_unit']          = $v['wms_unit'];
                 $list['group_code']         = $sku_info->group_code;
                 $list['group_name']         = $sku_info->group_name;
                 $list['order_id']           = $order_2['self_id'];
@@ -267,7 +264,6 @@ class OrderController extends CommonController{
                 $list['create_time']        = $list['update_time']=$now_time;
                 $list['sanitation']         = $v['sanitation'];
                 $list['recipt_code']        = $recipt_code;
-//                $list['shop_code']          = $shop_info->shop_code;
                 $list['price']              = $v['price'];
                 $list['total_price']        = $v['total_price'];
                 $list['remarks']            = $v['remark'];
