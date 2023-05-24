@@ -210,17 +210,6 @@ class OrderController extends CommonController{
 
             //dump($group_info);
 
-            $where_warehouse=[
-                ['delete_flag','=','Y'],
-                ['self_id','=',$warehouse_id],
-            ];
-
-            $warehouse_info = WmsWarehouse::where($where_warehouse)->select('self_id','warehouse_name','group_name','group_code')->first();
-            if(empty($warehouse_info)){
-                $msg['code'] = 302;
-                $msg['msg'] = '仓库不存在';
-                return $msg;
-            }
 
             $shop_info = WmsShop::where('self_id',$shop_id)->select('self_id','external_id','name','contacts','address','tel','group_code','group_name','company_id','company_name')->first();
 
@@ -234,8 +223,8 @@ class OrderController extends CommonController{
             $order_2['group_code']          =$shop_info->group_code;
             $order_2['group_name']          =$shop_info->group_name;
             $order_2['count']               =count($goods);
-            $order_2['warehouse_id']        =$warehouse_info->self_id;
-            $order_2['warehouse_name']      =$warehouse_info->warehouse_name;
+//            $order_2['warehouse_id']        =$warehouse_info->self_id;
+//            $order_2['warehouse_name']      =$warehouse_info->warehouse_name;
             $order_2['company_id']          =$shop_info->company_id;
             $order_2['company_name']        =$shop_info->company_name;
             $order_2['create_user_id']      =$user_info->admin_id;
@@ -251,7 +240,17 @@ class OrderController extends CommonController{
 
             $list=[];
             foreach($goods as $k =>$v){
+                $where_warehouse=[
+                    ['delete_flag','=','Y'],
+                    ['self_id','=',$v['warehouse_id']],
+                ];
 
+                $warehouse_info = WmsWarehouse::where($where_warehouse)->select('self_id','warehouse_name','group_name','group_code')->first();
+                if(empty($warehouse_info)){
+                    $msg['code'] = 302;
+                    $msg['msg'] = '仓库不存在';
+                    return $msg;
+                }
                 $where_sku=[
                     ['delete_flag','=','Y'],
                     ['external_sku_id','=',$v['external_sku_id']],
@@ -262,7 +261,7 @@ class OrderController extends CommonController{
 
                 //dd($vv);
                 $list['self_id']            =generate_id('list_');
-                $list['shop_id']            = $shop_id;
+//                $list['shop_id']            = $shop_id;
                 $list['shop_name']          = $shop_info->name;
                 $list['good_name']          = $sku_info->good_name;
                 $list['spec']               = $sku_info->wms_spec;
