@@ -264,10 +264,10 @@ class OrderController extends CommonController{
                 $list['create_time']        = $list['update_time']=$now_time;
 //                $list['sanitation']         = $v['sanitation'];
                 $list['recipt_code']        = $recipt_code;
-                $list['price']              = $v['price'];
-                $list['total_price']        = $v['total_price'];
+//                $list['price']              = $v['price'];
+//                $list['total_price']        = $v['total_price'];
                 $list['remarks']            = $v['remark'];
-                $list['out_library_state']  = $v['out_library_state'];
+//                $list['out_library_state']  = $v['out_library_state'];
 
                 $list['singe_weight']       = $v['singe_weight'];//件重
                 $list['plate_num']          = $v['plate_num'];//板数
