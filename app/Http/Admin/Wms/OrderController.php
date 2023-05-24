@@ -262,7 +262,7 @@ class OrderController extends CommonController{
                 $list['create_user_id']     = $user_info->admin_id;
                 $list['create_user_name']   = $user_info->name;
                 $list['create_time']        = $list['update_time']=$now_time;
-                $list['sanitation']         = $v['sanitation'];
+//                $list['sanitation']         = $v['sanitation'];
                 $list['recipt_code']        = $recipt_code;
                 $list['price']              = $v['price'];
                 $list['total_price']        = $v['total_price'];
