@@ -164,8 +164,8 @@ class DepositController extends CommonController{
         $company_id         =$request->input('company_id');//客户
         $car_number         =$request->input('car_number');//车牌号
         $deposit_time       =$request->input('deposit_time');//寄存时间
-        $more_money         =$request->input('more_money');//其他费用
-        $good_list          =$request->input('good_list');
+        $more_money         =json_decode($request->input('more_money'),true);//其他费用
+        $good_list          =json_decode($request->input('good_list'),true);
 
 
         $rules=[
