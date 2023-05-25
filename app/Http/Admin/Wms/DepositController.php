@@ -183,7 +183,7 @@ class DepositController extends CommonController{
             $address_list = [];
             $contact = [];
             $address_area = [];
-
+            $deposit_id                         =  generate_id('J');
             $data['total_price']                = $total_price;
             $data['total_plate']                = $total_plate;
             $data['total_weight']               = $total_weight;
@@ -216,23 +216,23 @@ class DepositController extends CommonController{
                     }
                 }
 
-                $list['self_id']           =  generate_id('J');
-                $list['sku_id']            =  $value['sku_id'];
-                $list['external_sku_id']   =  $value['external_sku_id'];
-                $list['warehouse_id']      =  $value['warehouse_id'];
-                $list['warehouse_name']    =  $value['warehouse_name'];
-                $list['good_name']         =  $value['good_name'];
-                $list['good_spac']         =  $value['good_spac'];
-                $list['good_weight']       =  $value['good_weight'];
-                $list['good_num']          =  $value['good_num'];
-                $list['weight']            =  $value['weight'];
-                $list['num']               =  $value['num'];
-                $list['plate_num']         =  $value['plate_num'];
-                $list['plate_id']          =  $value['plate_id'];
-                $list['produce_time']      =  $value['produce_time'];
-                $list['shelf_life']        =  $value['shelf_life'];
-                $list['remark']            =  $value['remark'];
-                $list['deposit_id']        =  $value['deposit_id'];
+
+                $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
+                $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
+                $list['warehouse_id']      =  $value['warehouse_id'];//仓库self_id
+                $list['warehouse_name']    =  $value['warehouse_name'];//仓库名称
+                $list['good_name']         =  $value['good_name'];//商品名称
+                $list['good_spac']         =  $value['good_spac'];//商品规格
+                $list['good_weight']       =  $value['good_weight'];//件重
+                $list['good_num']          =  $value['good_num'];//件数
+                $list['weight']            =  $value['weight'];//吨重
+                $list['num']               =  $value['num'];//计费数量
+                $list['plate_num']         =  $value['plate_num'];//板数
+                $list['plate_id']          =  $value['plate_id'];//板位
+                $list['produce_time']      =  $value['produce_time'];//生产日期
+                $list['shelf_life']        =  $value['shelf_life'];//保质期
+                $list['remark']            =  $value['remark'];//备注
+                $list['deposit_id']        =  $deposit_id;//
                 $list['group_code']        =  $group_code;
                 $list['group_name']        =  $user_info->group_name;
                 $list['create_user_id']    =  $user_info->id;
@@ -255,7 +255,7 @@ class DepositController extends CommonController{
 
             }else{
 
-                $data['self_id']=generate_id('JC');		//优惠券表ID
+                $data['self_id']=$deposit_id;		//优惠券表ID
                 $data['group_code'] = $group_code;
                 $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
                 $data['create_user_id']=$user_info->admin_id;
