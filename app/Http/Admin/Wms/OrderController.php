@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\Wms;
+use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsLibraryChange;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
@@ -174,7 +175,7 @@ class OrderController extends CommonController{
         $total_price        = $request->input('total_price');//总金额
         $total_plate        = $request->input('total_plate');//总板数
         $remark             = $request->input('remark');
-        $more_money         = $request->input('more_money');
+        $more_money         = json_decode($request->input('more_money'),true);
         /***
         $input['goods']=$goods=[
         '0'=>[
@@ -290,7 +291,22 @@ class OrderController extends CommonController{
             WmsOutOrderList::insert($datalist);
             $id= WmsOutOrder::insert($order_2);
 
-
+            foreach($more_money as $key => $value){
+                $money['self_id'] = generate_id('CM');
+                $money['price']   = $value['price'];
+                $money['order_id'] = $order_2['self_id'];
+                $money['money_id']   = $value['money_id'];
+                $money['number']   = $value['number'];
+                $money['total_price']   = $value['total_price'];
+                $money['bill_id']   = $value['bill_id'];
+                $money['group_code']   = $order_2['group_code'];
+                $money['group_name']   = $order_2['group_name'];
+                $money['create_user_id']   = $order_2['create_user_id'];
+                $money['create_user_name']   = $order_2['create_user_name'];
+                $money['create_time']   = $money['update_time'] = $now_time;
+                $money_list[] = $money;
+            }
+            InoutOtherMoney::insert($money_list);
 
             if($id){
                 $msg['code']=200;

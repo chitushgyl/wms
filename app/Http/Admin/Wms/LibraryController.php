@@ -308,43 +308,11 @@ class LibraryController extends CommonController{
                 }
 
                 //查询库位是不是存在
-                /**
-                 * 2022/1/10 修改 导入入库订单取消库位填写
-                 * $abc= explode('-',$v['sign']);
-                $where2k=[];
-                if(array_key_exists(0, $abc)){
-                $where2k['area']=$abc[0];
-                }
-                if(array_key_exists(1, $abc)){
-                $where2k['row']=$abc[1];
-                }
-                if(array_key_exists(2, $abc)){
-                $where2k['column']=$abc[2];
-                }
-                if(array_key_exists(3, $abc)){
-                $where2k['tier']=$abc[3];
-                }
-                if($where2k){
-                $where2k['warehouse_id']=$warehouse_id;
-                }
 
-                $warehouse_select=['warehouse_id','warehouse_name','self_id','area_id','area','row','column','tier','group_code','group_name'];
-                $getWmsWarehouse=WmsWarehouseSign::where($where2k)->select($warehouse_select)->first();
-                 * */
                 $where2k['self_id']=$v['warehouse_sign_id'];
                 $warehouse_select=['warehouse_id','warehouse_name','self_id','area_id','area','row','column','tier','group_code','group_name'];
                 $getWmsWarehouse=WmsWarehouseSign::where($where2k)->select($warehouse_select)->first();
 
-                /**
-                 * 2022/1/10 修改 导入入库订单取消库位填写
-                if(empty($getWmsWarehouse)){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行库位不存在".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-                 * */
                 /** 计算商品的有效期**/
                 $expire_time=null;
                 if($v['expire_time']){
@@ -888,7 +856,6 @@ class LibraryController extends CommonController{
             $seld=generate_id('SID_');
             $bulk=0;
             $weight=0;
-//dump($library_sige);
             $a=2;
             foreach($library_sige as $k => $v){
                 //dump($v);
