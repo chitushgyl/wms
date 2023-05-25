@@ -298,6 +298,12 @@ Route::group([
     Route::any('/settle/addGathering','SettleController@addGathering');
     Route::any('/settle/updateMoney','SettleController@updateMoney');
 
+    Route::any('/deposit/depositList', 'DepositController@depositList');
+    Route::any('/deposit/depositPage', 'DepositController@depositPage');
+    Route::any('/deposit/createDeposit','DepositController@createDeposit');
+    Route::any('/deposit/addDeposit', 'DepositController@addDeposit');
+    Route::any('/deposit/depositDelFlag','DepositController@depositDelFlag');
+
 
     Route::any('/crondtab/updateSkuState','CrondtabController@updateSkuState');
 });
