@@ -4,6 +4,7 @@ use App\Models\Shop\ErpShopGoodsSku;
 use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
 use App\Models\Wms\InoutOtherMoney;
+use App\Models\Wms\WmsChangeGood;
 use App\Models\Wms\WmsDeposit;
 use App\Models\Wms\WmsDepositGood;
 use Illuminate\Support\Facades\Input;
@@ -18,10 +19,10 @@ use App\Http\Controllers\DetailsController as Details;
 use App\Models\Wms\WmsGroup;
 use App\Models\Group\SystemGroup;
 
-class DepositController extends CommonController{
-    /***    业务公司列表      /wms/deposit/depositList
+class ChangeController extends CommonController{
+    /***    业务公司列表      /wms/change/changeList
      */
-    public function  depositList(Request $request){
+    public function  changeList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
         $abc='业务公司';
@@ -39,7 +40,7 @@ class DepositController extends CommonController{
     }
 
     //业务公司列表分页加载数据
-    /***    业务公司分页      /wms/deposit/depositPage
+    /***    业务公司分页      /wms/change/changePage
      */
     public function depositPage(Request $request){
         /** 接收中间件参数**/
@@ -70,8 +71,8 @@ class DepositController extends CommonController{
 
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=WmsDeposit::where($where)->count(); //总的数据量
-                $data['items']=WmsDeposit::where($where)
+                $data['total']=WmsChangeGood::where($where)->count(); //总的数据量
+                $data['items']=WmsChangeGood::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -79,16 +80,16 @@ class DepositController extends CommonController{
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=WmsDeposit::where($where)->count(); //总的数据量
-                $data['items']=WmsDeposit::where($where)
+                $data['total']=WmsChangeGood::where($where)->count(); //总的数据量
+                $data['items']=WmsChangeGood::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=WmsDeposit::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsDeposit::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['total']=WmsChangeGood::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=WmsChangeGood::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -112,9 +113,9 @@ class DepositController extends CommonController{
 
     }
 
-    /***    业务公司创建      /wms/deposit/createDeposit
+    /***    业务公司创建      /wms/change/createChange
      */
-    public function createDeposit(Request $request){
+    public function createChange(Request $request){
 
         /** 接收数据*/
         $self_id=$request->input('self_id');
@@ -122,7 +123,7 @@ class DepositController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $data['info']=WmsDeposit::where($where)->first();
+        $data['info']=WmsChangeGood::where($where)->first();
         if($data['info']){
 
         }
@@ -135,9 +136,9 @@ class DepositController extends CommonController{
 
     }
 
-    /***    业务公司添加进入数据库      /wms/deposit/addDeposit
+    /***    业务公司添加进入数据库      /wms/change/addChange
      */
-    public function addDeposit(Request $request){
+    public function addChange(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='wms_group';
