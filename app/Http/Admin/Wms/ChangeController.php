@@ -181,7 +181,7 @@ class ChangeController extends CommonController{
             $address_list = [];
             $contact = [];
             $address_area = [];
-            $deposit_id                         = generate_id('J');
+            $deposit_id                         = generate_id('T');
             $data['total_price']                = $total_price;
             $data['total_num']                  = $total_num;
             $data['total_weight']               = $total_weight;
@@ -208,7 +208,7 @@ class ChangeController extends CommonController{
                         $abcd++;
                     }
                 }
-
+                $list['sige_id']           =  $value['sige_id'];//原库存SELF_ID
                 $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
                 $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
                 $list['yuan_warehouse_id'] =  $value['yuan_warehouse_id'];//转出仓库self_id
@@ -226,7 +226,7 @@ class ChangeController extends CommonController{
                 $list['inventory_num']     =  $value['inventory_num'];//库存件数
                 $list['inventory_count_num']  =  $value['inventory_count_num'];//库存计费数量
                 $list['remark']            =  $value['remark'];//备注
-                $list['deposit_id']        =  $deposit_id;//
+                $list['change_id']         =  $deposit_id;//
                 $list['group_code']        =  $group_code;
                 $list['group_name']        =  $user_info->group_name;
                 $list['create_user_id']    =  $user_info->admin_id;
@@ -315,9 +315,9 @@ class ChangeController extends CommonController{
 
     }
 
-    /***    业务公司启用禁用      /wms/deposit/depositUseFlag
+    /***    业务公司启用禁用      /wms/change/changeUseFlag
      */
-    public function depositUseFlag(Request $request,Status $status){
+    public function changeUseFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
         $table_name='wms_deposit';
@@ -343,13 +343,13 @@ class ChangeController extends CommonController{
         return $msg;
     }
 
-    /***    业务公司删除      /wms/deposit/depositDelFlag
+    /***    业务公司删除      /wms/change/changeDelFlag
      */
-    public function depositDelFlag(Request $request,Status $status){
+    public function changeDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_deposit';
-        $medol_name='WmsDeposit';
+        $table_name='wms_change_good';
+        $medol_name='WmsChangeGood';
         $self_id=$request->input('self_id');
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';

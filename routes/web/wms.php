@@ -305,6 +305,12 @@ Route::group([
     Route::any('/deposit/depositDelFlag','DepositController@depositDelFlag');
 
 
+    Route::any('/change/changeList', 'ChangeController@changeList');
+    Route::any('/change/changePage', 'ChangeController@changePage');
+    Route::any('/change/createChange','ChangeController@createChange');
+    Route::any('/change/addChange', 'ChangeController@addChange');
+    Route::any('/change/changeDelFlag','ChangeController@changeDelFlag');
+
     Route::any('/crondtab/updateSkuState','CrondtabController@updateSkuState');
 });
 
