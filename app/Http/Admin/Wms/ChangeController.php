@@ -5,8 +5,10 @@ use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
 use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsChangeGood;
+use App\Models\Wms\WmsChangeList;
 use App\Models\Wms\WmsDeposit;
 use App\Models\Wms\WmsDepositGood;
+use App\Models\Wms\WmsLibrarySige;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -153,18 +155,13 @@ class ChangeController extends CommonController{
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $group_code         =$request->input('group_code');
-        $total_price        =$request->input('total_price');//总费用
-        $total_plate        =$request->input('total_plate');//总板数
+        $total_price        =$request->input('total_price');//总金额
+        $total_num          =$request->input('total_num');//总件数
         $total_weight       =$request->input('total_weight');//总吨重
-        $porter             =$request->input('porter');//搬运工
-        $porter_id          =$request->input('porter_id');//搬运工self_id
-        $contract_num       =$request->input('contract_num');//合同编号
-        $contract_id        =$request->input('contract_id');//合同SELF_ID
+        $change_time        =$request->input('change_time');//调仓时间
         $remark             =$request->input('remark');//备注
         $company_name       =$request->input('company_name');//客户
         $company_id         =$request->input('company_id');//客户
-        $car_number         =$request->input('car_number');//车牌号
-        $deposit_time       =$request->input('deposit_time');//寄存时间
         $more_money         =json_decode($request->input('more_money'),true);//其他费用
         $good_list          =json_decode($request->input('good_list'),true);
 
@@ -184,19 +181,14 @@ class ChangeController extends CommonController{
             $address_list = [];
             $contact = [];
             $address_area = [];
-            $deposit_id                         =  generate_id('J');
+            $deposit_id                         = generate_id('J');
             $data['total_price']                = $total_price;
-            $data['total_plate']                = $total_plate;
+            $data['total_num']                  = $total_num;
             $data['total_weight']               = $total_weight;
-            $data['porter']                     = $porter;
-            $data['porter_id']                  = $porter_id;
-            $data['contract_num']               = $contract_num;
-            $data['contract_id']           	    = $contract_id;
-            $data['remark']                 	= $remark;
+            $data['change_time']                = $change_time;
             $data['company_name']               = $company_name;
             $data['company_id']           	    = $company_id;
-            $data['car_number']           	    = $car_number;
-            $data['deposit_time']               = $deposit_time;
+            $data['remark']                 	= $remark;
 
             $errorNum=50;       //控制错误数据的条数
             $a=2;
@@ -217,21 +209,22 @@ class ChangeController extends CommonController{
                     }
                 }
 
-
                 $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
                 $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
-                $list['warehouse_id']      =  $value['warehouse_id'];//仓库self_id
-                $list['warehouse_name']    =  $value['warehouse_name'];//仓库名称
+                $list['yuan_warehouse_id'] =  $value['yuan_warehouse_id'];//转出仓库self_id
+                $list['yuan_warehouse_name'] =  $value['yuan_warehouse_name'];//转出仓库名称
+                $list['warehouse_id']      =  $value['warehouse_id'];//转入仓库self_id
+                $list['warehouse_name']    =  $value['warehouse_name'];//转入仓库名称
                 $list['good_name']         =  $value['good_name'];//商品名称
                 $list['good_spac']         =  $value['good_spac'];//商品规格
                 $list['good_weight']       =  $value['good_weight'];//件重
-                $list['good_num']          =  $value['good_num'];//件数
+//                $list['good_num']          =  $value['good_num'];//件数
                 $list['weight']            =  $value['weight'];//吨重
-                $list['num']               =  $value['num'];//计费数量
+                $list['num']               =  $value['num'];//数量
                 $list['plate_num']         =  $value['plate_num'];//板数
                 $list['plate_id']          =  $value['plate_id'];//板位
-                $list['produce_time']      =  $value['produce_time'];//生产日期
-                $list['shelf_life']        =  $value['shelf_life'];//保质期
+                $list['inventory_num']     =  $value['inventory_num'];//库存件数
+                $list['inventory_count_num']  =  $value['inventory_count_num'];//库存计费数量
                 $list['remark']            =  $value['remark'];//备注
                 $list['deposit_id']        =  $deposit_id;//
                 $list['group_code']        =  $group_code;
@@ -241,6 +234,11 @@ class ChangeController extends CommonController{
                 $list['create_time']       =  $now_time;
                 $list['update_time']       =  $now_time;
 
+
+                $wmsLibrarySige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
+                $library_sige['num']       = $wmsLibrarySige->num - $value['num'];
+
+                $library_sige_list[] = $library_sige;
                 $deposit_list[] = $list;
                 $a++;
             }
@@ -262,13 +260,13 @@ class ChangeController extends CommonController{
                 $data['create_user_id']=$user_info->admin_id;
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsDeposit::insert($data);
+                $id=WmsChangeGood::insert($data);
 
                 if ($id){
-                    WmsDepositGood::insert($deposit_list);
+                    WmsChangeList::insert($deposit_list);
                 }
                 foreach($more_money as $k => $v){
-                    $money['self_id'] = generate_id('CM');
+                    $money['self_id'] = generate_id('TC');
                     $money['price']   = $v['price'];
                     $money['order_id'] = $data['self_id'];
                     $money['money_id']   = $v['money_id'];
