@@ -3,7 +3,9 @@ namespace App\Http\Admin\Wms;
 use App\Models\Shop\ErpShopGoodsSku;
 use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
+use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsDeposit;
+use App\Models\Wms\WmsDepositGood;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -214,7 +216,7 @@ class DepositController extends CommonController{
                     }
                 }
 
-                $list['self_id']           =  generate_id('JC');
+                $list['self_id']           =  generate_id('J');
                 $list['sku_id']            =  $value['sku_id'];
                 $list['external_sku_id']   =  $value['external_sku_id'];
                 $list['warehouse_id']      =  $value['warehouse_id'];
@@ -244,109 +246,43 @@ class DepositController extends CommonController{
 
 
             $wheres['self_id'] = $self_id;
-            $old_info=WmsGroup::where($wheres)->first();
+            $old_info=WmsDeposit::where($wheres)->first();
 
             if($old_info){
-                //dd(1111);
-                $data['update_time']=$now_time;
-                $id=WmsGroup::where($wheres)->update($data);
-                foreach ($contacts as $k => $v){
-                    if ($v['self_id']){
-                        $contact['name'] = $v['name'];
-                        $contact['tel'] = $v['tel'];
-                        $contact['wechat'] = $v['wechat'];
-                        $contact['email'] = $v['email'];
-                        $contact['delete_flag'] = $v['delete_flag'];
-                        CompanyContact::where('self_id',$v['self_id'])->update($contact);
-                    }else{
-                        $contact['self_id'] = generate_id('tel_');
-                        $contact['company_id'] = $self_id;
-                        $contact['name'] = $v['name'];
-                        $contact['tel'] = $v['tel'];
-                        $contact['wechat'] = $v['wechat'];
-                        $contact['email'] = $v['email'];
-                        $contact['group_code'] = $group_code;
-                        $contact['group_name'] = $old_info->group_name;
-                        $contact['create_user_id'] = $user_info->admin_id;
-                        $contact['create_user_name'] = $user_info->name;
-                        $contact_list[] = $contact;
-                    }
-                }
-                foreach ($contact_address as $k => $v){
-                    if ($v['self_id']){
-                        $address_area['name'] = $v['name'];
-                        $address_area['tel'] = $v['tel'];
-                        $address_area['address'] = $v['address'];
-                        $address_area['default_flag'] = $v['default_flag'];
-                        $address_area['delete_flag'] = $v['delete_flag'];
-                        ContactAddress::where('self_id',$v['self_id'])->update($contact);
-                    }else{
-                        $address_area['self_id'] = generate_id('address_');
-                        $address_area['company_id'] = $self_id;
-                        $address_area['name'] = $v['name'];
-                        $address_area['tel'] = $v['tel'];
-                        $address_area['address'] = $v['address'];
-                        $address_area['default_flag'] = $v['default_flag'];
-                        $address_area['group_code'] = $group_code;
-                        $address_area['group_name'] = $old_info->group_name;
-                        $address_area['create_user_id'] = $user_info->admin_id;
-                        $address_area['create_user_name'] = $user_info->name;
-                        $address_list[] = $address_area;
-                    }
-                }
-                if (count($contact_list)>0){
-                    CompanyContact::insert($contact_list);
-                }
-                if (count($address_list)>0){
-                    ContactAddress::insert($address_list);
-                }
+
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
 
-
             }else{
 
-                $data['self_id']=generate_id('company_');		//优惠券表ID
+                $data['self_id']=generate_id('JC');		//优惠券表ID
                 $data['group_code'] = $group_code;
                 $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
                 $data['create_user_id']=$user_info->admin_id;
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsGroup::insert($data);
+                $id=WmsDeposit::insert($data);
 
-                if ($contacts){
-                    foreach ($contacts as $k => $v){
-                        $contact['self_id'] = generate_id('tel_');
-                        $contact['company_id'] = $data['self_id'];
-                        $contact['name'] = $v['name'];
-                        $contact['tel'] = $v['tel'];
-                        $contact['wechat'] = $v['wechat'];
-                        $contact['email'] = $v['email'];
-                        $contact['group_code'] = $group_code;
-                        $contact['group_name'] = $data['group_name'];
-                        $contact['create_user_id'] = $user_info->admin_id;
-                        $contact['create_user_name'] = $user_info->name;
-                        $contact_list[] = $contact;
-                    }
+                if ($id){
+                    WmsDepositGood::insert($deposit_list);
+                }
+                foreach($more_money as $k => $v){
+                    $money['self_id'] = generate_id('CM');
+                    $money['price']   = $v['price'];
+                    $money['order_id'] = $data['self_id'];
+                    $money['money_id']   = $v['money_id'];
+                    $money['number']   = $v['number'];
+                    $money['total_price']   = $v['total_price'];
+                    $money['bill_id']   = $v['bill_id'];
+                    $money['group_code']   = $data['group_code'];
+                    $money['group_name']   = $data['group_name'];
+                    $money['create_user_id']   = $data['create_user_id'];
+                    $money['create_user_name']   = $data['create_user_name'];
+                    $money['create_time']   = $money['update_time'] = $now_time;
+                    $money_list[] = $money;
+                }
+                InoutOtherMoney::insert($money_list);
 
-                }
-                if ($contact_address){
-                    foreach ($contact_address as $k => $v){
-                        $address_area['self_id'] = generate_id('address_');
-                        $address_area['company_id'] = $data['self_id'];
-                        $address_area['name'] = $v['name'];
-                        $address_area['tel'] = $v['tel'];
-                        $address_area['address'] = $v['address'];
-                        $address_area['default_flag'] = $v['default_flag'];
-                        $address_area['group_code'] = $group_code;
-                        $address_area['group_name'] = $data['group_name'];
-                        $address_area['create_user_id'] = $user_info->admin_id;
-                        $address_area['create_user_name'] = $user_info->name;
-                        $address_list[] = $address_area;
-                    }
-                }
-                ContactAddress::insert($address_list);
-                CompanyContact::insert($contact_list);
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
 
