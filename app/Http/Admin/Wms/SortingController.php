@@ -7,6 +7,7 @@ use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsDeposit;
 use App\Models\Wms\WmsDepositGood;
 use App\Models\Wms\WmsSorting;
+use App\Models\Wms\WmsSortingGood;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -156,17 +157,15 @@ class SortingController extends CommonController{
         $self_id            =$request->input('self_id');
         $group_code         =$request->input('group_code');
         $total_price        =$request->input('total_price');//总费用
-        $total_plate        =$request->input('total_plate');//总板数
         $total_weight       =$request->input('total_weight');//总吨重
         $porter             =$request->input('porter');//搬运工
         $porter_id          =$request->input('porter_id');//搬运工self_id
-        $contract_num       =$request->input('contract_num');//合同编号
-        $contract_id        =$request->input('contract_id');//合同SELF_ID
         $remark             =$request->input('remark');//备注
         $company_name       =$request->input('company_name');//客户
         $company_id         =$request->input('company_id');//客户
-        $car_number         =$request->input('car_number');//车牌号
-        $deposit_time       =$request->input('deposit_time');//寄存时间
+        $out_car_number     =$request->input('out_car_number');//转出车号
+        $in_car_number      =$request->input('in_car_number');//转入车号
+        $sorting_time       =$request->input('sorting_time');//寄存时间
         $more_money         =json_decode($request->input('more_money'),true);//其他费用
         $good_list          =json_decode($request->input('good_list'),true);
 
@@ -188,17 +187,16 @@ class SortingController extends CommonController{
             $address_area = [];
             $deposit_id                         =  generate_id('J');
             $data['total_price']                = $total_price;
-            $data['total_plate']                = $total_plate;
             $data['total_weight']               = $total_weight;
             $data['porter']                     = $porter;
             $data['porter_id']                  = $porter_id;
-            $data['contract_num']               = $contract_num;
-            $data['contract_id']           	    = $contract_id;
+
             $data['remark']                 	= $remark;
             $data['company_name']               = $company_name;
             $data['company_id']           	    = $company_id;
-            $data['car_number']           	    = $car_number;
-            $data['deposit_time']               = $deposit_time;
+            $data['in_car_number']              = $in_car_number;
+            $data['out_car_number']           	= $out_car_number;
+            $data['sorting_time']               = $sorting_time;
 
             $errorNum=50;       //控制错误数据的条数
             $a=2;
@@ -222,20 +220,13 @@ class SortingController extends CommonController{
 
                 $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
                 $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
-                $list['warehouse_id']      =  $value['warehouse_id'];//仓库self_id
-                $list['warehouse_name']    =  $value['warehouse_name'];//仓库名称
                 $list['good_name']         =  $value['good_name'];//商品名称
-                $list['good_spac']         =  $value['good_spac'];//商品规格
                 $list['good_weight']       =  $value['good_weight'];//件重
-                $list['good_num']          =  $value['good_num'];//件数
                 $list['weight']            =  $value['weight'];//吨重
                 $list['num']               =  $value['num'];//计费数量
                 $list['plate_num']         =  $value['plate_num'];//板数
-                $list['plate_id']          =  $value['plate_id'];//板位
-                $list['produce_time']      =  $value['produce_time'];//生产日期
-                $list['shelf_life']        =  $value['shelf_life'];//保质期
                 $list['remark']            =  $value['remark'];//备注
-                $list['deposit_id']        =  $deposit_id;//
+                $list['sorting_id']        =  $deposit_id;//
                 $list['group_code']        =  $group_code;
                 $list['group_name']        =  $user_info->group_name;
                 $list['create_user_id']    =  $user_info->admin_id;
@@ -249,7 +240,7 @@ class SortingController extends CommonController{
 
 
             $wheres['self_id'] = $self_id;
-            $old_info=WmsDeposit::where($wheres)->first();
+            $old_info=WmsSorting::where($wheres)->first();
 
             if($old_info){
 
@@ -264,10 +255,10 @@ class SortingController extends CommonController{
                 $data['create_user_id']=$user_info->admin_id;
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsDeposit::insert($data);
+                $id=WmsSorting::insert($data);
 
                 if ($id){
-                    WmsDepositGood::insert($deposit_list);
+                    WmsSortingGood::insert($deposit_list);
                 }
                 foreach($more_money as $k => $v){
                     $money['self_id'] = generate_id('CM');
