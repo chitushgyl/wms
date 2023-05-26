@@ -439,6 +439,7 @@ Route::group([
     Route::any('/wmsPorter/createWmsPorter', 'WmsPorterController@createWmsPorter');
     Route::any('/wmsPorter/addWmsPorter', 'WmsPorterController@addWmsPorter');
     Route::any('/wmsPorter/delWmsPorter', 'WmsPorterController@delWmsPorter');
+    Route::any('/wmsPorter/getPorter', 'WmsPorterController@getPorter');
 
     Route::any('/wmsRailway/wmsRailwayList', 'WmsRailwayController@wmsRailwayList');
     Route::any('/wmsRailway/wmsRailwayPage', 'WmsRailwayController@wmsRailwayPage');
