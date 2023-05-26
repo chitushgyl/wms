@@ -317,6 +317,18 @@ Route::group([
     Route::any('/turn/addTurn', 'TurnController@addTurn');
     Route::any('/turn/turnDelFlag','TurnController@turnDelFlag');
 
+    Route::any('/homework/homeworkList', 'HomeworkController@homeworkList');
+    Route::any('/homework/homeworkPage', 'HomeworkController@homeworkPage');
+    Route::any('/homework/createHomework','HomeworkController@createHomework');
+    Route::any('/homework/addHomework', 'HomeworkController@addHomework');
+    Route::any('/homework/homeworkDelFlag','HomeworkController@homeworkDelFlag');
+
+    Route::any('/sorting/sortingList', 'SortingController@sortingList');
+    Route::any('/sorting/sortingPage', 'SortingController@sortingPage');
+    Route::any('/sorting/createSorting','SortingController@createSorting');
+    Route::any('/sorting/addSorting', 'SortingController@addSorting');
+    Route::any('/sorting/SortingDelFlag','SortingController@SortingDelFlag');
+
     Route::any('/crondtab/updateSkuState','CrondtabController@updateSkuState');
 });
 
