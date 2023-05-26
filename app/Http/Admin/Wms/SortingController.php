@@ -6,6 +6,7 @@ use App\Models\Wms\ContactAddress;
 use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsDeposit;
 use App\Models\Wms\WmsDepositGood;
+use App\Models\Wms\WmsSorting;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -19,9 +20,9 @@ use App\Models\Wms\WmsGroup;
 use App\Models\Group\SystemGroup;
 
 class SortingController extends CommonController{
-    /***    业务公司列表      /wms/deposit/depositList
+    /***    业务公司列表      /wms/sorting/sortingList
      */
-    public function  depositList(Request $request){
+    public function  sortingList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
         $abc='业务公司';
@@ -39,9 +40,9 @@ class SortingController extends CommonController{
     }
 
     //业务公司列表分页加载数据
-    /***    业务公司分页      /wms/deposit/depositPage
+    /***    业务公司分页      /wms/sorting/sortingPage
      */
-    public function depositPage(Request $request){
+    public function sortingPage(Request $request){
         /** 接收中间件参数**/
         $wms_cost_type_show    =array_column(config('wms.wms_cost_type'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
@@ -65,32 +66,34 @@ class SortingController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','company_name','use_flag','group_name','company_id','deposit_time','car_number','company_num','group_code','create_time','update_time',
-            'remark','contract_id','contract_num','porter_id','group_code','porter','total_weight','total_plate','total_price'];
+        $select=[];
 
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=WmsDeposit::where($where)->count(); //总的数据量
-                $data['items']=WmsDeposit::where($where)
+                $data['total']=WmsSorting::where($where)->count(); //总的数据量
+                $data['items']=WmsSorting::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=WmsDeposit::where($where)->count(); //总的数据量
-                $data['items']=WmsDeposit::where($where)
+                $data['total']=WmsSorting::where($where)->count(); //总的数据量
+                $data['items']=WmsSorting::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=WmsDeposit::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsDeposit::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['total']=WmsSorting::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=WmsSorting::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
         }
@@ -112,9 +115,9 @@ class SortingController extends CommonController{
 
     }
 
-    /***    业务公司创建      /wms/deposit/createDeposit
+    /***    业务公司创建      /wms/sorting/createSorting
      */
-    public function createDeposit(Request $request){
+    public function createSorting(Request $request){
 
         /** 接收数据*/
         $self_id=$request->input('self_id');
@@ -122,7 +125,7 @@ class SortingController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $data['info']=WmsDeposit::where($where)->first();
+        $data['info']=WmsSorting::where($where)->first();
         if($data['info']){
 
         }
@@ -135,12 +138,12 @@ class SortingController extends CommonController{
 
     }
 
-    /***    业务公司添加进入数据库      /wms/deposit/addDeposit
+    /***    业务公司添加进入数据库      /wms/sorting/addSorting
      */
-    public function addDeposit(Request $request){
+    public function addSorting(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
-        $table_name     ='wms_group';
+        $table_name     ='wms_sorting';
 
         $operationing->access_cause     ='创建/修改业务公司';
         $operationing->table            =$table_name;
@@ -316,13 +319,13 @@ class SortingController extends CommonController{
 
     }
 
-    /***    业务公司启用禁用      /wms/deposit/depositUseFlag
+    /***    业务公司启用禁用      /wms/sorting/sortingUseFlag
      */
     public function depositUseFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_deposit';
-        $medol_name='WmsDeposit';
+        $table_name='wms_sorting';
+        $medol_name='WmsSorting';
         $self_id=$request->input('self_id');
         $flag='useFlag';
         //$self_id='group_202007311841426065800243';
@@ -344,13 +347,13 @@ class SortingController extends CommonController{
         return $msg;
     }
 
-    /***    业务公司删除      /wms/deposit/depositDelFlag
+    /***    业务公司删除      /wms/sorting/sortingDelFlag
      */
-    public function depositDelFlag(Request $request,Status $status){
+    public function sortingDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_deposit';
-        $medol_name='WmsDeposit';
+        $table_name='wms_sorting';
+        $medol_name='WmsSorting';
         $self_id=$request->input('self_id');
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';
