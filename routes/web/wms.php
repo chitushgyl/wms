@@ -381,6 +381,7 @@ Route::group([
     Route::any('/wmsPorter/createWmsPorter', 'WmsPorterController@createWmsPorter');
     Route::any('/wmsPorter/addWmsPorter', 'WmsPorterController@addWmsPorter');
     Route::any('/wmsPorter/delWmsPorter', 'WmsPorterController@delWmsPorter');
+    Route::any('/wmsPorter/getPorter', 'WmsPorterController@getPorter');
 
     Route::any('/wmsRailway/wmsRailwayList', 'WmsRailwayController@wmsRailwayList');
     Route::any('/wmsRailway/wmsRailwayPage', 'WmsRailwayController@wmsRailwayPage');
@@ -413,39 +414,7 @@ Route::group([
     });
 
 
-    Route::any('/costType/costTypeList', 'CostTypeController@costTypeList');
-    Route::any('/costType/costTypePage', 'CostTypeController@costTypePage');
-    Route::any('/costType/createCostType', 'CostTypeController@createCostType');
-    Route::any('/costType/addCostType', 'CostTypeController@addCostType');
-    Route::any('/costType/delCostType', 'CostTypeController@delCostType');
 
-
-    Route::any('/settleType/settleTypeList', 'SettleTypeController@settleTypeList');
-    Route::any('/settleType/settleTypePage', 'SettleTypeController@settleTypePage');
-    Route::any('/settleType/createSettleType', 'SettleTypeController@createSettleType');
-    Route::any('/settleType/addSettleType', 'SettleTypeController@addSettleType');
-    Route::any('/settleType/delSettleType', 'SettleTypeController@delSettleType');
-
-
-    Route::any('/customerBank/customerBankList', 'CustomerBankController@customerBankList');
-    Route::any('/customerBank/customerBankPage', 'CustomerBankController@customerBankPage');
-    Route::any('/customerBank/createCustomerBank', 'CustomerBankController@createCustomerBank');
-    Route::any('/customerBank/addCustomerBank', 'CustomerBankController@addCustomerBank');
-    Route::any('/customerBank/delCustomerBank', 'CustomerBankController@delCustomerBank');
-
-
-    Route::any('/wmsPorter/wmsPorterList', 'WmsPorterController@wmsPorterList');
-    Route::any('/wmsPorter/wmsPorterPage', 'WmsPorterController@wmsPorterPage');
-    Route::any('/wmsPorter/createWmsPorter', 'WmsPorterController@createWmsPorter');
-    Route::any('/wmsPorter/addWmsPorter', 'WmsPorterController@addWmsPorter');
-    Route::any('/wmsPorter/delWmsPorter', 'WmsPorterController@delWmsPorter');
-    Route::any('/wmsPorter/getPorter', 'WmsPorterController@getPorter');
-
-    Route::any('/wmsRailway/wmsRailwayList', 'WmsRailwayController@wmsRailwayList');
-    Route::any('/wmsRailway/wmsRailwayPage', 'WmsRailwayController@wmsRailwayPage');
-    Route::any('/wmsRailway/createWmsRailway', 'WmsRailwayController@createWmsRailway');
-    Route::any('/wmsRailway/addWmsRailway', 'WmsRailwayController@addWmsRailway');
-    Route::any('/wmsRailway/delWmsRailway', 'WmsRailwayController@delWmsRailway');
 
 
 });
