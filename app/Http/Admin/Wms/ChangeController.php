@@ -68,15 +68,15 @@ class ChangeController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','company_name','use_flag','group_name','company_id','deposit_time','car_number','company_num','group_code','create_time','update_time',
-            'remark','contract_id','contract_num','porter_id','group_code','porter','total_weight','total_plate','total_price'];
+        $select=[];
 
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=WmsChangeGood::where($where)->count(); //总的数据量
                 $data['items']=WmsChangeGood::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
 
@@ -85,7 +85,8 @@ class ChangeController extends CommonController{
                 $data['total']=WmsChangeGood::where($where)->count(); //总的数据量
                 $data['items']=WmsChangeGood::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='N';
                 break;
 
@@ -93,7 +94,8 @@ class ChangeController extends CommonController{
                 $data['total']=WmsChangeGood::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=WmsChangeGood::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
         }
