@@ -311,6 +311,12 @@ Route::group([
     Route::any('/change/addChange', 'ChangeController@addChange');
     Route::any('/change/changeDelFlag','ChangeController@changeDelFlag');
 
+    Route::any('/turn/turnList', 'TurnController@turnList');
+    Route::any('/turn/turnPage', 'TurnController@turnPage');
+    Route::any('/turn/createTurn','TurnController@createTurn');
+    Route::any('/turn/addTurn', 'TurnController@addTurn');
+    Route::any('/turn/turnDelFlag','TurnController@turnDelFlag');
+
     Route::any('/crondtab/updateSkuState','CrondtabController@updateSkuState');
 });
 
