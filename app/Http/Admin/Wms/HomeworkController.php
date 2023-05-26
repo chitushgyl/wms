@@ -2,6 +2,7 @@
 namespace App\Http\Admin\Wms;
 use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
+use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsHomework;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
@@ -150,42 +151,22 @@ class HomeworkController extends CommonController{
         $input              =$request->all();
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        $company_name       =$request->input('company_name');//名称
+        $company_id         =$request->input('company_id');//客户
+        $company_name       =$request->input('company_name');//客户
         $group_code         =$request->input('group_code');
-        $tel       	        =$request->input('tel');//固定电话
-        $area               =$request->input('area');//地区
-        $address            =$request->input('address');//地址
+        $add_time      	    =$request->input('add_time');//时间
+        $total_price        =$request->input('total_price');//总金额
+        $porter_id          =$request->input('porter_id');//搬运工
+        $porter             =$request->input('porter');//搬运工
+        $more_money         =json_decode($request->input('more_money'),true);//其他费用
 
-        $company_num        =$request->input('company_num');//客户编号
-        $level              =$request->input('level');//客户等级
-        $balance            =$request->input('balance');//余额
-        $credit_limit       =$request->input('credit_limit');//信用额度
-        $remark             =$request->input('remark');//备注
-        $wechat             =$request->input('wechat');//微信
-        $contacts           =$request->input('contacts');//联系人
-        $contact_address    =$request->input('contact_address');//收货地址
 
-        /*** 虚拟数据
-        $input['self_id']           =$self_id='group_202006040950004008768595';
-        $input['company_name']      =$company_name='A公司';
-        $input['group_code']           =$group_code='1234';
-        $input['preentry_type']     =$preentry_type     ='pull';
-        $input['preentry_price']    =$preentry_price   ='152';
-        $input['out_type']          =$out_type  ='pull';
-        $input['out_price']         =$out_price  ='152';
-        $input['storage_type']      =$storage_type  ='pull';
-        $input['storage_price']     =$storage_price  ='152';
-        $input['total_type']        =$total_type  ='pull';
-        $input['total_price']       =$total_price  ='152';
-        $input['pay_type']       =$pay_type  ='152';
-         ***/
-//        dd($input);
         $rules=[
             'group_code'=>'required',
             'company_name'=>'required',
         ];
         $message=[
-            'system_group.required'=>'所属公司不能为空',
+            'group_code.required'=>'所属公司不能为空',
             'company_name.required'=>'公司名称不能为空',
         ];
         $validator=Validator::make($input,$rules,$message);
@@ -197,121 +178,50 @@ class HomeworkController extends CommonController{
             $address_area = [];
 
             $data['company_name']               = $company_name;
-            $data['company_num']                = $company_num;
-            $data['area']                       = $area;
-            $data['address']                    = $address;
-            $data['tel']                        = $tel;
-            $data['level']           	        = $level;
-            $data['balance']           	        = $balance;
-            $data['credit_limit']           	= $credit_limit;
-            $data['remark']           	        = $remark;
-            $data['wechat']           	        = $wechat;
+            $data['company_id']                 = $company_id;
+            $data['add_time']                   = $add_time;
+            $data['total_price']                = $total_price;
+            $data['porter_id']                  = $porter_id;
+            $data['porter']           	        = $porter;
 
 
             $wheres['self_id'] = $self_id;
-            $old_info=WmsGroup::where($wheres)->first();
+            $old_info=WmsHomework::where($wheres)->first();
 
             if($old_info){
                 //dd(1111);
                 $data['update_time']=$now_time;
-                $id=WmsGroup::where($wheres)->update($data);
-                foreach ($contacts as $k => $v){
-                    if ($v['self_id']){
-                        $contact['name'] = $v['name'];
-                        $contact['tel'] = $v['tel'];
-                        $contact['wechat'] = $v['wechat'];
-                        $contact['email'] = $v['email'];
-                        $contact['delete_flag'] = $v['delete_flag'];
-                        CompanyContact::where('self_id',$v['self_id'])->update($contact);
-                    }else{
-                        $contact['self_id'] = generate_id('tel_');
-                        $contact['company_id'] = $self_id;
-                        $contact['name'] = $v['name'];
-                        $contact['tel'] = $v['tel'];
-                        $contact['wechat'] = $v['wechat'];
-                        $contact['email'] = $v['email'];
-                        $contact['group_code'] = $group_code;
-                        $contact['group_name'] = $old_info->group_name;
-                        $contact['create_user_id'] = $user_info->admin_id;
-                        $contact['create_user_name'] = $user_info->name;
-                        $contact_list[] = $contact;
-                    }
-                }
-                foreach ($contact_address as $k => $v){
-                    if ($v['self_id']){
-                        $address_area['name'] = $v['name'];
-                        $address_area['tel'] = $v['tel'];
-                        $address_area['address'] = $v['address'];
-                        $address_area['default_flag'] = $v['default_flag'];
-                        $address_area['delete_flag'] = $v['delete_flag'];
-                        ContactAddress::where('self_id',$v['self_id'])->update($contact);
-                    }else{
-                        $address_area['self_id'] = generate_id('address_');
-                        $address_area['company_id'] = $self_id;
-                        $address_area['name'] = $v['name'];
-                        $address_area['tel'] = $v['tel'];
-                        $address_area['address'] = $v['address'];
-                        $address_area['default_flag'] = $v['default_flag'];
-                        $address_area['group_code'] = $group_code;
-                        $address_area['group_name'] = $old_info->group_name;
-                        $address_area['create_user_id'] = $user_info->admin_id;
-                        $address_area['create_user_name'] = $user_info->name;
-                        $address_list[] = $address_area;
-                    }
-                }
-                if (count($contact_list)>0){
-                    CompanyContact::insert($contact_list);
-                }
-                if (count($address_list)>0){
-                    ContactAddress::insert($address_list);
-                }
+                $id=WmsHomework::where($wheres)->update($data);
+
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
 
 
             }else{
-
-                $data['self_id']=generate_id('company_');		//优惠券表ID
+                $data['self_id']=generate_id('ZY');		//优惠券表ID
                 $data['group_code'] = $group_code;
                 $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
                 $data['create_user_id']=$user_info->admin_id;
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsGroup::insert($data);
+                $id=WmsHomework::insert($data);
 
-                if ($contacts){
-                    foreach ($contacts as $k => $v){
-                        $contact['self_id'] = generate_id('tel_');
-                        $contact['company_id'] = $data['self_id'];
-                        $contact['name'] = $v['name'];
-                        $contact['tel'] = $v['tel'];
-                        $contact['wechat'] = $v['wechat'];
-                        $contact['email'] = $v['email'];
-                        $contact['group_code'] = $group_code;
-                        $contact['group_name'] = $data['group_name'];
-                        $contact['create_user_id'] = $user_info->admin_id;
-                        $contact['create_user_name'] = $user_info->name;
-                        $contact_list[] = $contact;
-                    }
-
+                foreach($more_money as $k => $v){
+                    $money['self_id'] = generate_id('CM');
+                    $money['price']   = $v['price'];
+                    $money['order_id'] = $data['self_id'];
+                    $money['money_id']   = $v['money_id'];
+                    $money['number']   = $v['number'];
+                    $money['total_price']   = $v['total_price'];
+                    $money['bill_id']   = $v['bill_id'];
+                    $money['group_code']   = $data['group_code'];
+                    $money['group_name']   = $data['group_name'];
+                    $money['create_user_id']   = $data['create_user_id'];
+                    $money['create_user_name']   = $data['create_user_name'];
+                    $money['create_time']   = $money['update_time'] = $now_time;
+                    $money_list[] = $money;
                 }
-                if ($contact_address){
-                    foreach ($contact_address as $k => $v){
-                        $address_area['self_id'] = generate_id('address_');
-                        $address_area['company_id'] = $data['self_id'];
-                        $address_area['name'] = $v['name'];
-                        $address_area['tel'] = $v['tel'];
-                        $address_area['address'] = $v['address'];
-                        $address_area['default_flag'] = $v['default_flag'];
-                        $address_area['group_code'] = $group_code;
-                        $address_area['group_name'] = $data['group_name'];
-                        $address_area['create_user_id'] = $user_info->admin_id;
-                        $address_area['create_user_name'] = $user_info->name;
-                        $address_list[] = $address_area;
-                    }
-                }
-                ContactAddress::insert($address_list);
-                CompanyContact::insert($contact_list);
+                InoutOtherMoney::insert($money_list);
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
 
