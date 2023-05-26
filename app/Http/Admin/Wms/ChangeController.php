@@ -44,7 +44,7 @@ class ChangeController extends CommonController{
     //业务公司列表分页加载数据
     /***    业务公司分页      /wms/change/changePage
      */
-    public function depositPage(Request $request){
+    public function changePage(Request $request){
         /** 接收中间件参数**/
         $wms_cost_type_show    =array_column(config('wms.wms_cost_type'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
