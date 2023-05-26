@@ -2,6 +2,7 @@
 namespace App\Http\Admin\Wms;
 use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
+use App\Models\Wms\WmsHomework;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -14,10 +15,10 @@ use App\Http\Controllers\DetailsController as Details;
 use App\Models\Wms\WmsGroup;
 use App\Models\Group\SystemGroup;
 
-class GroupController extends CommonController{
-    /***    业务公司列表      /wms/group/groupList
+class HomeworkController extends CommonController{
+    /***    业务公司列表      /wms/homework/homeworkList
      */
-    public function  groupList(Request $request){
+    public function  homeworkList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
         $abc='业务公司';
@@ -35,9 +36,9 @@ class GroupController extends CommonController{
     }
 
     //业务公司列表分页加载数据
-    /***    业务公司分页      /wms/group/groupPage
+    /***    业务公司分页      /wms/homework/homeworkPage
      */
-    public function groupPage(Request $request){
+    public function homeworkPage(Request $request){
         /** 接收中间件参数**/
         $wms_cost_type_show    =array_column(config('wms.wms_cost_type'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
@@ -61,32 +62,34 @@ class GroupController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','company_name','use_flag','group_name','area','address','tel','company_num','level','balance','credit_limit',
-            'remark','wechat','contacts','contact_address','group_code'];
+        $select=[];
 
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=WmsGroup::where($where)->count(); //总的数据量
-                $data['items']=WmsGroup::where($where)
+                $data['total']=WmsHomework::where($where)->count(); //总的数据量
+                $data['items']=WmsHomework::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=WmsGroup::where($where)->count(); //总的数据量
-                $data['items']=WmsGroup::where($where)
+                $data['total']=WmsHomework::where($where)->count(); //总的数据量
+                $data['items']=WmsHomework::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=WmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['total']=WmsHomework::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=WmsHomework::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
         }
@@ -108,9 +111,9 @@ class GroupController extends CommonController{
 
     }
 
-    /***    业务公司创建      /wms/group/createGroup
+    /***    业务公司创建      /wms/homework/createHomework
      */
-    public function createGroup(Request $request){
+    public function createHomework(Request $request){
 
         /** 接收数据*/
         $self_id=$request->input('self_id');
@@ -118,10 +121,9 @@ class GroupController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $data['info']=WmsGroup::where($where)->first();
+        $data['info']=WmsHomework::where($where)->first();
         if($data['info']){
-            $data['contact'] = CompanyContact::where('company_id',$self_id)->get();
-            $data['address'] = ContactAddress::where('company_id',$self_id)->get();
+
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -132,12 +134,12 @@ class GroupController extends CommonController{
 
     }
 
-    /***    业务公司添加进入数据库      /wms/group/addGroup
+    /***    业务公司添加进入数据库      /wms/homework/addHomework
      */
-    public function addGroup(Request $request){
+    public function addHomework(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
-        $table_name     ='wms_group';
+        $table_name     ='wms_homework';
 
         $operationing->access_cause     ='创建/修改业务公司';
         $operationing->table            =$table_name;
@@ -343,13 +345,13 @@ class GroupController extends CommonController{
 
     }
 
-    /***    业务公司启用禁用      /wms/group/groupUseFlag
+    /***    业务公司启用禁用      /wms/homework/homeworkUseFlag
      */
-    public function groupUseFlag(Request $request,Status $status){
+    public function homeworkUseFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_group';
-        $medol_name='wmsGroup';
+        $table_name='wms_homework';
+        $medol_name='WmsHomework';
         $self_id=$request->input('self_id');
         $flag='useFlag';
         //$self_id='group_202007311841426065800243';
@@ -371,13 +373,13 @@ class GroupController extends CommonController{
         return $msg;
     }
 
-    /***    业务公司删除      /wms/group/groupDelFlag
+    /***    业务公司删除      /wms/homework/homeworkDelFlag
      */
-    public function groupDelFlag(Request $request,Status $status){
+    public function homeworkDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_group';
-        $medol_name='wmsGroup';
+        $table_name='wms_homework';
+        $medol_name='WmsHomework';
         $self_id=$request->input('self_id');
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';

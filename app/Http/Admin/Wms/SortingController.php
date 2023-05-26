@@ -18,7 +18,7 @@ use App\Http\Controllers\DetailsController as Details;
 use App\Models\Wms\WmsGroup;
 use App\Models\Group\SystemGroup;
 
-class DepositController extends CommonController{
+class SortingController extends CommonController{
     /***    业务公司列表      /wms/deposit/depositList
      */
     public function  depositList(Request $request){
