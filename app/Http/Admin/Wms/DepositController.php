@@ -64,7 +64,10 @@ class DepositController extends CommonController{
         ];
 
         $where=get_list_where($search);
-
+        $where1=[
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+        ];
         $select=['self_id','company_name','use_flag','group_name','company_id','deposit_time','car_number','company_num','group_code','create_time','update_time',
             'remark','contract_id','contract_num','porter_id','group_code','porter','total_weight','total_plate','total_price'];
 

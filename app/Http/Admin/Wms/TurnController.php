@@ -69,7 +69,10 @@ class TurnController extends CommonController{
         ];
 
         $where=get_list_where($search);
-
+        $where1=[
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+        ];
         $select=[];
 
         switch ($group_info['group_id']){
