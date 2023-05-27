@@ -178,19 +178,18 @@ class TurnController extends CommonController{
 
         $rules=[
             'group_code'=>'required',
-            'company_name'=>'required',
+            'in_company_name'=>'required',
+            'out_company_name'=>'required',
         ];
         $message=[
             'group_code.required'=>'所属公司不能为空',
-            'company_name.required'=>'公司名称不能为空',
+            'in_company_name.required'=>'转入客户公司名称不能为空',
+            'out_company_name.required'=>'转出客户公司名称不能为空',
         ];
         $validator=Validator::make($input,$rules,$message);
 
         if($validator->passes()){
-            $contact_list = [];
-            $address_list = [];
-            $contact = [];
-            $address_area = [];
+            $out_money_list = [];
             $deposit_id                         = generate_id('T');
             $data['in_total_price']             = $in_total_price;
             $data['out_total_price']            = $out_total_price;
@@ -283,7 +282,7 @@ class TurnController extends CommonController{
                 if ($id){
                     WmsChangeList::insert($deposit_list);
                 }
-                foreach($more_money as $k => $v){
+                foreach($in_more_money as $k => $v){
                     $money['self_id'] = generate_id('TC');
                     $money['price']   = $v['price'];
                     $money['order_id'] = $data['self_id'];
@@ -299,6 +298,23 @@ class TurnController extends CommonController{
                     $money_list[] = $money;
                 }
                 InoutOtherMoney::insert($money_list);
+
+                foreach($out_more_money as $k => $v){
+                    $out_money['self_id'] = generate_id('TC');
+                    $out_money['price']   = $v['price'];
+                    $out_money['order_id'] = $data['self_id'];
+                    $out_money['money_id']   = $v['money_id'];
+                    $out_money['number']   = $v['number'];
+                    $out_money['total_price']   = $v['total_price'];
+                    $out_money['bill_id']   = $v['bill_id'];
+                    $out_money['group_code']   = $data['group_code'];
+                    $out_money['group_name']   = $data['group_name'];
+                    $out_money['create_user_id']   = $data['create_user_id'];
+                    $out_money['create_user_name']   = $data['create_user_name'];
+                    $out_money['create_time']   = $out_money['update_time'] = $now_time;
+                    $out_money_list[] = $out_money;
+                }
+                InoutOtherMoney::insert($out_money_list);
 
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
