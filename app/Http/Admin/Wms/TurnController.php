@@ -242,7 +242,7 @@ class TurnController extends CommonController{
                         $abcd++;
                     }
                 }
-                $list['sige_id']           =  $value['sige_id'];//原库存SELF_ID
+//                $list['sige_id']           =  $value['sige_id'];//原库存SELF_ID
                 $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
                 $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
                 $list['out_warehouse_id']  =  $value['out_warehouse_id'];//转出仓库
