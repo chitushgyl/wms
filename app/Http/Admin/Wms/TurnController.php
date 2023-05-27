@@ -253,7 +253,7 @@ class TurnController extends CommonController{
                 $list['plate_num']         =  $value['plate_num'];//板数
                 $list['plate_id']          =  $value['plate_id'];//板位
                 $list['remark']            =  $value['remark'];//备注
-                $list['change_id']         =  $deposit_id;//
+                $list['turn_id']           =  $deposit_id;//
                 $list['group_code']        =  $group_code;
                 $list['group_name']        =  $user_info->group_name;
                 $list['create_user_id']    =  $user_info->admin_id;
