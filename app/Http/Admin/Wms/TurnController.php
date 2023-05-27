@@ -310,8 +310,8 @@ class TurnController extends CommonController{
                     $money['number']           = $v['number'];
                     $money['total_price']      = $v['total_price'];
                     $money['bill_id']          = $v['bill_id'];
-                    $money['in_company_id']    = $in_company_id;
-                    $money['in_company_name']  = $in_company_name;
+                    $money['company_id']    = $in_company_id;
+                    $money['company_name']  = $in_company_name;
                     $money['group_code']       = $data['group_code'];
                     $money['group_name']       = $data['group_name'];
                     $money['create_user_id']   = $data['create_user_id'];
@@ -330,8 +330,8 @@ class TurnController extends CommonController{
                     $out_money['number']           = $v['number'];
                     $out_money['total_price']      = $v['total_price'];
                     $out_money['bill_id']          = $v['bill_id'];
-                    $out_money['out_company_id']   = $out_company_id;
-                    $out_money['out_company_name'] = $out_company_name;
+                    $out_money['company_id']   = $out_company_id;
+                    $out_money['company_name'] = $out_company_name;
                     $out_money['group_code']       = $data['group_code'];
                     $out_money['group_name']       = $data['group_name'];
                     $out_money['create_user_id']   = $data['create_user_id'];
