@@ -324,12 +324,12 @@ class TurnController extends CommonController{
 
                 foreach($out_more_money as $kk => $vv){
                     $out_money['self_id']          = generate_id('TC');
-                    $out_money['price']            = $v['price'];
+                    $out_money['price']            = $vv['price'];
                     $out_money['order_id']         = $data['self_id'];
-                    $out_money['money_id']         = $v['money_id'];
-                    $out_money['number']           = $v['number'];
-                    $out_money['total_price']      = $v['total_price'];
-                    $out_money['bill_id']          = $v['bill_id'];
+                    $out_money['money_id']         = $vv['money_id'];
+                    $out_money['number']           = $vv['number'];
+                    $out_money['total_price']      = $vv['total_price'];
+                    $out_money['bill_id']          = $vv['bill_id'];
                     $out_money['company_id']   = $out_company_id;
                     $out_money['company_name'] = $out_company_name;
                     $out_money['group_code']       = $data['group_code'];
