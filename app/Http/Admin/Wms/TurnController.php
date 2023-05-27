@@ -207,6 +207,7 @@ class TurnController extends CommonController{
         $validator=Validator::make($input,$rules,$message);
 
         if($validator->passes()){
+            $money_list = [];
             $out_money_list = [];
             $deposit_list = [];
             $deposit_id                         = generate_id('T');
@@ -302,35 +303,40 @@ class TurnController extends CommonController{
                     TurnCardGood::insert($deposit_list);
                 }
                 foreach($in_more_money as $k => $v){
-                    $money['self_id'] = generate_id('TC');
-                    $money['price']   = $v['price'];
-                    $money['order_id'] = $data['self_id'];
-                    $money['money_id']   = $v['money_id'];
-                    $money['number']   = $v['number'];
-                    $money['total_price']   = $v['total_price'];
-                    $money['bill_id']   = $v['bill_id'];
-                    $money['group_code']   = $data['group_code'];
-                    $money['group_name']   = $data['group_name'];
+                    $money['self_id']          = generate_id('TC');
+                    $money['price']            = $v['price'];
+                    $money['order_id']         = $data['self_id'];
+                    $money['money_id']         = $v['money_id'];
+                    $money['number']           = $v['number'];
+                    $money['total_price']      = $v['total_price'];
+                    $money['bill_id']          = $v['bill_id'];
+                    $money['in_company_id']    = $in_company_id;
+                    $money['in_company_name']  = $in_company_name;
+                    $money['group_code']       = $data['group_code'];
+                    $money['group_name']       = $data['group_name'];
                     $money['create_user_id']   = $data['create_user_id'];
-                    $money['create_user_name']   = $data['create_user_name'];
-                    $money['create_time']   = $money['update_time'] = $now_time;
+                    $money['create_user_name'] = $data['create_user_name'];
+                    $money['create_time']      = $money['update_time'] = $now_time;
                     $money_list[] = $money;
                 }
                 InoutOtherMoney::insert($money_list);
 
-                foreach($out_more_money as $k => $v){
-                    $out_money['self_id'] = generate_id('TC');
-                    $out_money['price']   = $v['price'];
-                    $out_money['order_id'] = $data['self_id'];
-                    $out_money['money_id']   = $v['money_id'];
-                    $out_money['number']   = $v['number'];
-                    $out_money['total_price']   = $v['total_price'];
-                    $out_money['bill_id']   = $v['bill_id'];
-                    $out_money['group_code']   = $data['group_code'];
-                    $out_money['group_name']   = $data['group_name'];
+
+                foreach($out_more_money as $kk => $vv){
+                    $out_money['self_id']          = generate_id('TC');
+                    $out_money['price']            = $v['price'];
+                    $out_money['order_id']         = $data['self_id'];
+                    $out_money['money_id']         = $v['money_id'];
+                    $out_money['number']           = $v['number'];
+                    $out_money['total_price']      = $v['total_price'];
+                    $out_money['bill_id']          = $v['bill_id'];
+                    $out_money['out_company_id']   = $out_company_id;
+                    $out_money['out_company_name'] = $out_company_name;
+                    $out_money['group_code']       = $data['group_code'];
+                    $out_money['group_name']       = $data['group_name'];
                     $out_money['create_user_id']   = $data['create_user_id'];
-                    $out_money['create_user_name']   = $data['create_user_name'];
-                    $out_money['create_time']   = $out_money['update_time'] = $now_time;
+                    $out_money['create_user_name'] = $data['create_user_name'];
+                    $out_money['create_time']      = $out_money['update_time'] = $now_time;
                     $out_money_list[] = $out_money;
                 }
                 InoutOtherMoney::insert($out_money_list);
