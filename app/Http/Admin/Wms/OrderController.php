@@ -176,6 +176,7 @@ class OrderController extends CommonController{
         $total_plate        = $request->input('total_plate');//总板数
         $remark             = $request->input('remark');
         $more_money         = json_decode($request->input('more_money'),true);
+        $type               = $request->input('type');
         /***
         $input['goods']=$goods=[
         '0'=>[
@@ -227,6 +228,7 @@ class OrderController extends CommonController{
             $order_2['total_number']        =$total_number;
             $order_2['total_price']         =$total_price;
             $order_2['total_plate']         =$total_plate;
+            $order_2['status']              =$type;
             $order_2['remark']              =$remark;
 
             $list=[];

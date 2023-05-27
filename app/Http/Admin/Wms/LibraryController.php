@@ -697,6 +697,7 @@ class LibraryController extends CommonController{
         $railway            = $request->input('railway');//月台号
         $insufficient       = $request->input('insufficient');//不足N吨按吨算
         $other_money        = json_decode($request->input('other_money'),true);//其他费用
+        $type               = $request->input('type');
 	//dd($library_sige);
         /*** 虚拟数据
         $input['group_code']=$group_code='1234';
@@ -1013,7 +1014,7 @@ class LibraryController extends CommonController{
             $data['insufficient']       =$insufficient;
 //            $data['other_money']        =$other_money;
             $data['voucher']            =img_for($voucher,'in');
-            $data['order_status']       = 'S';
+            $data['order_status']       = $type;
            //dd($data);
 
             $id=WmsLibraryOrder::insert($data);
@@ -1028,22 +1029,25 @@ class LibraryController extends CommonController{
                 $change->change($datalist,'preentry');
 //                $money->moneyCompute($data,$datalist,$now_time,$company_info,$user_info,'in');
                 //计算费用
-                foreach($other_money as $key => $value){
-                    $money['self_id'] = generate_id('LM');
-                    $money['price']   = $value['price'];
-                    $money['order_id'] = $data['self_id'];
-                    $money['money_id']   = $value['money_id'];
-                    $money['number']   = $value['number'];
-                    $money['total_price']   = $value['total_price'];
-                    $money['bill_id']   = $value['bill_id'];
-                    $money['group_code']   = $data['group_code'];
-                    $money['group_name']   = $data['group_name'];
-                    $money['create_user_id']   = $data['create_user_id'];
-                    $money['create_user_name']   = $data['create_user_name'];
-                    $money['create_time']   = $money['update_time'] = $now_time;
-                    $money_list[] = $money;
+                if ($type == 'W'){
+                    foreach($other_money as $key => $value){
+                        $money['self_id'] = generate_id('LM');
+                        $money['price']   = $value['price'];
+                        $money['order_id'] = $data['self_id'];
+                        $money['money_id']   = $value['money_id'];
+                        $money['number']   = $value['number'];
+                        $money['total_price']   = $value['total_price'];
+                        $money['bill_id']   = $value['bill_id'];
+                        $money['group_code']   = $data['group_code'];
+                        $money['group_name']   = $data['group_name'];
+                        $money['create_user_id']   = $data['create_user_id'];
+                        $money['create_user_name']   = $data['create_user_name'];
+                        $money['create_time']   = $money['update_time'] = $now_time;
+                        $money_list[] = $money;
+                    }
+                    InoutOtherMoney::insert($money_list);
                 }
-                InoutOtherMoney::insert($money_list);
+
 
                 $msg['code']=200;
                 $msg['msg']='操作成功，您一共手工入库'.$count.'条数据，共计'.$pull_count.'托盘';
