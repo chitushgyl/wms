@@ -401,8 +401,8 @@ class TurnController extends CommonController{
     public function turnDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_change_good';
-        $medol_name='WmsChangeGood';
+        $table_name='wms_turn_card';
+        $medol_name='WmsTurnCard';
         $self_id=$request->input('self_id');
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';
