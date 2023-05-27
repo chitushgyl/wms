@@ -51,12 +51,16 @@ class WmsSorting extends Model{
     ];
 
 //一对一
-    //public function wmsOutOrder(){
-    //    //参数：关联模型名称，外键，主键
-    //    //如果主键是id可以省略
-    //    return $this->hasMany('App\Models\Wms\WmsOutOrder','total_id','self_id');
-    //}
-
+    public function WmsSortingGood(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsSortingGood','sorting_id','self_id');
+    }
+    public function InoutOtherMoney(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\InoutOtherMoney','order_id','self_id');
+    }
 
 
 }

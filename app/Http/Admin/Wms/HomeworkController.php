@@ -122,7 +122,13 @@ class HomeworkController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $data['info']=WmsHomework::where($where)->first();
+        $where1=[
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+        ];
+        $data['info']=WmsHomework::with(['InoutOtherMoney' => function($query)use($where1){
+            $query->where($where1);
+        }])->where($where)->first();
         if($data['info']){
 
         }

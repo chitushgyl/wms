@@ -127,7 +127,15 @@ class ChangeController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $data['info']=WmsChangeGood::where($where)->first();
+        $where1=[
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+        ];
+        $data['info']=WmsChangeGood::with(['WmsChangeList' => function($query)use($where1){
+            $query->where($where1);
+        }])->with(['InoutOtherMoney' => function($query)use($where1){
+            $query->where($where1);
+        }])->where($where)->first();
         if($data['info']){
 
         }
@@ -247,7 +255,7 @@ class ChangeController extends CommonController{
 
 
             $wheres['self_id'] = $self_id;
-            $old_info=WmsDeposit::where($wheres)->first();
+            $old_info=WmsChangeGood::where($wheres)->first();
 
             if($old_info){
 

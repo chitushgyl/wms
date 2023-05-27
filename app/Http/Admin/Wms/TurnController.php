@@ -4,6 +4,7 @@ use App\Models\Shop\ErpShopGoodsSku;
 use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
 use App\Models\Wms\InoutOtherMoney;
+use App\Models\Wms\TurnCardGood;
 use App\Models\Wms\WmsChangeGood;
 use App\Models\Wms\WmsChangeList;
 use App\Models\Wms\WmsDeposit;
@@ -128,7 +129,15 @@ class TurnController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $data['info']=WmsTurnCard::where($where)->first();
+        $where1=[
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+        ];
+        $data['info']=WmsTurnCard::with(['TurnCardGood' => function($query)use($where1){
+            $query->where($where1);
+        }])->with(['InoutOtherMoney' => function($query)use($where1){
+            $query->where($where1);
+        }])->where($where)->first();
         if($data['info']){
 
         }
@@ -262,7 +271,7 @@ class TurnController extends CommonController{
 
 
             $wheres['self_id'] = $self_id;
-            $old_info=WmsDeposit::where($wheres)->first();
+            $old_info=WmsTurnCard::where($wheres)->first();
 
             if($old_info){
 
@@ -277,10 +286,10 @@ class TurnController extends CommonController{
                 $data['create_user_id']=$user_info->admin_id;
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsChangeGood::insert($data);
+                $id=WmsTurnCard::insert($data);
 
                 if ($id){
-                    WmsChangeList::insert($deposit_list);
+                    TurnCardGood::insert($deposit_list);
                 }
                 foreach($in_more_money as $k => $v){
                     $money['self_id'] = generate_id('TC');

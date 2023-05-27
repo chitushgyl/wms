@@ -122,7 +122,15 @@ class DepositController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $data['info']=WmsDeposit::where($where)->first();
+        $where1=[
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+        ];
+        $data['info']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
+            $query->where($where1);
+        }])->with(['InoutOtherMoney' => function($query)use($where1){
+            $query->where($where1);
+        }])->where($where)->first();
         if($data['info']){
 
         }
