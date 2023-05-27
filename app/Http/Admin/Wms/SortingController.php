@@ -72,7 +72,9 @@ class SortingController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=WmsSorting::where($where)->count(); //总的数据量
-                $data['items']=WmsSorting::where($where)
+                $data['items']=WmsSorting::with(['WmsSortingGood' => function($query)use($where1){
+                    $query->where($where1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
 //                    ->select($select)
                     ->get();
@@ -82,7 +84,9 @@ class SortingController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=WmsSorting::where($where)->count(); //总的数据量
-                $data['items']=WmsSorting::where($where)
+                $data['items']=WmsSorting::with(['WmsSortingGood' => function($query)use($where1){
+                    $query->where($where1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
 //                    ->select($select)
                     ->get();
@@ -91,7 +95,9 @@ class SortingController extends CommonController{
 
             case 'more':
                 $data['total']=WmsSorting::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsSorting::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['items']=WmsSorting::with(['WmsSortingGood' => function($query)use($where1){
+                    $query->where($where1);
+                }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
 //                    ->select($select)
                     ->get();

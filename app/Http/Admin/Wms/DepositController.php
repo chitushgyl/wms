@@ -71,7 +71,9 @@ class DepositController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=WmsDeposit::where($where)->count(); //总的数据量
-                $data['items']=WmsDeposit::where($where)
+                $data['items']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
+                    $query->where($where1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -80,7 +82,9 @@ class DepositController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=WmsDeposit::where($where)->count(); //总的数据量
-                $data['items']=WmsDeposit::where($where)
+                $data['items']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
+                    $query->where($where1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
@@ -88,7 +92,9 @@ class DepositController extends CommonController{
 
             case 'more':
                 $data['total']=WmsDeposit::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsDeposit::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['items']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
+                    $query->where($where1);
+                }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
