@@ -199,6 +199,7 @@ class TurnController extends CommonController{
 
         if($validator->passes()){
             $out_money_list = [];
+            $deposit_list = [];
             $deposit_id                         = generate_id('T');
             $data['in_total_price']             = $in_total_price;
             $data['out_total_price']            = $out_total_price;
