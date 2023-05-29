@@ -329,6 +329,12 @@ Route::group([
     Route::any('/sorting/addSorting', 'SortingController@addSorting');
     Route::any('/sorting/SortingDelFlag','SortingController@SortingDelFlag');
 
+    Route::any('/labour/labourList', 'LabourController@labourList');
+    Route::any('/labour/labourPage', 'LabourController@labourPage');
+    Route::any('/labour/createLabour','LabourController@createLabour');
+    Route::any('/labour/addLabour', 'LabourController@addLabour');
+    Route::any('/labour/LabourDelFlag','LabourController@LabourDelFlag');
+
     Route::any('/crondtab/updateSkuState','CrondtabController@updateSkuState');
 });
 
