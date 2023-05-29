@@ -19,7 +19,7 @@ use App\Models\Wms\WmsGroup;
 use App\Models\Group\SystemGroup;
 
 class BulkContractController extends CommonController{
-    /***    业务公司列表      /wms/deposit/depositList
+    /***    业务公司列表      /wms/bulkContract/bulkContractList
      */
     public function  depositList(Request $request){
         $data['page_info']      =config('page.listrows');
@@ -39,9 +39,9 @@ class BulkContractController extends CommonController{
     }
 
     //业务公司列表分页加载数据
-    /***    业务公司分页      /wms/deposit/depositPage
+    /***    业务公司分页      /wms/bulkContract/bulkContractPage
      */
-    public function depositPage(Request $request){
+    public function bulkContractPage(Request $request){
         /** 接收中间件参数**/
         $wms_cost_type_show    =array_column(config('wms.wms_cost_type'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
@@ -121,9 +121,9 @@ class BulkContractController extends CommonController{
 
     }
 
-    /***    业务公司创建      /wms/deposit/createDeposit
+    /***    业务公司创建      /wms/bulkContract/BulkContract
      */
-    public function createDeposit(Request $request){
+    public function createBulkContract(Request $request){
 
         /** 接收数据*/
         $self_id=$request->input('self_id');
@@ -152,9 +152,9 @@ class BulkContractController extends CommonController{
 
     }
 
-    /***    业务公司添加进入数据库      /wms/deposit/addDeposit
+    /***    业务公司添加进入数据库      /wms/bulkContract/addBulkContract
      */
-    public function addDeposit(Request $request){
+    public function addBulkContract(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='wms_group';
@@ -333,13 +333,13 @@ class BulkContractController extends CommonController{
 
     }
 
-    /***    业务公司启用禁用      /wms/deposit/depositUseFlag
+    /***    业务公司启用禁用      /wms/bulkContract/bulkContractUseFlag
      */
     public function depositUseFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_deposit';
-        $medol_name='WmsDeposit';
+        $table_name='wms_bulk_contract';
+        $medol_name='WmsBulkContract';
         $self_id=$request->input('self_id');
         $flag='useFlag';
         //$self_id='group_202007311841426065800243';
@@ -361,13 +361,13 @@ class BulkContractController extends CommonController{
         return $msg;
     }
 
-    /***    业务公司删除      /wms/deposit/depositDelFlag
+    /***    业务公司删除      /wms/bulkContract/bulkContractDelFlag
      */
     public function depositDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_deposit';
-        $medol_name='WmsDeposit';
+        $table_name='wms_bulk_contract';
+        $medol_name='WmsBulkContract';
         $self_id=$request->input('self_id');
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';
