@@ -225,6 +225,8 @@ class TurnController extends CommonController{
             $data['cold_day']           	    = $cold_day;
             $data['remark']                 	= $remark;
 
+
+            $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
             $abcd=0;
             $errorNum=50;       //控制错误数据的条数
             $a=2;
