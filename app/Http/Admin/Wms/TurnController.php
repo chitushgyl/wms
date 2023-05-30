@@ -225,6 +225,7 @@ class TurnController extends CommonController{
             $data['cold_day']           	    = $cold_day;
             $data['remark']                 	= $remark;
 
+            $abcd=0;
             $errorNum=50;       //控制错误数据的条数
             $a=2;
             foreach($good_list as $key => $value){

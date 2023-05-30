@@ -123,7 +123,8 @@ class LibraryController extends CommonController{
                     $query->where($where1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
 
@@ -134,7 +135,8 @@ class LibraryController extends CommonController{
                     $query->where($where1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='N';
                 break;
 
@@ -144,7 +146,8 @@ class LibraryController extends CommonController{
                     $query->where($where1);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
         }
