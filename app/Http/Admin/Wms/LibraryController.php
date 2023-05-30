@@ -807,17 +807,18 @@ class LibraryController extends CommonController{
                             $abcs++;
                         }
                 }
+                if($type == 'S'){
+                    $where_pack=[
+                        ['delete_flag','=','Y'],
+                        ['self_id','=', $v['warehouse_id']],
+                    ];
 
-                $where_pack=[
-                    ['delete_flag','=','Y'],
-                    ['self_id','=', $v['warehouse_id']],
-                ];
-
-                $warehouse_info = WmsWarehouse::where($where_pack)->select('warehouse_name','group_code','group_name')->first();
-                if(empty($warehouse_info)){
-                    $msg['code'] = 304;
-                    $msg['msg'] = '仓库不存在';
-                    return $msg;
+                    $warehouse_info = WmsWarehouse::where($where_pack)->select('warehouse_name','group_code','group_name')->first();
+                    if(empty($warehouse_info)){
+                        $msg['code'] = 304;
+                        $msg['msg'] = '仓库不存在';
+                        return $msg;
+                    }
                 }
 
             }
@@ -942,8 +943,8 @@ class LibraryController extends CommonController{
                     $list['storage_number']     =$v['now_num'];
 //                    $list["group_code"]         =$getWmsWarehouse->group_code;
 //                    $list["group_name"]         =$getWmsWarehouse->group_name;
-                    $list["group_code"]         =$warehouse_info->group_code;
-                    $list["group_name"]         =$warehouse_info->group_name;
+                    $list["group_code"]         =$getGoods->group_code;
+                    $list["group_name"]         =$getGoods->group_name;
 
                     $list['create_time']        =$now_time;
                     $list["update_time"]        =$now_time;
@@ -985,10 +986,8 @@ class LibraryController extends CommonController{
             $data['create_time']        =$now_time;
             $data["update_time"]        =$now_time;
             $data["grounding_status"]   ='N';
-            $data["group_code"]         =$warehouse_info->group_code;
-            $data["group_name"]         =$warehouse_info->group_name;
-            $data["warehouse_id"]       =$warehouse_id;
-            $data["warehouse_name"]     =$warehouse_info->warehouse_name;
+            $data["group_code"]         =$getGoods->group_code;
+            $data["group_name"]         =$getGoods->group_name;
             $data['count']              =$count;
             $data['type']               ='preentry';
             $data['company_id']         =$company_info->self_id;

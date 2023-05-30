@@ -4,6 +4,7 @@ use App\Models\Shop\ErpShopGoodsSku;
 use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
 use App\Models\Wms\InoutOtherMoney;
+use App\Models\Wms\WmsBulkContract;
 use App\Models\Wms\WmsDeposit;
 use App\Models\Wms\WmsDepositGood;
 use Illuminate\Support\Facades\Input;
@@ -21,7 +22,7 @@ use App\Models\Group\SystemGroup;
 class BulkContractController extends CommonController{
     /***    业务公司列表      /wms/bulkContract/bulkContractList
      */
-    public function  depositList(Request $request){
+    public function  bulkContractList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
         $abc='业务公司';
@@ -73,8 +74,8 @@ class BulkContractController extends CommonController{
 
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=WmsDeposit::where($where)->count(); //总的数据量
-                $data['items']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
+                $data['total']=WmsBulkContract::where($where)->count(); //总的数据量
+                $data['items']=WmsBulkContract::with(['WmsBulkGood' => function($query)use($where1){
                     $query->where($where1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
@@ -84,8 +85,8 @@ class BulkContractController extends CommonController{
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=WmsDeposit::where($where)->count(); //总的数据量
-                $data['items']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
+                $data['total']=WmsBulkContract::where($where)->count(); //总的数据量
+                $data['items']=WmsBulkContract::with(['WmsBulkGood' => function($query)use($where1){
                     $query->where($where1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
@@ -94,8 +95,8 @@ class BulkContractController extends CommonController{
                 break;
 
             case 'more':
-                $data['total']=WmsDeposit::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
+                $data['total']=WmsBulkContract::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=WmsBulkContract::with(['WmsBulkGood' => function($query)use($where1){
                     $query->where($where1);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
@@ -135,7 +136,7 @@ class BulkContractController extends CommonController{
             ['delete_flag','=','Y'],
             ['use_flag','=','Y'],
         ];
-        $data['info']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
+        $data['info']=WmsBulkContract::with(['WmsBulkGood' => function($query)use($where1){
             $query->where($where1);
         }])->with(['InoutOtherMoney' => function($query)use($where1){
             $query->where($where1);

@@ -50,12 +50,16 @@ class WmsBulkContract extends Model{
         //写进去的字段不被注入
     ];
 
-//一对一
-    //public function wmsOutOrder(){
-    //    //参数：关联模型名称，外键，主键
-    //    //如果主键是id可以省略
-    //    return $this->hasMany('App\Models\Wms\WmsOutOrder','total_id','self_id');
-    //}
+    public function WmsBulkGood(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsBulkGood','sorting_id','self_id');
+    }
+    public function InoutOtherMoney(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\InoutOtherMoney','order_id','self_id');
+    }
 
 
 

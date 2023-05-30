@@ -335,6 +335,13 @@ Route::group([
     Route::any('/labour/addLabour', 'LabourController@addLabour');
     Route::any('/labour/LabourDelFlag','LabourController@LabourDelFlag');
 
+
+    Route::any('/bulkContract/bulkContractList', 'BulkContractController@bulkContractList');
+    Route::any('/bulkContract/bulkContractPage', 'BulkContractController@bulkContractPage');
+    Route::any('/bulkContract/createBulkContract','BulkContractController@createBulkContract');
+    Route::any('/bulkContract/addBulkContract', 'BulkContractController@addBulkContract');
+    Route::any('/bulkContract/bulkContractDelFlag','BulkContractController@bulkContractDelFlag');
+
     Route::any('/crondtab/updateSkuState','CrondtabController@updateSkuState');
 });
 
