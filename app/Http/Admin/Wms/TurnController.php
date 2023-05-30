@@ -285,7 +285,8 @@ class TurnController extends CommonController{
             $old_info=WmsTurnCard::where($wheres)->first();
 
             if($old_info){
-
+                $update['update_time'] = $now_time;
+                $id = WmsTurnCard::where('self_id',$self_id)->update($update);
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
 

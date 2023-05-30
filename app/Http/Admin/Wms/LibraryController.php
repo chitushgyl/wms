@@ -807,7 +807,7 @@ class LibraryController extends CommonController{
                             $abcs++;
                         }
                 }
-                if($type == 'S'){
+                if($type == 'W'){
                     $where_pack=[
                         ['delete_flag','=','Y'],
                         ['self_id','=', $v['warehouse_id']],
