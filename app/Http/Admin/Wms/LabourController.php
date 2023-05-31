@@ -75,9 +75,7 @@ class LabourController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=WmsLabour::where($where)->count(); //总的数据量
-                $data['items']=WmsLabour::with(['WmsDepositGood' => function($query)use($where1){
-                    $query->where($where1);
-                }])->where($where)
+                $data['items']=WmsLabour::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
 //                    ->select($select)
                     ->get();
@@ -87,9 +85,7 @@ class LabourController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=WmsLabour::where($where)->count(); //总的数据量
-                $data['items']=WmsLabour::with(['WmsDepositGood' => function($query)use($where1){
-                    $query->where($where1);
-                }])->where($where)
+                $data['items']=WmsLabour::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
 //                    ->select($select)
                     ->get();
@@ -98,9 +94,7 @@ class LabourController extends CommonController{
 
             case 'more':
                 $data['total']=WmsLabour::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsLabour::with(['WmsDepositGood' => function($query)use($where1){
-                    $query->where($where1);
-                }])->where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['items']=WmsLabour::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
 //                    ->select($select)
                     ->get();
