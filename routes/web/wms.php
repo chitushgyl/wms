@@ -342,6 +342,18 @@ Route::group([
     Route::any('/bulkContract/addBulkContract', 'BulkContractController@addBulkContract');
     Route::any('/bulkContract/bulkContractDelFlag','BulkContractController@bulkContractDelFlag');
 
+    Route::any('/logistic/logisticList', 'LogisticController@logisticList');
+    Route::any('/logistic/logisticPage', 'LogisticController@logisticPage');
+    Route::any('/logistic/createLogistic','LogisticController@createLogistic');
+    Route::any('/logistic/addLogistic', 'LogisticController@addLogistic');
+    Route::any('/logistic/logisticDelFlag','LogisticController@logisticDelFlag');
+
+    Route::any('/carType/carTypeList', 'CarTypeController@carTypeList');
+    Route::any('/carType/carTypePage', 'CarTypeController@carTypePage');
+    Route::any('/carType/createCarType','CarTypeController@createCarType');
+    Route::any('/carType/addCarType', 'CarTypeController@addCarType');
+    Route::any('/carType/carTypeDelFlag','CarTypeController@carTypeDelFlag');
+
     Route::any('/crondtab/updateSkuState','CrondtabController@updateSkuState');
 });
 
