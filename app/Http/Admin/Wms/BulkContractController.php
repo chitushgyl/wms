@@ -5,6 +5,7 @@ use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
 use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsBulkContract;
+use App\Models\Wms\WmsBulkGood;
 use App\Models\Wms\WmsDeposit;
 use App\Models\Wms\WmsDepositGood;
 use Illuminate\Support\Facades\Input;
@@ -79,7 +80,8 @@ class BulkContractController extends CommonController{
                     $query->where($where1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
 
@@ -90,7 +92,8 @@ class BulkContractController extends CommonController{
                     $query->where($where1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='N';
                 break;
 
@@ -100,7 +103,8 @@ class BulkContractController extends CommonController{
                     $query->where($where1);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
         }
@@ -171,17 +175,13 @@ class BulkContractController extends CommonController{
         $self_id            =$request->input('self_id');
         $group_code         =$request->input('group_code');
         $total_price        =$request->input('total_price');//总费用
-        $total_plate        =$request->input('total_plate');//总板数
+        $total_num        =$request->input('total_num');//总件数
         $total_weight       =$request->input('total_weight');//总吨重
-        $porter             =$request->input('porter');//搬运工
-        $porter_id          =$request->input('porter_id');//搬运工self_id
-        $contract_num       =$request->input('contract_num');//合同编号
-        $contract_id        =$request->input('contract_id');//合同SELF_ID
         $remark             =$request->input('remark');//备注
         $company_name       =$request->input('company_name');//客户
         $company_id         =$request->input('company_id');//客户
-        $car_number         =$request->input('car_number');//车牌号
-        $deposit_time       =$request->input('deposit_time');//寄存时间
+        $add_time           =$request->input('add_time');//单据时间
+        $count_weight       =$request->input('count_weight');//按吨操作
         $more_money         =json_decode($request->input('more_money'),true);//其他费用
         $good_list          =json_decode($request->input('good_list'),true);
 
@@ -203,20 +203,20 @@ class BulkContractController extends CommonController{
             $address_area = [];
             $deposit_id                         =  generate_id('J');
             $data['total_price']                = $total_price;
-            $data['total_plate']                = $total_plate;
+            $data['total_num']                  = $total_num;
             $data['total_weight']               = $total_weight;
-            $data['porter']                     = $porter;
-            $data['porter_id']                  = $porter_id;
-            $data['contract_num']               = $contract_num;
-            $data['contract_id']           	    = $contract_id;
             $data['remark']                 	= $remark;
             $data['company_name']               = $company_name;
             $data['company_id']           	    = $company_id;
-            $data['car_number']           	    = $car_number;
-            $data['deposit_time']               = $deposit_time;
+            $data['add_time']               = $add_time;
 
+
+
+            $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
+            $abcd=0;
             $errorNum=50;       //控制错误数据的条数
             $a=2;
+            $money_lists = [];
             foreach($good_list as $key => $value){
                 $where['self_id']=$value['sku_id'];
                 //查询商品是不是存在
@@ -234,21 +234,21 @@ class BulkContractController extends CommonController{
                     }
                 }
 
-                $list['self_id']           =  generate_id('DG');
+                $list['self_id']           =  generate_id('LB');
                 $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
                 $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
-                $list['warehouse_id']      =  $value['warehouse_id'];//仓库self_id
-                $list['warehouse_name']    =  $value['warehouse_name'];//仓库名称
+                $list['out_warehouse_id']  =  $value['out_warehouse_id'];//转出仓库self_id
+                $list['out_warehouse_name']=  $value['out_warehouse_name'];//转出仓库名称
+                $list['in_warehouse_id']   =  $value['in_warehouse_id'];//转入仓库self_id
+                $list['in_warehouse_name'] =  $value['in_warehouse_name'];//转入仓库名称
                 $list['good_name']         =  $value['good_name'];//商品名称
                 $list['good_spac']         =  $value['good_spac'];//商品规格
+                $list['good_lot']          =  $value['good_lot'];//商品批号
                 $list['good_weight']       =  $value['good_weight'];//件重
                 $list['good_num']          =  $value['good_num'];//件数
                 $list['weight']            =  $value['weight'];//吨重
                 $list['num']               =  $value['num'];//计费数量
-                $list['plate_num']         =  $value['plate_num'];//板数
                 $list['plate_id']          =  $value['plate_id'];//板位
-                $list['produce_time']      =  $value['produce_time'];//生产日期
-                $list['shelf_life']        =  $value['shelf_life'];//保质期
                 $list['remark']            =  $value['remark'];//备注
                 $list['deposit_id']        =  $deposit_id;//
                 $list['group_code']        =  $group_code;
@@ -258,13 +258,31 @@ class BulkContractController extends CommonController{
                 $list['create_time']       =  $now_time;
                 $list['update_time']       =  $now_time;
 
+                foreach($value['more_money'] as $k => $v){
+                    $money['self_id'] = generate_id('CM');
+                    $money['price']   = $v['price'];
+                    $money['order_id'] = $data['self_id'];
+                    $money['money_id']   = $v['money_id'];
+                    $money['number']   = $v['number'];
+                    $money['total_price']   = $v['total_price'];
+                    $money['bill_id']   = $v['bill_id'];
+                    $money['group_code']   = $data['group_code'];
+                    $money['group_name']   = $data['group_name'];
+                    $money['create_user_id']   = $data['create_user_id'];
+                    $money['create_user_name']   = $data['create_user_name'];
+                    $money['create_time']   = $money['update_time'] = $now_time;
+                    $money_lists = array_merge($money);
+                }
+
+//                InoutOtherMoney::insert($money_list);
                 $deposit_list[] = $list;
+
                 $a++;
             }
-
+            dd($money_lists);
 
             $wheres['self_id'] = $self_id;
-            $old_info=WmsDeposit::where($wheres)->first();
+            $old_info=WmsBulkContract::where($wheres)->first();
 
             if($old_info){
 
@@ -279,27 +297,12 @@ class BulkContractController extends CommonController{
                 $data['create_user_id']=$user_info->admin_id;
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsDeposit::insert($data);
+                $id=WmsBulkContract::insert($data);
 
                 if ($id){
-                    WmsDepositGood::insert($deposit_list);
+                    WmsBulkGood::insert($deposit_list);
                 }
-                foreach($more_money as $k => $v){
-                    $money['self_id'] = generate_id('CM');
-                    $money['price']   = $v['price'];
-                    $money['order_id'] = $data['self_id'];
-                    $money['money_id']   = $v['money_id'];
-                    $money['number']   = $v['number'];
-                    $money['total_price']   = $v['total_price'];
-                    $money['bill_id']   = $v['bill_id'];
-                    $money['group_code']   = $data['group_code'];
-                    $money['group_name']   = $data['group_name'];
-                    $money['create_user_id']   = $data['create_user_id'];
-                    $money['create_user_name']   = $data['create_user_name'];
-                    $money['create_time']   = $money['update_time'] = $now_time;
-                    $money_list[] = $money;
-                }
-                InoutOtherMoney::insert($money_list);
+
 
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
