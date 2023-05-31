@@ -197,8 +197,6 @@ class BulkContractController extends CommonController{
         $validator=Validator::make($input,$rules,$message);
 
         if($validator->passes()){
-            $contact_list = [];
-            $address_list = [];
             $contact = [];
             $address_area = [];
             $deposit_id                         =  generate_id('J');
@@ -208,7 +206,7 @@ class BulkContractController extends CommonController{
             $data['remark']                 	= $remark;
             $data['company_name']               = $company_name;
             $data['company_id']           	    = $company_id;
-            $data['add_time']               = $add_time;
+            $data['add_time']                   = $add_time;
 
 
 

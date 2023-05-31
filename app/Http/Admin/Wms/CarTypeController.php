@@ -109,7 +109,7 @@ class CarTypeController extends CommonController{
 
     /***    新建商品      /wms/carType/createCarType
      */
-    public function createGood(Request $request){
+    public function createCarType(Request $request){
         $data['period'] = config('wms.period');
 
         /** 接收数据*/
@@ -130,7 +130,7 @@ class CarTypeController extends CommonController{
 
     /***    新建商品入库      /wms/carType/addCarType
      */
-    public function addGood(Request $request){
+    public function addCarType(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='erp_shop_goods_sku';
