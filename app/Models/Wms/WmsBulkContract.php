@@ -53,7 +53,7 @@ class WmsBulkContract extends Model{
     public function WmsBulkGood(){
         //参数：关联模型名称，外键，主键
         //如果主键是id可以省略
-        return $this->hasMany('App\Models\Wms\WmsBulkGood','sorting_id','self_id');
+        return $this->hasMany('App\Models\Wms\WmsBulkGood','bulk_id','self_id');
     }
     public function InoutOtherMoney(){
         //参数：关联模型名称，外键，主键
