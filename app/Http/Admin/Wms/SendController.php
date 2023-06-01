@@ -76,7 +76,7 @@ class SendController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=WmsSend::where($where)->count(); //总的数据量
-                $data['items']=WmsSend::with(['WmsDepositGood' => function($query)use($where1){
+                $data['items']=WmsSend::with(['WmsSendGood' => function($query)use($where1){
                     $query->where($where1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
@@ -88,7 +88,7 @@ class SendController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=WmsSend::where($where)->count(); //总的数据量
-                $data['items']=WmsSend::with(['WmsDepositGood' => function($query)use($where1){
+                $data['items']=WmsSend::with(['WmsSendGood' => function($query)use($where1){
                     $query->where($where1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
@@ -99,7 +99,7 @@ class SendController extends CommonController{
 
             case 'more':
                 $data['total']=WmsSend::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsSend::with(['WmsDepositGood' => function($query)use($where1){
+                $data['items']=WmsSend::with(['WmsSendGood' => function($query)use($where1){
                     $query->where($where1);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
@@ -268,7 +268,7 @@ class SendController extends CommonController{
                 if ($id){
                     WmsSendGood::insert($deposit_list);
                 }
-                
+
 
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';

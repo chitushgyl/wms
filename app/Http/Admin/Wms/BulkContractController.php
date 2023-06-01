@@ -259,7 +259,7 @@ class BulkContractController extends CommonController{
                 foreach($value['more_money'] as $k => $v){
                     $money['self_id'] = generate_id('CM');
                     $money['price']   = $v['price'];
-                    $money['order_id'] = $data['self_id'];
+                    $money['order_id'] = $list['self_id'];
                     $money['money_id']   = $v['money_id'];
                     $money['number']   = $v['number'];
                     $money['total_price']   = $v['total_price'];

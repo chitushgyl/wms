@@ -354,6 +354,13 @@ Route::group([
     Route::any('/carType/addCarType', 'CarTypeController@addCarType');
     Route::any('/carType/carTypeDelFlag','CarTypeController@carTypeDelFlag');
 
+
+    Route::any('/send/sendList', 'SendController@sendList');
+    Route::any('/send/sendPage', 'SendController@sendPage');
+    Route::any('/send/createSend','SendController@createSend');
+    Route::any('/send/addSend', 'SendController@addSend');
+    Route::any('/send/sendDelFlag','SendController@sendDelFlag');
+
     Route::any('/crondtab/updateSkuState','CrondtabController@updateSkuState');
 });
 
