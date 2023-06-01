@@ -264,10 +264,10 @@ class BulkContractController extends CommonController{
                     $money['number']   = $v['number'];
                     $money['total_price']   = $v['total_price'];
                     $money['bill_id']   = $v['bill_id'];
-                    $money['group_code']   = $data['group_code'];
-                    $money['group_name']   = $data['group_name'];
-                    $money['create_user_id']   = $data['create_user_id'];
-                    $money['create_user_name']   = $data['create_user_name'];
+                    $money['group_code']   = $user_info->group_code;
+                    $money['group_name']   = $user_info->group_name;
+                    $money['create_user_id']   = $user_info->create_user_id;
+                    $money['create_user_name']   = $user_info->create_user_name;
                     $money['create_time']   = $money['update_time'] = $now_time;
                     $money_lists = array_merge($money);
                 }
