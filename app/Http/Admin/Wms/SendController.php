@@ -195,7 +195,7 @@ class SendController extends CommonController{
             $contact = [];
             $address_area = [];
             $deposit_id                         =  generate_id('J');
-            $data['total_price']                = $total_num;
+            $data['total_num']                  = $total_num;
             $data['total_weight']               = $total_weight;
             $data['remark']                 	= $remark;
             $data['company_name']               = $company_name;

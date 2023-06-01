@@ -209,7 +209,7 @@ class ChangeController extends CommonController{
             $data['company_id']           	    = $company_id;
             $data['remark']                 	= $remark;
 
-            
+
             $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
