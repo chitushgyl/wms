@@ -266,8 +266,8 @@ class BulkContractController extends CommonController{
                     $money['bill_id']   = $v['bill_id'];
                     $money['group_code']   = $user_info->group_code;
                     $money['group_name']   = $user_info->group_name;
-                    $money['create_user_id']   = $user_info->create_user_id;
-                    $money['create_user_name']   = $user_info->create_user_name;
+                    $money['create_user_id']   = $user_info->admin_id;
+                    $money['create_user_name']   = $user_info->name;
                     $money['create_time']   = $money['update_time'] = $now_time;
                     $money_lists = array_merge($money);
                 }
@@ -277,7 +277,7 @@ class BulkContractController extends CommonController{
 
                 $a++;
             }
-            dd($money_lists);
+//            dd($money_lists);
 
             $wheres['self_id'] = $self_id;
             $old_info=WmsBulkContract::where($wheres)->first();
@@ -299,6 +299,7 @@ class BulkContractController extends CommonController{
 
                 if ($id){
                     WmsBulkGood::insert($deposit_list);
+                    InoutOtherMoney::insert($money_lists);
                 }
 
 
