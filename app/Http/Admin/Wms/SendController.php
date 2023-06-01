@@ -6,6 +6,8 @@ use App\Models\Wms\ContactAddress;
 use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsDeposit;
 use App\Models\Wms\WmsDepositGood;
+use App\Models\Wms\WmsSend;
+use App\Models\Wms\WmsSendGood;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -19,9 +21,9 @@ use App\Models\Wms\WmsGroup;
 use App\Models\Group\SystemGroup;
 
 class SendController extends CommonController{
-    /***    业务公司列表      /wms/deposit/depositList
+    /***    业务公司列表      /wms/send/sendList
      */
-    public function  depositList(Request $request){
+    public function  sendList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
         $abc='业务公司';
@@ -39,9 +41,9 @@ class SendController extends CommonController{
     }
 
     //业务公司列表分页加载数据
-    /***    业务公司分页      /wms/deposit/depositPage
+    /***    业务公司分页      /wms/send/sendPage
      */
-    public function depositPage(Request $request){
+    public function sendPage(Request $request){
         /** 接收中间件参数**/
         $wms_cost_type_show    =array_column(config('wms.wms_cost_type'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
@@ -73,33 +75,36 @@ class SendController extends CommonController{
 
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=WmsDeposit::where($where)->count(); //总的数据量
-                $data['items']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
+                $data['total']=WmsSend::where($where)->count(); //总的数据量
+                $data['items']=WmsSend::with(['WmsDepositGood' => function($query)use($where1){
                     $query->where($where1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=WmsDeposit::where($where)->count(); //总的数据量
-                $data['items']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
+                $data['total']=WmsSend::where($where)->count(); //总的数据量
+                $data['items']=WmsSend::with(['WmsDepositGood' => function($query)use($where1){
                     $query->where($where1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=WmsDeposit::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
+                $data['total']=WmsSend::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=WmsSend::with(['WmsDepositGood' => function($query)use($where1){
                     $query->where($where1);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show']='Y';
                 break;
         }
@@ -121,9 +126,9 @@ class SendController extends CommonController{
 
     }
 
-    /***    业务公司创建      /wms/deposit/createDeposit
+    /***    业务公司创建      /wms/send/createSend
      */
-    public function createDeposit(Request $request){
+    public function createSend(Request $request){
 
         /** 接收数据*/
         $self_id=$request->input('self_id');
@@ -135,9 +140,7 @@ class SendController extends CommonController{
             ['delete_flag','=','Y'],
             ['use_flag','=','Y'],
         ];
-        $data['info']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
-            $query->where($where1);
-        }])->with(['InoutOtherMoney' => function($query)use($where1){
+        $data['info']=WmsSend::with(['WmsSendGood' => function($query)use($where1){
             $query->where($where1);
         }])->where($where)->first();
         if($data['info']){
@@ -152,9 +155,9 @@ class SendController extends CommonController{
 
     }
 
-    /***    业务公司添加进入数据库      /wms/deposit/addDeposit
+    /***    业务公司添加进入数据库      /wms/send/addSend
      */
-    public function addDeposit(Request $request){
+    public function addSend(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='wms_group';
@@ -170,18 +173,11 @@ class SendController extends CommonController{
         $self_id            =$request->input('self_id');
         $group_code         =$request->input('group_code');
         $total_price        =$request->input('total_price');//总费用
-        $total_plate        =$request->input('total_plate');//总板数
         $total_weight       =$request->input('total_weight');//总吨重
-        $porter             =$request->input('porter');//搬运工
-        $porter_id          =$request->input('porter_id');//搬运工self_id
-        $contract_num       =$request->input('contract_num');//合同编号
-        $contract_id        =$request->input('contract_id');//合同SELF_ID
         $remark             =$request->input('remark');//备注
         $company_name       =$request->input('company_name');//客户
         $company_id         =$request->input('company_id');//客户
-        $car_number         =$request->input('car_number');//车牌号
-        $deposit_time       =$request->input('deposit_time');//寄存时间
-        $more_money         =json_decode($request->input('more_money'),true);//其他费用
+        $send_time          =$request->input('send_time');//寄存时间
         $good_list          =json_decode($request->input('good_list'),true);
 
 
@@ -196,23 +192,15 @@ class SendController extends CommonController{
         $validator=Validator::make($input,$rules,$message);
 
         if($validator->passes()){
-            $contact_list = [];
-            $address_list = [];
             $contact = [];
             $address_area = [];
             $deposit_id                         =  generate_id('J');
             $data['total_price']                = $total_price;
-            $data['total_plate']                = $total_plate;
             $data['total_weight']               = $total_weight;
-            $data['porter']                     = $porter;
-            $data['porter_id']                  = $porter_id;
-            $data['contract_num']               = $contract_num;
-            $data['contract_id']           	    = $contract_id;
             $data['remark']                 	= $remark;
             $data['company_name']               = $company_name;
             $data['company_id']           	    = $company_id;
-            $data['car_number']           	    = $car_number;
-            $data['deposit_time']               = $deposit_time;
+            $data['send_time']                  = $send_time;
 
             $errorNum=50;       //控制错误数据的条数
             $a=2;
@@ -236,20 +224,17 @@ class SendController extends CommonController{
                 $list['self_id']           =  generate_id('DG');
                 $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
                 $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
-                $list['warehouse_id']      =  $value['warehouse_id'];//仓库self_id
-                $list['warehouse_name']    =  $value['warehouse_name'];//仓库名称
+                $list['order_number']      =  $value['order_number'];//原订单号
+                $list['receive_address']   =  $value['receive_address'];//收货地址
+                $list['receiver']          =  $value['receiver'];//收货人
+                $list['tel']               =  $value['tel'];//联系电话
                 $list['good_name']         =  $value['good_name'];//商品名称
-                $list['good_spac']         =  $value['good_spac'];//商品规格
-                $list['good_weight']       =  $value['good_weight'];//件重
-                $list['good_num']          =  $value['good_num'];//件数
-                $list['weight']            =  $value['weight'];//吨重
-                $list['num']               =  $value['num'];//计费数量
-                $list['plate_num']         =  $value['plate_num'];//板数
-                $list['plate_id']          =  $value['plate_id'];//板位
-                $list['produce_time']      =  $value['produce_time'];//生产日期
-                $list['shelf_life']        =  $value['shelf_life'];//保质期
+                $list['spac']              =  $value['spac'];//规格
+                $list['order_count']       =  $value['order_count'];//订单数量
+                $list['send_num']          =  $value['send_num'];//配送数量
+                $list['send_weight']       =  $value['send_weight'];//配送重量
                 $list['remark']            =  $value['remark'];//备注
-                $list['deposit_id']        =  $deposit_id;//
+                $list['send_id']           =  $deposit_id;//
                 $list['group_code']        =  $group_code;
                 $list['group_name']        =  $user_info->group_name;
                 $list['create_user_id']    =  $user_info->admin_id;
@@ -263,7 +248,7 @@ class SendController extends CommonController{
 
 
             $wheres['self_id'] = $self_id;
-            $old_info=WmsDeposit::where($wheres)->first();
+            $old_info=WmsSend::where($wheres)->first();
 
             if($old_info){
 
@@ -278,27 +263,12 @@ class SendController extends CommonController{
                 $data['create_user_id']=$user_info->admin_id;
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsDeposit::insert($data);
+                $id=WmsSend::insert($data);
 
                 if ($id){
-                    WmsDepositGood::insert($deposit_list);
+                    WmsSendGood::insert($deposit_list);
                 }
-                foreach($more_money as $k => $v){
-                    $money['self_id'] = generate_id('CM');
-                    $money['price']   = $v['price'];
-                    $money['order_id'] = $data['self_id'];
-                    $money['money_id']   = $v['money_id'];
-                    $money['number']   = $v['number'];
-                    $money['total_price']   = $v['total_price'];
-                    $money['bill_id']   = $v['bill_id'];
-                    $money['group_code']   = $data['group_code'];
-                    $money['group_name']   = $data['group_name'];
-                    $money['create_user_id']   = $data['create_user_id'];
-                    $money['create_user_name']   = $data['create_user_name'];
-                    $money['create_time']   = $money['update_time'] = $now_time;
-                    $money_list[] = $money;
-                }
-                InoutOtherMoney::insert($money_list);
+                
 
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
@@ -333,13 +303,13 @@ class SendController extends CommonController{
 
     }
 
-    /***    业务公司启用禁用      /wms/deposit/depositUseFlag
+    /***    业务公司启用禁用      /wms/send/SendUseFlag
      */
-    public function depositUseFlag(Request $request,Status $status){
+    public function SendUseFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_deposit';
-        $medol_name='WmsDeposit';
+        $table_name='wms_send';
+        $medol_name='WmsSend';
         $self_id=$request->input('self_id');
         $flag='useFlag';
         //$self_id='group_202007311841426065800243';
@@ -361,13 +331,13 @@ class SendController extends CommonController{
         return $msg;
     }
 
-    /***    业务公司删除      /wms/deposit/depositDelFlag
+    /***    业务公司删除      /wms/send/sendDelFlag
      */
-    public function depositDelFlag(Request $request,Status $status){
+    public function sendDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_deposit';
-        $medol_name='WmsDeposit';
+        $table_name='wms_send';
+        $medol_name='WmsSend';
         $self_id=$request->input('self_id');
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';
