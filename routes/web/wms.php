@@ -355,11 +355,17 @@ Route::group([
     Route::any('/carType/carTypeDelFlag','CarTypeController@carTypeDelFlag');
 
 
-    Route::any('/send/sendList', 'SendController@sendList');
-    Route::any('/send/sendPage', 'SendController@sendPage');
+    Route::any('/send/sendList','SendController@sendList');
+    Route::any('/send/sendPage','SendController@sendPage');
     Route::any('/send/createSend','SendController@createSend');
-    Route::any('/send/addSend', 'SendController@addSend');
+    Route::any('/send/addSend','SendController@addSend');
     Route::any('/send/sendDelFlag','SendController@sendDelFlag');
+
+    Route::any('/loading/loadingList', 'LoadingController@loadingList');
+    Route::any('/loading/loadingPage', 'LoadingController@loadingPage');
+    Route::any('/loading/createLoading','LoadingController@createLoading');
+    Route::any('/loading/addLoading', 'LoadingController@addLoading');
+    Route::any('/loading/loadingDelFlag','LoadingController@loadingDelFlag');
 
     Route::any('/crondtab/updateSkuState','CrondtabController@updateSkuState');
 });
