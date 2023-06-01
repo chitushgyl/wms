@@ -248,7 +248,7 @@ class BulkContractController extends CommonController{
                 $list['num']               =  $value['num'];//计费数量
                 $list['plate_id']          =  $value['plate_id'];//板位
                 $list['remark']            =  $value['remark'];//备注
-                $list['deposit_id']        =  $deposit_id;//
+                $list['bulk_id']        =  $deposit_id;//
                 $list['group_code']        =  $group_code;
                 $list['group_name']        =  $user_info->group_name;
                 $list['create_user_id']    =  $user_info->admin_id;
