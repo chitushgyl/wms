@@ -172,7 +172,7 @@ class SendController extends CommonController{
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $group_code         =$request->input('group_code');
-        $total_price        =$request->input('total_price');//总费用
+        $total_num          =$request->input('total_num');//总费用
         $total_weight       =$request->input('total_weight');//总吨重
         $remark             =$request->input('remark');//备注
         $company_name       =$request->input('company_name');//客户
@@ -195,7 +195,7 @@ class SendController extends CommonController{
             $contact = [];
             $address_area = [];
             $deposit_id                         =  generate_id('J');
-            $data['total_price']                = $total_price;
+            $data['total_price']                = $total_num;
             $data['total_weight']               = $total_weight;
             $data['remark']                 	= $remark;
             $data['company_name']               = $company_name;

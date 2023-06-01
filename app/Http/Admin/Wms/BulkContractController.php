@@ -338,7 +338,7 @@ class BulkContractController extends CommonController{
 
     /***    业务公司启用禁用      /wms/bulkContract/bulkContractUseFlag
      */
-    public function depositUseFlag(Request $request,Status $status){
+    public function bulkContractUseFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
         $table_name='wms_bulk_contract';
@@ -366,7 +366,7 @@ class BulkContractController extends CommonController{
 
     /***    业务公司删除      /wms/bulkContract/bulkContractDelFlag
      */
-    public function depositDelFlag(Request $request,Status $status){
+    public function bulkContractDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
         $table_name='wms_bulk_contract';
