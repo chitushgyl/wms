@@ -177,7 +177,7 @@ class SendController extends CommonController{
         $remark             =$request->input('remark');//备注
         $company_name       =$request->input('company_name');//客户
         $company_id         =$request->input('company_id');//客户
-        $send_time          =$request->input('send_time');//寄存时间
+        $send_time          =$request->input('send_time');//时间
         $good_list          =json_decode($request->input('good_list'),true);
 
 

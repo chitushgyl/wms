@@ -64,7 +64,7 @@ class FileController extends Controller{
                 //括号里面的是必须加的哦,如果括号里面的不加上的话，下面的方法也无法调用的
                 $name=$pic->getClientOriginalName();//得到图片名；
                 $ext=$pic->getClientOriginalExtension();//获取文件的扩展名
-                $extensions = ["png", "jpg", "gif","image","jpeg"];
+                $extensions = ["png", "jpg", "gif","image","jpeg","pdf","zip","rar"];
 
                 $size = $pic->getSize();
                 if(!in_array(strtolower($ext),$extensions)) {//限制上传文件的类型
