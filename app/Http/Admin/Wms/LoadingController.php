@@ -240,7 +240,6 @@ class LoadingController extends CommonController{
                 $list['good_spac']         =  $value['good_spac'];//商品规格
                 $list['good_weight']       =  $value['good_weight'];//
                 $list['good_num']          =  $value['good_num'];//
-                $list['send_num']          =  $value['send_num'];//配送数量
                 $list['sort']              =  $value['sort'];//排序
                 $list['send_id']           =  $deposit_id;//
                 $list['group_code']        =  $group_code;

@@ -79,8 +79,9 @@ class contractController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=WmsContract::where($where)->count(); //总的数据量
-                $data['items']=WmsContract::with(['WmsBillType' => function($query)use($where1){
+                $data['items']=WmsContract::with(['WmsBillType' => function($query)use($where1,$select1){
                     $query->where($where1);
+                    $query->select($select1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
 //                    ->select($select)
@@ -91,8 +92,9 @@ class contractController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=WmsContract::where($where)->count(); //总的数据量
-                $data['items']=WmsContract::with(['WmsBillType' => function($query)use($where1){
+                $data['items']=WmsContract::with(['WmsBillType' => function($query)use($where1,$select1){
                     $query->where($where1);
+                    $query->select($select1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
 //                    ->select($select)
@@ -102,8 +104,9 @@ class contractController extends CommonController{
 
             case 'more':
                 $data['total']=WmsContract::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsContract::with(['WmsBillType' => function($query)use($where1){
+                $data['items']=WmsContract::with(['WmsBillType' => function($query)use($where1,$select1){
                     $query->where($where1);
+                    $query->select($select1);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
 //                    ->select($select)
@@ -254,12 +257,7 @@ class contractController extends CommonController{
             $data['cycle']           	        = $cycle;
             $data['sale_price']        	        = $sale_price;
             $data['type']        	            = $type;
-            if ($type == 'bulk'){
-                $data['company_num']                = generate_num('LH');
-            }else{
-                $data['company_num']                = generate_num('BH');
-            }
-
+            $data['company_num']                = $company_num;
             $data['contract_type']        	    = $contract_type;
             $data['contract_settle_type']       = $contract_settle_type;
             $data['number']        	            = $number;
@@ -345,7 +343,11 @@ class contractController extends CommonController{
 
 
             }else{
-
+                if ($type == 'bulk'){
+                    $data['self_id']                = generate_num('LH');
+                }else{
+                    $data['self_id']                = generate_num('BH');
+                }
                 $data['self_id']=generate_id('L');		//优惠券表ID
                 $data['group_code'] = $group_code;
                 $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
