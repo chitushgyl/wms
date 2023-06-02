@@ -63,6 +63,12 @@ class WmsContract extends Model{
         return $this->hasMany('App\Models\Wms\ContractDetailed','contract_id','self_id');
     }
 
+    public function WmsBillType(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsBillType','bill_id','self_id');
+    }
+
 
 
 }

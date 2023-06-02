@@ -72,11 +72,15 @@ class contractController extends CommonController{
 
         $select=['self_id','company_name','use_flag','group_name','company_id','warehouse_num','bill_id','sale_price','remark','insufficient','start_time',
             'end_time','contract_num','cold_settle','cycle','group_code','delete_flag','create_time','delete_flag','type'];
-
+        $where1=[
+            ['delete_flag','=','Y'],
+        ];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=WmsContract::where($where)->count(); //总的数据量
-                $data['items']=WmsContract::where($where)
+                $data['items']=WmsContract::with(['WmsBillType' => function($query)use($where1){
+                    $query->where($where1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
 //                    ->select($select)
                     ->get();
@@ -86,7 +90,9 @@ class contractController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=WmsContract::where($where)->count(); //总的数据量
-                $data['items']=WmsContract::where($where)
+                $data['items']=WmsContract::with(['WmsBillType' => function($query)use($where1){
+                    $query->where($where1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
 //                    ->select($select)
                     ->get();
@@ -95,7 +101,9 @@ class contractController extends CommonController{
 
             case 'more':
                 $data['total']=WmsContract::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsContract::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['items']=WmsContract::with(['WmsBillType' => function($query)use($where1){
+                    $query->where($where1);
+                }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
 //                    ->select($select)
                     ->get();
