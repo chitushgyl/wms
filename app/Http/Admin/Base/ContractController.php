@@ -236,7 +236,6 @@ class contractController extends CommonController{
 
             $data['company_id']                 = $company_id;
             $data['company_name']               = $company_name;
-            $data['company_num']                = $company_num;
             $data['insufficient']               = $insufficient;
             $data['bill_id']                    = $bill_id;
             $data['start_time']                 = $start_time;
@@ -246,6 +245,12 @@ class contractController extends CommonController{
             $data['cycle']           	        = $cycle;
             $data['sale_price']        	        = $sale_price;
             $data['type']        	            = $type;
+            if ($type == 'bulk'){
+                $data['company_num']                = generate_num('LH');
+            }else{
+                $data['company_num']                = generate_num('BH');
+            }
+
             $data['contract_type']        	    = $contract_type;
             $data['contract_settle_type']       = $contract_settle_type;
             $data['number']        	            = $number;

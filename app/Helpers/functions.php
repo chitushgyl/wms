@@ -13,6 +13,18 @@ function generate_id($kk){
     return $time;
 }
 
+function generate_num($kk){
+    list($s1, $s2) = explode(' ', microtime());
+    $float = explode ( ".", ((float)$s1 + (float)$s2) );
+    if (!array_key_exists(1,$float)){
+        $float[1] = mt_rand(1001,9999);
+    }
+    $a = mt_rand(100,999);
+    $b = mt_rand(100,999);
+    $time=$kk.date('mdHi').$float[1].$a;
+    return $time;
+}
+
 /*** md5加密*/
 function get_md5($money){
     $mon=md5(md5($money)."baoyan");
