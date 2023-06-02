@@ -205,7 +205,7 @@ class GroupController extends CommonController{
             $data['credit_limit']           	= $credit_limit;
             $data['remark']           	        = $remark;
             $data['wechat']           	        = $wechat;
-            $data['img']           	            = img_for($wechat,'in');
+            $data['img']           	            = img_for($img,'in');
 
 
             $wheres['self_id'] = $self_id;
