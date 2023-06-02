@@ -174,12 +174,16 @@ class LoadingController extends CommonController{
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $group_code         =$request->input('group_code');
+        $logistic_id        =$request->input('logistic_id');
+        $logistic           =$request->input('logistic');
+        $car_id             =$request->input('car_id');
+        $car_type           =$request->input('car_type');
+        $car_number         =$request->input('car_number');
         $total_num          =$request->input('total_num');//总费用
         $total_weight       =$request->input('total_weight');//总吨重
+        $send_num           =$request->input('send_num');//
         $remark             =$request->input('remark');//备注
-        $company_name       =$request->input('company_name');//客户
-        $company_id         =$request->input('company_id');//客户
-        $send_time          =$request->input('send_time');//寄存时间
+        $loading_time       =$request->input('loading_time');//寄存时间
         $good_list          =json_decode($request->input('good_list'),true);
 
 
@@ -197,12 +201,16 @@ class LoadingController extends CommonController{
             $contact = [];
             $address_area = [];
             $deposit_id                         =  generate_id('J');
+            $data['logistic_id']                = $logistic_id;
+            $data['logistic']                   = $logistic;
+            $data['car_id']                     = $car_id;
+            $data['car_type']                   = $car_type;
+            $data['car_number']                 = $car_number;
             $data['total_num']                  = $total_num;
             $data['total_weight']               = $total_weight;
+            $data['send_num']                   = $send_num;
             $data['remark']                 	= $remark;
-            $data['company_name']               = $company_name;
-            $data['company_id']           	    = $company_id;
-            $data['send_time']                  = $send_time;
+            $data['loading_time']               = $loading_time;
 
             $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
@@ -228,15 +236,18 @@ class LoadingController extends CommonController{
                 $list['self_id']           =  generate_id('DG');
                 $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
                 $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
-                $list['order_number']      =  $value['order_number'];//原订单号
-                $list['receive_address']   =  $value['receive_address'];//收货地址
+                $list['send_number']       =  $value['order_number'];//配送编号
+                $list['address']           =  $value['receive_address'];//收货地址
                 $list['receiver']          =  $value['receiver'];//收货人
                 $list['tel']               =  $value['tel'];//联系电话
                 $list['good_name']         =  $value['good_name'];//商品名称
-                $list['spac']              =  $value['spac'];//规格
-                $list['order_count']       =  $value['order_count'];//订单数量
+                $list['good_lot']          =  $value['good_lot'];//商品批号
+                $list['good_spac']         =  $value['good_spac'];//商品规格
+                $list['good_weight']       =  $value['good_weight'];//
+                $list['good_num']          =  $value['good_num'];//
                 $list['send_num']          =  $value['send_num'];//配送数量
-                $list['send_weight']       =  $value['send_weight'];//配送重量
+
+                $list['sort']              =  $value['sort'];//配送重量
                 $list['remark']            =  $value['remark'];//备注
                 $list['send_id']           =  $deposit_id;//
                 $list['group_code']        =  $group_code;
