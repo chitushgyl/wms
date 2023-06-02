@@ -174,32 +174,29 @@ class LoadingController extends CommonController{
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $group_code         =$request->input('group_code');
-        $logistic_id        =$request->input('logistic_id');
-        $logistic           =$request->input('logistic');
-        $car_id             =$request->input('car_id');
-        $car_type           =$request->input('car_type');
-        $car_number         =$request->input('car_number');
+        $logistic_id        =$request->input('logistic_id');//物流公司
+        $logistic           =$request->input('logistic');//物流公司
+        $car_id             =$request->input('car_id');//车型
+        $car_type           =$request->input('car_type');//车型
+        $car_number         =$request->input('car_number');//车牌号
         $total_num          =$request->input('total_num');//总费用
         $total_weight       =$request->input('total_weight');//总吨重
-        $send_num           =$request->input('send_num');//
+        $send_num           =$request->input('send_num');//送货件数
         $remark             =$request->input('remark');//备注
-        $loading_time       =$request->input('loading_time');//寄存时间
+        $loading_time       =$request->input('loading_time');//时间
         $good_list          =json_decode($request->input('good_list'),true);
 
 
         $rules=[
             'group_code'=>'required',
-            'company_name'=>'required',
         ];
         $message=[
             'group_code.required'=>'所属公司不能为空',
-            'company_name.required'=>'公司名称不能为空',
         ];
         $validator=Validator::make($input,$rules,$message);
 
         if($validator->passes()){
-            $contact = [];
-            $address_area = [];
+
             $deposit_id                         =  generate_id('J');
             $data['logistic_id']                = $logistic_id;
             $data['logistic']                   = $logistic;
@@ -238,17 +235,13 @@ class LoadingController extends CommonController{
                 $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
                 $list['send_number']       =  $value['order_number'];//配送编号
                 $list['address']           =  $value['receive_address'];//收货地址
-                $list['receiver']          =  $value['receiver'];//收货人
-                $list['tel']               =  $value['tel'];//联系电话
                 $list['good_name']         =  $value['good_name'];//商品名称
                 $list['good_lot']          =  $value['good_lot'];//商品批号
                 $list['good_spac']         =  $value['good_spac'];//商品规格
                 $list['good_weight']       =  $value['good_weight'];//
                 $list['good_num']          =  $value['good_num'];//
                 $list['send_num']          =  $value['send_num'];//配送数量
-
-                $list['sort']              =  $value['sort'];//配送重量
-                $list['remark']            =  $value['remark'];//备注
+                $list['sort']              =  $value['sort'];//排序
                 $list['send_id']           =  $deposit_id;//
                 $list['group_code']        =  $group_code;
                 $list['group_name']        =  $user_info->group_name;
