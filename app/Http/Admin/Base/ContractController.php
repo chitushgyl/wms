@@ -72,6 +72,7 @@ class contractController extends CommonController{
 
         $select=['self_id','company_name','use_flag','group_name','company_id','warehouse_num','bill_id','sale_price','remark','insufficient','start_time',
             'end_time','contract_num','cold_settle','cycle','group_code','delete_flag','create_time','delete_flag','type'];
+        $select1= ['self_id','bill_name'];
         $where1=[
             ['delete_flag','=','Y'],
         ];
