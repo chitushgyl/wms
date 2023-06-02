@@ -8,7 +8,7 @@ function generate_id($kk){
         $float[1] = mt_rand(100,999);
     }
     $a = mt_rand(10,99);
-    $time=$kk.date('YmdHis').$float[1].$a;
+    $time=$kk.date('mdHi').$float[1].$a;
     return $time;
 }
 
