@@ -162,6 +162,7 @@ class GroupController extends CommonController{
         $wechat             =$request->input('wechat');//微信
         $contacts           =$request->input('contacts');//联系人
         $contact_address    =$request->input('contact_address');//收货地址
+        $img                =$request->input('img');//附件
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -204,6 +205,7 @@ class GroupController extends CommonController{
             $data['credit_limit']           	= $credit_limit;
             $data['remark']           	        = $remark;
             $data['wechat']           	        = $wechat;
+            $data['img']           	            = img_for($wechat,'in');
 
 
             $wheres['self_id'] = $self_id;
