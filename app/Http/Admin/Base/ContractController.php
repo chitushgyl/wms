@@ -216,6 +216,7 @@ class contractController extends CommonController{
         $warehouse_id       =$request->input('warehouse_id');//仓库
         $warehouse_name     =$request->input('warehouse_name');//仓库
         $bill_name          =$request->input('bill_name');//
+        $contact_detailed   =$request->input('contract_detailed');//
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -246,7 +247,7 @@ class contractController extends CommonController{
             $contact_list = [];
             $contact = [];
             $detail_list = [];
-
+            $ids_list = [];
             $data['company_id']                 = $company_id;
             $data['company_name']               = $company_name;
             $data['insufficient']               = $insufficient;
@@ -305,19 +306,8 @@ class contractController extends CommonController{
                 }
                 if($type == 'contract'){
                     //包仓明细
-                    foreach($contact_details as $key => $value){
-                        if($value['self_id']){
-                            $details['start_time']  = $value['start_time'];
-                            $details['end_time']    = $value['end_time'];
-                            $details['price']       = $value['price'];
-                            $details['number']      = $value['number'];
-                            $details['yuan_money']  = $value['yuan_money'];
-                            $details['total_money'] = $value['total_money'];
-                            $details['settle_flag'] = $value['settle_flag'];
-                            $details['stop_money']  = $value['stop_money'];
-                            $details['update_time'] = $now_time;
-                            ContractDetailed::where('self_id',$value['self_id'])->update($details);
-                        }else{
+                    if(count($contact_detailed)>0){
+                        foreach($contact_detailed as $key => $value){
                             $details['self_id']     = generate_id('BM');
                             $details['contract_id']     = $self_id;
                             $details['start_time']  = $value['start_time'];
@@ -335,9 +325,44 @@ class contractController extends CommonController{
                             $details['create_time']  = $details['update_time'] = $now_time;
                             $detail_list[] = $details;
                         }
+
+                        foreach($contact_details as $key => $value){
+                            if($value['self_id']){
+                                $ids  = $value['self_id'];
+                                $ids_list = array_push($ids);
+                            }
+                        }
+
+                    }else{
+                        foreach($contact_details as $key => $value){
+                            $details['self_id']     = generate_id('BM');
+                            $details['contract_id']     = $self_id;
+                            $details['start_time']  = $value['start_time'];
+                            $details['end_time']    = $value['end_time'];
+                            $details['price']       = $value['price'];
+                            $details['number']      = $value['number'];
+                            $details['yuan_money']  = $value['yuan_money'];
+                            $details['total_money'] = $value['total_money'];
+                            $details['settle_flag'] = $value['settle_flag'];
+                            $details['stop_money']  = $value['stop_money'];
+                            $details['group_code']  = $group_code;
+                            $details['group_name']  = $old_info->group_name;
+                            $details['create_user_id']  = $user_info->admin_id;
+                            $details['create_user_name']  = $user_info->name;
+                            $details['create_time']  = $details['update_time'] = $now_time;
+                            $detail_list[] = $details;
+
+                        }
+                        $ids_list = [];
                     }
+
                     if (count($detail_list)>0){
                         ContractDetailed::insert($detail_list);
+                    }
+                    if (count($ids_list)>0){
+                        $update['delete_flag'] = 'Y';
+                        $update['update_time'] = $now_time;
+                        ContractDetailed::whereIn('self_id',$ids_list)->update($update);
                     }
                 }
                 $operationing->access_cause='修改业务公司';
@@ -372,6 +397,7 @@ class contractController extends CommonController{
                         $contact['group_name'] = $data['group_name'];
                         $contact['create_user_id'] = $user_info->admin_id;
                         $contact['create_user_name'] = $user_info->name;
+                        $contact['create_time'] = $contact['update_time'] = $user_info->name;
                         $contact_list[] = $contact;
                     }
                 }
