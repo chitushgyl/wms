@@ -360,7 +360,7 @@ class contractController extends CommonController{
                         ContractDetailed::insert($detail_list);
                     }
                     if (count($ids_list)>0){
-                        $update['delete_flag'] = 'Y';
+                        $update['delete_flag'] = 'N';
                         $update['update_time'] = $now_time;
                         ContractDetailed::whereIn('self_id',$ids_list)->update($update);
                     }
