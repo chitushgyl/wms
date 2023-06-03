@@ -329,7 +329,7 @@ class contractController extends CommonController{
                         foreach($contact_detailed as $key => $value){
                             if($value['self_id']){
                                 $ids  = $value['self_id'];
-                                $ids_list = array_push($ids);
+                                $ids_list = array_push($ids_list,$ids);
                             }
                         }
 
