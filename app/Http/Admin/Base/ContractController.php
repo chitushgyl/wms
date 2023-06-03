@@ -306,8 +306,8 @@ class contractController extends CommonController{
                 }
                 if($type == 'contract'){
                     //包仓明细
-                    if(count($contact_detailed)>0){
-                        foreach($contact_detailed as $key => $value){
+                    if(count($contact_details)>0){
+                        foreach($contact_details as $key => $value){
                             $details['self_id']     = generate_id('BM');
                             $details['contract_id']     = $self_id;
                             $details['start_time']  = $value['start_time'];
@@ -326,7 +326,7 @@ class contractController extends CommonController{
                             $detail_list[] = $details;
                         }
 
-                        foreach($contact_details as $key => $value){
+                        foreach($contact_detailed as $key => $value){
                             if($value['self_id']){
                                 $ids  = $value['self_id'];
                                 $ids_list = array_push($ids);
@@ -334,7 +334,7 @@ class contractController extends CommonController{
                         }
 
                     }else{
-                        foreach($contact_details as $key => $value){
+                        foreach($contact_detailed as $key => $value){
                             $details['self_id']     = generate_id('BM');
                             $details['contract_id']     = $self_id;
                             $details['start_time']  = $value['start_time'];
