@@ -858,7 +858,7 @@ class LibraryController extends CommonController{
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $pull=[];
-            $seld=generate_id('SID_');
+            $seld=generate_id('R');
             $bulk=0;
             $weight=0;
             $a=2;
@@ -914,7 +914,7 @@ class LibraryController extends CommonController{
                     $pull[] = '';
 
 		    //dd($getGoods->toArray());
-                    $list["self_id"]            =generate_id('R');
+                    $list["self_id"]            =generate_id('RK');
                     $list["order_id"]           =$seld;
                     $list["sku_id"]             =$getGoods->self_id;
                     $list["external_sku_id"]    =$getGoods->external_sku_id;
@@ -1254,7 +1254,7 @@ class LibraryController extends CommonController{
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $pull=[];
-            $seld=generate_id('SID_');
+            $seld=generate_id('R');
             $bulk=0;
             $weight=0;
             $a=2;
@@ -1337,7 +1337,7 @@ class LibraryController extends CommonController{
                               $list['update_time']  = $now_time;
                               WmsLibrarySige::where('self_id',$v['self_id'])->update($list);
                         }else{
-                            $list["self_id"]            =generate_id('R');
+                            $list["self_id"]            =generate_id('RK');
                             $list["group_code"]         =$getGoods->group_code;
                             $list["group_name"]         =$getGoods->group_name;
                             $list['create_time']        =$now_time;
