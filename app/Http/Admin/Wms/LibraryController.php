@@ -968,10 +968,28 @@ class LibraryController extends CommonController{
                     $weight+=  $getGoods->wms_weight*$v['now_num'];
 
                     $datalist[]=$list;
+                    foreach($other_money as $key => $value){
+                           $money['self_id'] = generate_id('LM');
+                           $money['price']   = $value['price'];
+                           $money['order_id'] = $list["self_id"];
+                           $money['money_id']   = $value['money_id'];
+                           $money['number']   = $value['number'];
+                           $money['total_price']   = $value['total_price'];
+                           $money['bill_id']   = $value['bill_id'];
+                           $money['group_code']   = $list['group_code'];
+                           $money['group_name']   = $list['group_name'];
+                           $money['create_user_id']   = $list['create_user_id'];
+                           $money['create_user_name']   = $list['create_user_name'];
+                           $money['create_time']   = $money['update_time'] = $now_time;
+                           $money_list[] = $money;
+                           $money_lists = array_merge($money);
+                    }
+
+//                    InoutOtherMoney::insert($money_list);
                 }
                 $a++;
             }
-
+            dd($money_lists);
             if($cando == 'N'){
                 $msg['code'] = 306;
                 $msg['msg'] = $strs;
@@ -1031,24 +1049,24 @@ class LibraryController extends CommonController{
                 $change->change($datalist,'preentry');
 //                $money->moneyCompute($data,$datalist,$now_time,$company_info,$user_info,'in');
                 //计算费用
-                if ($type == 'W'){
-                    foreach($other_money as $key => $value){
-                        $money['self_id'] = generate_id('LM');
-                        $money['price']   = $value['price'];
-                        $money['order_id'] = $data['self_id'];
-                        $money['money_id']   = $value['money_id'];
-                        $money['number']   = $value['number'];
-                        $money['total_price']   = $value['total_price'];
-                        $money['bill_id']   = $value['bill_id'];
-                        $money['group_code']   = $data['group_code'];
-                        $money['group_name']   = $data['group_name'];
-                        $money['create_user_id']   = $data['create_user_id'];
-                        $money['create_user_name']   = $data['create_user_name'];
-                        $money['create_time']   = $money['update_time'] = $now_time;
-                        $money_list[] = $money;
-                    }
-                    InoutOtherMoney::insert($money_list);
-                }
+//                if ($type == 'W'){
+//                    foreach($other_money as $key => $value){
+//                        $money['self_id'] = generate_id('LM');
+//                        $money['price']   = $value['price'];
+//                        $money['order_id'] = $data['self_id'];
+//                        $money['money_id']   = $value['money_id'];
+//                        $money['number']   = $value['number'];
+//                        $money['total_price']   = $value['total_price'];
+//                        $money['bill_id']   = $value['bill_id'];
+//                        $money['group_code']   = $data['group_code'];
+//                        $money['group_name']   = $data['group_name'];
+//                        $money['create_user_id']   = $data['create_user_id'];
+//                        $money['create_user_name']   = $data['create_user_name'];
+//                        $money['create_time']   = $money['update_time'] = $now_time;
+//                        $money_list[] = $money;
+//                    }
+//                    InoutOtherMoney::insert($money_list);
+//                }
 
 
                 $msg['code']=200;
