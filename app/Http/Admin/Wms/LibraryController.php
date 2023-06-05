@@ -1089,10 +1089,11 @@ class LibraryController extends CommonController{
         ];
         $data['info']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query) use($where1){
             $query->where($where1);
+            $query->with(['InoutOtherMoney' => function($query) use($where1){
+                $query->where($where1);
+            }]);
         }])
-            ->with(['InoutOtherMoney' => function($query) use($where1){
-            $query->where($where1);
-        }])
+
             ->with(['wmsGroup' => function($query) use($where1){
                 $query->where($where1);
             }])
