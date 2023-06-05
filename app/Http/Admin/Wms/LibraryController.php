@@ -906,7 +906,7 @@ class LibraryController extends CommonController{
                     }
                 }
 
-				//dd($expire_time);
+				dd($getGoods);
 
 				$list=[];
                 if($cando == 'Y'){
@@ -969,7 +969,7 @@ class LibraryController extends CommonController{
 
                     $datalist[]=$list;
                     foreach($v['other_money'] as $key => $value){
-                           $money['self_id'] = generate_id('LM');
+                           $money['self_id'] = generate_id('RF');
                            $money['price']   = $value['price'];
                            $money['order_id'] = $list["self_id"];
                            $money['money_id']   = $value['money_id'];
