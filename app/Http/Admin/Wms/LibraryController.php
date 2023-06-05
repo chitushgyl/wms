@@ -862,13 +862,14 @@ class LibraryController extends CommonController{
             $bulk=0;
             $weight=0;
             $a=2;
+            $money_lists=[];
             foreach($library_sige as $k => $v){
                 //dump($v);
                 //$where100['company_id']=$company_id;
                 $where100['self_id']=$v['sku_id'];
                 //查询商品是不是存在
                 $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
-                    'wms_length','wms_wide','wms_high','wms_weight','period','period_value'];
+                    'wms_length','wms_wide','wms_high','wms_weight','period','period_value','group_code','group_name'];
 					//dump($goods_select);
 
                 $getGoods=ErpShopGoodsSku::where($where100)->select($goods_select)->first();
@@ -985,11 +986,10 @@ class LibraryController extends CommonController{
                            $money_lists = array_merge($money_list);
                     }
 
-//                    InoutOtherMoney::insert($money_list);
                 }
                 $a++;
             }
-            dd($money_lists);
+
             if($cando == 'N'){
                 $msg['code'] = 306;
                 $msg['msg'] = $strs;
@@ -1047,26 +1047,8 @@ class LibraryController extends CommonController{
                 WmsLibrarySige::insert($datalist);
 
                 $change->change($datalist,'preentry');
+                InoutOtherMoney::insert($money_lists);
 //                $money->moneyCompute($data,$datalist,$now_time,$company_info,$user_info,'in');
-                //计算费用
-//                if ($type == 'W'){
-//                    foreach($other_money as $key => $value){
-//                        $money['self_id'] = generate_id('LM');
-//                        $money['price']   = $value['price'];
-//                        $money['order_id'] = $data['self_id'];
-//                        $money['money_id']   = $value['money_id'];
-//                        $money['number']   = $value['number'];
-//                        $money['total_price']   = $value['total_price'];
-//                        $money['bill_id']   = $value['bill_id'];
-//                        $money['group_code']   = $data['group_code'];
-//                        $money['group_name']   = $data['group_name'];
-//                        $money['create_user_id']   = $data['create_user_id'];
-//                        $money['create_user_name']   = $data['create_user_name'];
-//                        $money['create_time']   = $money['update_time'] = $now_time;
-//                        $money_list[] = $money;
-//                    }
-//                    InoutOtherMoney::insert($money_list);
-//                }
 
 
                 $msg['code']=200;
