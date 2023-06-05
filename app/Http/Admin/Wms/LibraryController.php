@@ -982,7 +982,7 @@ class LibraryController extends CommonController{
                            $money['create_user_name']   = $list['create_user_name'];
                            $money['create_time']   = $money['update_time'] = $now_time;
                            $money_list[] = $money;
-                           $money_lists = array_merge($money);
+                           $money_lists = array_merge($money_list);
                     }
 
 //                    InoutOtherMoney::insert($money_list);
