@@ -907,7 +907,6 @@ class LibraryController extends CommonController{
                     }
                 }
 
-				dd($getGoods);
 
 				$list=[];
                 if($cando == 'Y'){
@@ -977,6 +976,7 @@ class LibraryController extends CommonController{
                            $money['number']   = $value['number'];
                            $money['total_price']   = $value['total_price'];
                            $money['bill_id']   = $value['bill_id'];
+                           $money['use_flag']  = 'N';
                            $money['group_code']   = $list['group_code'];
                            $money['group_name']   = $list['group_name'];
                            $money['create_user_id']   = $list['create_user_id'];
