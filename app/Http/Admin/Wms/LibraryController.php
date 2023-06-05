@@ -968,7 +968,7 @@ class LibraryController extends CommonController{
                     $weight+=  $getGoods->wms_weight*$v['now_num'];
 
                     $datalist[]=$list;
-                    foreach($other_money as $key => $value){
+                    foreach($v['other_money'] as $key => $value){
                            $money['self_id'] = generate_id('LM');
                            $money['price']   = $value['price'];
                            $money['order_id'] = $list["self_id"];
