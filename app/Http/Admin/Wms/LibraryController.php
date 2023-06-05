@@ -1108,6 +1108,364 @@ class LibraryController extends CommonController{
         return $msg;
     }
 
+    /**
+     * 编辑入库  /wms/library/editLibrary
+     * */
+    public function editLibrary(Request $request,Change $change){
+        $operationing       = $request->get('operationing');//接收中间件产生的参数
+        $user_info          = $request->get('user_info');                //接收中间件产生的参数
+        $now_time           =date('Y-m-d H:i:s',time());
+        $table_name         ='wms_library_order';
+
+        $operationing->access_cause='手工入库';
+        $operationing->operation_type='create';
+        $operationing->table=$table_name;
+        $operationing->now_time=$now_time;
+
+        $input=$request->all();
+        /** 接收数据*/
+        //dd($input);
+        $warehouse_id       = $request->input('warehouse_id');
+        $entry_time         = $request->input('entry_time');//入库时间
+        $company_id         = $request->input('company_id');
+        $company_name         = $request->input('company_name');//客户名称
+        $library_sige       = json_decode($request->input('library_sige'), true);
+        $voucher            = json_decode($request->input('voucher'),true);
+        $contract_id        = $request->input('contract_id');//合同编号
+        $contract_num       = $request->input('contract_num');//合同编号
+        $porter_num         = $request->input('porter_num');//搬运工单号
+        $car_number         = $request->input('car_number');//车牌号
+        $cupboard_num       = $request->input('cupboard_num');//柜号
+        $total_num          = $request->input('total_num');//总件数
+        $total_weight       = $request->input('total_weight');//总吨数
+        $total_money        = $request->input('total_money');//总金额
+        $total_plate_num    = $request->input('total_plate_num');//总板数
+        $remark             = $request->input('remark');//总板数
+        $railway            = $request->input('railway');//月台号
+        $insufficient       = $request->input('insufficient');//不足N吨按吨算
+        $other_money        = json_decode($request->input('other_money'),true);//其他费用
+        $type               = $request->input('type');
+
+        $rules=[
+            'group_code'=>'required',
+            'company_id'=>'required',
+            'library_sige'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'请填写公司',
+            'company_id.required'=>'请填写业务公司',
+            'library_sige.required'=>'商品必须',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            //二次效验！！！！
+            $rulesssss=['sku_id'=>'商品名称','now_num'=>'件数'];
+
+            $rule=array_keys($rulesssss);
+            $rule_count=count($rule);
+
+
+            $msg['msg']=null;
+            $cando='Y';
+            $abcs=1;
+            foreach($library_sige as $k => $v){
+                $art222=array_keys($v);
+                //取一个交集出来，然后比较长度
+                $result=array_intersect($rule,$art222);
+                $result_count=count($result);
+
+                if($rule_count != $result_count){
+                    //说明缺少参数
+                    $msg['code']=302;
+                    $msg['msg']='模板数组缺少必要参数';
+                    //dd($msg);
+                    return $msg;
+                }
+
+                /**效验必填项目**/
+                foreach($rulesssss as $kk => $vv){
+                    if($kk !='expire_time'){
+                        if($v[$kk]){
+                            if(in_array($kk,['now_num'])){
+                                if($v[$kk]<0){
+                                    $cando='N';
+                                    $msg['msg'].=$abcs.": ".$vv." 必须大于0</br>";
+                                    $abcs++;
+                                }
+                            }
+                        }else{
+                            $cando='N';
+                            $msg['msg'].=$abcs.": ".$vv." 缺失</br>";
+                            $abcs++;
+                        }
+                    }
+
+                }
+                /*** 这里还要加一个开始时间和结束时间的比较***/
+                if($v['production_date'] && $v['expire_time']){
+                    if($v['production_date'] > $v['expire_time']){
+                        $ahf=$k +1;
+                        $cando='N';
+                        $msg['msg'].=$abcs.": 第".$ahf." 行的有效期日期不正确，请检查</br>";
+                        $abcs++;
+                    }
+                }
+                if($type == 'W'){
+                    $where_pack=[
+                        ['delete_flag','=','Y'],
+                        ['self_id','=', $v['warehouse_id']],
+                    ];
+
+                    $warehouse_info = WmsWarehouse::where($where_pack)->select('warehouse_name','group_code','group_name')->first();
+                    if(empty($warehouse_info)){
+                        $msg['code'] = 304;
+                        $msg['msg'] = '仓库不存在';
+                        return $msg;
+                    }
+                }
+
+            }
+
+            if($cando=='N'){
+                $msg['code']=303;
+                //dd($msg);
+                return $msg;
+            }
+
+            /** 开始检查其他数据对不对    **/
+            $where_pack2=[
+                ['delete_flag','=','Y'],
+                ['self_id','=', $company_id],
+            ];
+            $company_select=['self_id','company_name'];
+
+            $company_info = WmsGroup::where($where_pack2)->select($company_select)->first();
+
+            if(empty($company_info)){
+                $msg['code'] = 305;
+                $msg['msg'] = '业务公司不存在';
+                return $msg;
+            }
+
+            /** 开始制作数据了*/
+            $datalist=[];       //初始化数组为空
+            $cando='Y';         //错误数据的标记
+            $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
+            $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
+            $errorNum=50;       //控制错误数据的条数
+            $pull=[];
+            $seld=generate_id('SID_');
+            $bulk=0;
+            $weight=0;
+            $a=2;
+            $money_lists=[];
+            DB::beginTransaction();
+            try{
+                foreach($library_sige as $k => $v){
+                    $where100['self_id']=$v['sku_id'];
+                    //查询商品是不是存在
+                    $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
+                        'wms_length','wms_wide','wms_high','wms_weight','period','period_value','group_code','group_name'];
+                    $getGoods=ErpShopGoodsSku::where($where100)->select($goods_select)->first();
+                    if(empty($getGoods)){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行商品不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+
+                    /** 计算商品的有效期**/
+                    $expire_time=null;
+                    if($v['expire_time']){
+                        $expire_time=$v['expire_time'];
+                    }else{
+                        if($getGoods->period_value && $getGoods->period){
+                            $abcccc='+'.$getGoods->period_value.' '.$getGoods->period;
+
+                            $expire_time       =date('Y-m-d',strtotime($abcccc,strtotime($v['production_date'])));
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行数据无到期时间".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+
+                    $list=[];
+                    if($cando == 'Y'){
+                        $pull[] = '';
+
+                        $list["order_id"]           =$seld;
+                        $list["sku_id"]             =$getGoods->self_id;
+                        $list["external_sku_id"]    =$getGoods->external_sku_id;
+                        $list["company_id"]         =$getGoods->company_id;
+                        $list["company_name"]       =$getGoods->company_name;
+                        $list["good_name"]          =$getGoods->good_name;
+                        $list["good_english_name"]  =$getGoods->good_english_name;
+                        $list["good_target_unit"]   =$getGoods->wms_target_unit;
+                        $list["good_scale"]         =$getGoods->wms_scale;
+                        $list["good_unit"]          =$getGoods->wms_unit;
+                        $list["wms_length"]         =$getGoods->wms_length;
+                        $list["wms_wide"]           =$getGoods->wms_wide;
+                        $list["wms_high"]           =$getGoods->wms_high;
+                        $list["wms_weight"]         =$getGoods->wms_weight;
+                        $list["good_info"]          =json_encode($getGoods,JSON_UNESCAPED_UNICODE);
+                        $list["warehouse_id"]       =$v['warehouse_id'];
+                        $list["warehouse_name"]     =$v['warehouse_name'];
+                        $list["production_date"]    =$v['production_date'];
+                        $list["expire_time"]        =$expire_time;
+                        $list['spec']               =$getGoods->wms_spec;
+                        $list['initial_num']        =$v['now_num'];
+                        $list['now_num']            =$v['now_num'];
+                        $list['storage_number']     =$v['now_num'];
+                        $list["grounding_status"]   ='N';
+                        $list["good_remark"]        =$v['good_remark'];
+                        $list["good_lot"]           =$v['good_lot'];
+                        $list["plate_number"]       =$v['plate_number'];
+                        $list["singe_plate_number"] =$v['singe_plate_number'];
+                        $list["singe_weight"]       =$v['singe_weight'];
+                        $list["count_number"]       =$v['count_number'];
+
+                        $list['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
+                        $list['weight']             = $v['singe_weight']*$v['now_num'];
+                        $bulk+=  $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
+                        $weight+=  $getGoods->wms_weight*$v['now_num'];
+
+                        if($v['self_id']){
+                              $list['update_time']  = $now_time;
+                              WmsLibrarySige::where('self_id',$v['self_id'])->update($list);
+                        }else{
+                            $list["self_id"]            =generate_id('R');
+                            $list["group_code"]         =$getGoods->group_code;
+                            $list["group_name"]         =$getGoods->group_name;
+                            $list['create_time']        =$now_time;
+                            $list["update_time"]        =$now_time;
+                            $list['create_user_id']     = $user_info->admin_id;
+                            $list['create_user_name']   = $user_info->name;
+                            $datalist[]=$list;
+                        }
+
+
+                        foreach($v['other_money'] as $key => $value){
+                            $money['price']             = $value['price'];
+                            $money['order_id']          = $list["self_id"];
+                            $money['money_id']          = $value['money_id'];
+                            $money['number']            = $value['number'];
+                            $money['total_price']       = $value['total_price'];
+                            $money['bill_id']           = $value['bill_id'];
+                            $money['use_flag']          = 'N';
+                            if ($value['order_id'] == $v['self_id'] && $value['self_id']){
+                                InoutOtherMoney::where('self_id',$value['self_id'])->update($money);
+                            }else{
+                                $money['self_id']           = generate_id('RF');
+                                $money['group_code']        = $list['group_code'];
+                                $money['group_name']        = $list['group_name'];
+                                $money['create_user_id']    = $list['create_user_id'];
+                                $money['create_user_name']  = $list['create_user_name'];
+                                $money['create_time']       = $money['update_time'] = $now_time;
+                                $money_list[] = $money;
+                                $money_lists = array_merge($money_list);
+                            }
+
+                        }
+
+                    }
+                    $a++;
+                }
+
+                if($cando == 'N'){
+                    $msg['code'] = 306;
+                    $msg['msg'] = $strs;
+                    return $msg;
+                }
+
+                $count=count($datalist);
+
+                $pull=array_unique($pull);
+                $pull_count=count($pull);
+
+                $data['self_id']            =$seld;
+                $data['create_user_id']     = $user_info->admin_id;
+                $data['create_user_name']   = $user_info->name;
+                $data['create_time']        =$now_time;
+                $data["update_time"]        =$now_time;
+                $data["grounding_status"]   ='N';
+                $data["group_code"]         =$getGoods->group_code;
+                $data["group_name"]         =$getGoods->group_name;
+                $data['count']              =$count;
+                $data['type']               ='preentry';
+                $data['company_id']         =$company_info->self_id;
+                $data["company_name"]       =$company_info->company_name;
+                $data["pull_count"]         =$pull_count;
+                $data['check_user_id']      = $user_info->admin_id;
+                $data['check_user_name']    = $user_info->name;
+                $data['check_time']         =$now_time;
+                $data['bulk']               =$bulk;
+                $data['weight']             =$weight;
+                $data['entry_time']         =$entry_time;
+                $data['contract_id']       =$contract_id;
+                $data['contract_num']       =$contract_num;
+                $data['porter_num']         =$porter_num;
+                $data['car_number']         =$car_number;
+                $data['cupboard_num']       =$cupboard_num;
+                $data['total_num']          =$total_num;
+                $data['total_weight']       =$total_weight;
+                $data['total_money']        =$total_money;
+                $data['total_plate_num']    =$total_plate_num;
+                $data['remark']             =$remark;
+                $data['railway']            =$railway;
+                $data['insufficient']       =$insufficient;
+//            $data['other_money']        =$other_money;
+                $data['voucher']            =img_for($voucher,'in');
+                $data['order_status']       = $type;
+                //dd($data);
+
+                $id=WmsLibraryOrder::insert($data);
+
+                $operationing->table_id=$data['self_id'];
+                $operationing->old_info=null;
+                $operationing->new_info=$data;
+
+                if($id){
+                    WmsLibrarySige::insert($datalist);
+
+                    $change->change($datalist,'preentry');
+                    InoutOtherMoney::insert($money_lists);
+//                $money->moneyCompute($data,$datalist,$now_time,$company_info,$user_info,'in');
+
+
+                    $msg['code']=200;
+                    $msg['msg']='操作成功，您一共手工入库'.$count.'条数据，共计'.$pull_count.'托盘';
+
+                    return $msg;
+                }else{
+                    $msg['code']=301;
+                    $msg['msg']='操作失败';
+                    return $msg;
+                }
+            }catch(\Exception $e){
+                DB::rollBack();
+                $msg['code']=301;
+                $msg['msg']='操作失败';
+                return $msg;
+
+            }
+
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+    }
+
     /***    入库详情     /wms/library/details
      */
     public function  details(Request $request,Details $details){

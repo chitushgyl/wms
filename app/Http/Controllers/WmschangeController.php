@@ -44,7 +44,7 @@ class WmschangeController extends Controller{
             $list['good_lot']           =$v['good_lot'];
             $list['produce_time']       =$v['production_date'];
             $list['expire_time']        =$v['expire_time'];
-	    //dd($list);
+
             switch ($type){
                 case 'preentry':
                     $list['initial_num']        ='0';
@@ -79,11 +79,8 @@ class WmschangeController extends Controller{
                     $list['change_num']         =$list['initial_num']-$list['now_num'];
                     break;
 
-
                 case 'out':
-                    //$v['now_num']  66
-                    //$v['now_num_new']   66-25=41
-                    $list['initial_num']        =$v['initial_num'];             //66
+                    $list['initial_num']        =$v['initial_num'];
                     $list['change_num']         =$v['shiji_num'];
                     $list['now_num']            =$v['initial_num']-$v['shiji_num'];
                     $list['use_flag']           ='N';
