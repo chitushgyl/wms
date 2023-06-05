@@ -1350,7 +1350,6 @@ class LibraryController extends CommonController{
 
                         foreach($v['other_money'] as $key => $value){
                             $money['price']             = $value['price'];
-                            $money['order_id']          = $list["self_id"];
                             $money['money_id']          = $value['money_id'];
                             $money['number']            = $value['number'];
                             $money['total_price']       = $value['total_price'];
@@ -1360,6 +1359,7 @@ class LibraryController extends CommonController{
                                 InoutOtherMoney::where('self_id',$value['self_id'])->update($money);
                             }else{
                                 $money['self_id']           = generate_id('RF');
+                                $money['order_id']          = $list["self_id"];
                                 $money['group_code']        = $list['group_code'];
                                 $money['group_name']        = $list['group_name'];
                                 $money['create_user_id']    = $list['create_user_id'];
