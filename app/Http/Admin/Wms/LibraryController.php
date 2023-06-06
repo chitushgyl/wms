@@ -1328,6 +1328,7 @@ class LibraryController extends CommonController{
                         $list["singe_plate_number"] =$v['singe_plate_number'];
                         $list["singe_weight"]       =$v['singe_weight'];
                         $list["count_number"]       =$v['count_number'];
+                        $money['delete_flag']       = $v['delete_flag'];
 
                         $list['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
                         $list['weight']             = $v['singe_weight']*$v['now_num'];
@@ -1356,6 +1357,7 @@ class LibraryController extends CommonController{
                             $money['total_price']       = $value['total_price'];
                             $money['bill_id']           = $value['bill_id'];
                             $money['use_flag']          = 'N';
+                            $money['delete_flag']       = $value['delete_flag'];
                             if ($value['order_id'] == $v['self_id'] && $value['self_id']){
                                 InoutOtherMoney::where('self_id',$value['self_id'])->update($money);
                             }else{
