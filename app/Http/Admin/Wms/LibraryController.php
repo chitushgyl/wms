@@ -1379,7 +1379,7 @@ class LibraryController extends CommonController{
                     }
                     $a++;
                 }
-
+                dd($money_lists);
                 if($cando == 'N'){
                     $msg['code'] = 306;
                     $msg['msg'] = $strs;
