@@ -57,6 +57,10 @@ class WmsOutOrderList extends Model{
         return $this->hasMany('App\Models\Wms\WmsOutSige','order_list_id','self_id');
     }
 
-
+    public function InoutOtherMoney(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\InoutOtherMoney','order_id','self_id');
+    }
 
 }
