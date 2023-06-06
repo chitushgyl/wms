@@ -1365,10 +1365,10 @@ class LibraryController extends CommonController{
                                     $money['order_id']          = $list["self_id"];
                                 }
 
-                                $money['group_code']        = $list['group_code'];
-                                $money['group_name']        = $list['group_name'];
-                                $money['create_user_id']    = $list['create_user_id'];
-                                $money['create_user_name']  = $list['create_user_name'];
+                                $money['group_code']        = $user_info->group_code;
+                                $money['group_name']        = $user_info->group_name;
+                                $money['create_user_id']    = $user_info->admin_id;
+                                $money['create_user_name']  = $user_info->name;
                                 $money['create_time']       = $money['update_time'] = $now_time;
                                 $money_list[] = $money;
                                 $money_lists = array_merge($money_list);
