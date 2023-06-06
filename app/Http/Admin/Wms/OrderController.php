@@ -335,7 +335,44 @@ class OrderController extends CommonController{
 
     }
 
+    /**
+     * 出库编辑  /wms/order/createOrder
+     * */
+    public function createOrder(Request $request){
+        /** 接收数据*/
+        $self_id=$request->input('self_id');
+        $where=[
+            ['delete_flag','=','Y'],
+            ['self_id','=',$self_id],
+        ];
+        $where1=[
+            ['delete_flag','=','Y'],
+        ];
+        $data['info']=WmsOutOrder::with(['wmsOutOrderList' => function($query) use($where1){
+            $query->where($where1);
+            $query->with(['InoutOtherMoney' => function($query) use($where1){
+                $query->where($where1);
+            }]);
+        }])
 
+            ->with(['wmsGroup' => function($query) use($where1){
+                $query->where($where1);
+            }])
+            ->where($where)->first();
+        if($data['info']){
+
+        }
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+    }
+
+     ///wms/order/editOrder
+    public function editOrder(Request $request){
+
+    }
 
     /***    出库订单导入      /wms/order/import
      */
