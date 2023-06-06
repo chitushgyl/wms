@@ -1359,7 +1359,12 @@ class LibraryController extends CommonController{
                                 InoutOtherMoney::where('self_id',$value['self_id'])->update($money);
                             }else{
                                 $money['self_id']           = generate_id('RF');
-                                $money['order_id']          = $list["self_id"];
+                                if($v['self_id']){
+                                    $money['order_id']          = $v["self_id"];
+                                }else{
+                                    $money['order_id']          = $list["self_id"];
+                                }
+
                                 $money['group_code']        = $list['group_code'];
                                 $money['group_name']        = $list['group_name'];
                                 $money['create_user_id']    = $list['create_user_id'];
