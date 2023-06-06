@@ -1298,7 +1298,7 @@ class LibraryController extends CommonController{
                     if($cando == 'Y'){
                         $pull[] = '';
 
-                        $list["order_id"]           =$seld;
+                        $list["order_id"]           =$self_id;
                         $list["sku_id"]             =$getGoods->self_id;
                         $list["external_sku_id"]    =$getGoods->external_sku_id;
                         $list["company_id"]         =$getGoods->company_id;
