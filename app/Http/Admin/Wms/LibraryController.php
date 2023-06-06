@@ -1440,12 +1440,13 @@ class LibraryController extends CommonController{
                     $change->change($datalist,'preentry');
                     InoutOtherMoney::insert($money_lists);
 //                $money->moneyCompute($data,$datalist,$now_time,$company_info,$user_info,'in');
-
+                    DB::commit();
                     $msg['code']=200;
                     $msg['msg']='操作成功，您一共手工入库'.$count.'条数据，共计'.$pull_count.'托盘';
 
                     return $msg;
                 }else{
+                    DB::rollBack();
                     $msg['code']=301;
                     $msg['msg']='操作失败';
                     return $msg;
