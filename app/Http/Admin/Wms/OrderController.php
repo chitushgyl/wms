@@ -312,7 +312,7 @@ class OrderController extends CommonController{
             WmsOutOrderList::insert($datalist);
             $id= WmsOutOrder::insert($order_2);
 
-            if ($type = 2){
+            if ($type == 2){
                 InoutOtherMoney::insert($money_list);
             }
 
