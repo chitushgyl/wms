@@ -1391,8 +1391,7 @@ class LibraryController extends CommonController{
 
                 $pull=array_unique($pull);
                 $pull_count=count($pull);
-
-                $data['self_id']            =$seld;
+                
                 $data['create_user_id']     = $user_info->admin_id;
                 $data['create_user_name']   = $user_info->name;
                 $data['create_time']        =$now_time;
