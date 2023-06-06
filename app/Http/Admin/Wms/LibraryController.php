@@ -1125,6 +1125,7 @@ class LibraryController extends CommonController{
         $input=$request->all();
         /** 接收数据*/
         //dd($input);
+        $self_id            = $request->input('self_id');
         $warehouse_id       = $request->input('warehouse_id');
         $entry_time         = $request->input('entry_time');//入库时间
         $company_id         = $request->input('company_id');
@@ -1379,7 +1380,7 @@ class LibraryController extends CommonController{
                     }
                     $a++;
                 }
-                dd($money_lists);
+
                 if($cando == 'N'){
                     $msg['code'] = 306;
                     $msg['msg'] = $strs;
@@ -1427,7 +1428,7 @@ class LibraryController extends CommonController{
                 $data['order_status']       = $type;
                 //dd($data);
 
-                $id=WmsLibraryOrder::insert($data);
+                $id=WmsLibraryOrder::where('self_id',$self_id)->update($data);
 
                 $operationing->table_id=$data['self_id'];
                 $operationing->old_info=null;
@@ -1439,7 +1440,6 @@ class LibraryController extends CommonController{
                     $change->change($datalist,'preentry');
                     InoutOtherMoney::insert($money_lists);
 //                $money->moneyCompute($data,$datalist,$now_time,$company_info,$user_info,'in');
-
 
                     $msg['code']=200;
                     $msg['msg']='操作成功，您一共手工入库'.$count.'条数据，共计'.$pull_count.'托盘';
