@@ -210,6 +210,224 @@ class OrderController extends CommonController{
                 return $msg;
             }
 
+            $order_2['self_id']             =generate_id('CK');
+
+            $order_2['group_code']          =$group_info->group_code;
+            $order_2['group_name']          =$group_info->group_name;
+            $order_2['count']               =count($goods);
+//            $order_2['warehouse_id']        =$warehouse_info->self_id;
+//            $order_2['warehouse_name']      =$warehouse_info->warehouse_name;
+            $order_2['company_id']          =$group_info->company_id;
+            $order_2['company_name']        =$group_info->company_name;
+            $order_2['create_user_id']      =$user_info->admin_id;
+            $order_2['create_user_name']    =$user_info->name;
+            $order_2['create_time']         =$order_2['update_time']            =$now_time;
+            $order_2['out_time']            =$out_time;
+            $order_2['car_number']          =$car_number;
+            $order_2['total_weight']        =$total_weight;
+            $order_2['total_number']        =$total_number;
+            $order_2['total_price']         =$total_price;
+            $order_2['total_plate']         =$total_plate;
+            $order_2['status']              =$type;
+            $order_2['remark']              =$remark;
+
+            $list=[];
+            foreach($goods as $k =>$v){
+                $where_warehouse=[
+                    ['delete_flag','=','Y'],
+                    ['self_id','=',$v['warehouse_id']],
+                ];
+
+                $warehouse_info = WmsWarehouse::where($where_warehouse)->select('self_id','warehouse_name','group_name','group_code')->first();
+                if(empty($warehouse_info)){
+                    $msg['code'] = 302;
+                    $msg['msg'] = '仓库不存在';
+                    return $msg;
+                }
+                $where_sku=[
+                    ['delete_flag','=','Y'],
+                    ['external_sku_id','=',$v['external_sku_id']],
+                    ['company_id','=',$company_id],
+                ];
+                $select_ErpShopGoodsSku=['self_id','group_code','group_name','external_sku_id','wms_unit','good_name','wms_spec'];
+                $sku_info = ErpShopGoodsSku::where($where_sku)->select($select_ErpShopGoodsSku)->first();
+
+                //dd($vv);
+                $list['self_id']            =generate_id('CD');
+                $list['good_name']          = $sku_info->good_name;
+                $list['spec']               = $sku_info->wms_spec;
+                $list['num']                = $v['num'];
+                $list['group_code']         = $sku_info->group_code;
+                $list['group_name']         = $sku_info->group_name;
+                $list['order_id']           = $order_2['self_id'];
+                $list['sku_id']             = $sku_info->self_id;
+                $list['external_sku_id']    = $sku_info->external_sku_id;
+                $list['create_user_id']     = $user_info->admin_id;
+                $list['create_user_name']   = $user_info->name;
+                $list['create_time']        = $list['update_time']=$now_time;
+//                $list['sanitation']         = $v['sanitation'];
+                $list['recipt_code']        = $recipt_code;
+//                $list['price']              = $v['price'];
+//                $list['total_price']        = $v['total_price'];
+                $list['remarks']            = $v['remark'];
+//                $list['out_library_state']  = $v['out_library_state'];
+
+                $list['singe_weight']       = $v['singe_weight'];//件重
+                $list['plate_num']          = $v['plate_num'];//板数
+                $list['count_num']          = $v['count_num'];//计费数量
+                $list['inventory_num']      = $v['inventory_num'];//库存数量
+                $list['inventory_weight']   = $v['inventory_weight'];//库存重量
+                $list['inventory_count_num']= $v['inventory_count_num'];//库存计费数量
+                $list['entry_time']         = $v['entry_time'];//入库时间
+                $list['warehouse_id']       = $v['warehouse_id'];//仓库
+                $list['warehouse_name']     = $v['warehouse_name'];
+                $list['produce_time']       = $v['produce_time'];//生产时间
+                $list['expire_time']        = $v['expire_time'];//过期时间
+                $list['cabinet_no']         = $v['cabinet_no'];//柜号
+
+                $datalist[]=$list;
+                if ($type == 2){
+                    foreach($v['more_money'] as $key => $value){
+                        $money['self_id'] = generate_id('RF');
+                        $money['price']   = $value['price'];
+                        $money['order_id'] = $list["self_id"];
+                        $money['money_id']   = $value['money_id'];
+                        $money['number']   = $value['number'];
+                        $money['total_price']   = $value['total_price'];
+                        $money['bill_id']   = $value['bill_id'];
+                        $money['use_flag']  = 'N';
+                        $money['group_code']   = $list['group_code'];
+                        $money['group_name']   = $list['group_name'];
+                        $money['create_user_id']   = $list['create_user_id'];
+                        $money['create_user_name']   = $list['create_user_name'];
+                        $money['create_time']   = $money['update_time'] = $now_time;
+                        $money_list[] = $money;
+                        $money_lists = array_merge($money_list);
+                    }
+                }
+
+            }
+
+            $count=count($goods);
+            WmsOutOrderList::insert($datalist);
+            $id= WmsOutOrder::insert($order_2);
+
+            if ($type = 2){
+                InoutOtherMoney::insert($money_list);
+            }
+
+
+            if($id){
+                $msg['code']=200;
+                /** 告诉用户，你一共导入了多少条数据，其中比如插入了多少条，修改了多少条！！！*/
+                $msg['msg']='操作成功，您一共导入'.$count.'条数据';
+
+                return $msg;
+            }else{
+                $msg['code']=301;
+                $msg['msg']='操作失败';
+                return $msg;
+            }
+
+        }else{
+            $erro = $validator->errors()->all();
+            $msg['msg'] = null;
+            foreach ($erro as $k => $v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code'] = 300;
+            return $msg;
+        }
+
+    }
+
+    /**
+     * 出库编辑  /wms/order/createOrder
+     * */
+    public function createOrder(Request $request){
+        /** 接收数据*/
+        $self_id=$request->input('self_id');
+        $where=[
+            ['delete_flag','=','Y'],
+            ['self_id','=',$self_id],
+        ];
+        $where1=[
+            ['delete_flag','=','Y'],
+        ];
+        $data['info']=WmsOutOrder::with(['wmsOutOrderList' => function($query) use($where1){
+            $query->where($where1);
+            $query->with(['InoutOtherMoney' => function($query) use($where1){
+                $query->where($where1);
+            }]);
+        }])
+            ->with(['wmsGroup' => function($query) use($where1){
+                $query->where($where1);
+            }])
+            ->where($where)->first();
+        if($data['info']){
+
+        }
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+    }
+
+     ///wms/order/editOrder
+    public function editOrder(Request $request){
+        $user_info          = $request->get('user_info');//接收中间件产生的参数
+        $now_time           = date('Y-m-d H:i:s', time());
+        $table_name         ='wms_out_order';
+        $operationing       = $request->get('operationing');//接收中间件产生的参数
+        $operationing->access_cause     ='创建出库订单';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='add';
+
+        /** 接收数据*/
+        $input              = $request->all();
+        $self_id            = $request->input('self_id');
+        $company_id         = $request->input('company_id');
+        $company_name         = $request->input('company_name');
+        $warehouse_id       = $request->input('warehouse_id');
+        $shop_id            = $request->input('shop_id');
+        $goods              = json_decode($request->input('goods'),true);
+        $delivery_time      = $request->input('delivery_time');
+        $recipt_code        = $request->input('recipt_code');
+        $out_time           = $request->input('out_time');//出库时间
+        $car_number         = $request->input('car_number');//车牌号
+        $total_weight       = $request->input('total_weight');//总吨重
+        $total_number       = $request->input('total_number');//总件数
+        $total_price        = $request->input('total_price');//总金额
+        $total_plate        = $request->input('total_plate');//总板数
+        $remark             = $request->input('remark');
+        $more_money         = json_decode($request->input('more_money'),true);
+        $type               = $request->input('type');
+
+        $rules = [
+            'company_id' => 'required',
+        ];
+        $message = [
+            'company_id.required' => '请选择公司',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+
+        if ($validator->passes()) {
+            $where_company=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$company_id],
+            ];
+            $group_info = WmsGroup::where($where_company)->select('company_name','group_name','group_code')->first();
+            //dump($group_info);
+            if(empty($group_info)){
+                $msg['code'] = 302;
+                $msg['msg'] = '公司不存在';
+                return $msg;
+            }
+
             $order_2['self_id']             =generate_id('order_');
 
             $order_2['group_code']          =$group_info->group_code;
@@ -309,21 +527,7 @@ class OrderController extends CommonController{
             WmsOutOrderList::insert($datalist);
             $id= WmsOutOrder::insert($order_2);
 
-//            foreach($more_money as $key => $value){
-//                $money['self_id'] = generate_id('CM');
-//                $money['price']   = $value['price'];
-//                $money['order_id'] = $order_2['self_id'];
-//                $money['money_id']   = $value['money_id'];
-//                $money['number']   = $value['number'];
-//                $money['total_price']   = $value['total_price'];
-//                $money['bill_id']   = $value['bill_id'];
-//                $money['group_code']   = $order_2['group_code'];
-//                $money['group_name']   = $order_2['group_name'];
-//                $money['create_user_id']   = $order_2['create_user_id'];
-//                $money['create_user_name']   = $order_2['create_user_name'];
-//                $money['create_time']   = $money['update_time'] = $now_time;
-//                $money_list[] = $money;
-//            }
+
             InoutOtherMoney::insert($money_list);
 
             if($id){
@@ -348,45 +552,6 @@ class OrderController extends CommonController{
             $msg['code'] = 300;
             return $msg;
         }
-
-    }
-
-    /**
-     * 出库编辑  /wms/order/createOrder
-     * */
-    public function createOrder(Request $request){
-        /** 接收数据*/
-        $self_id=$request->input('self_id');
-        $where=[
-            ['delete_flag','=','Y'],
-            ['self_id','=',$self_id],
-        ];
-        $where1=[
-            ['delete_flag','=','Y'],
-        ];
-        $data['info']=WmsOutOrder::with(['wmsOutOrderList' => function($query) use($where1){
-            $query->where($where1);
-            $query->with(['InoutOtherMoney' => function($query) use($where1){
-                $query->where($where1);
-            }]);
-        }])
-            ->with(['wmsGroup' => function($query) use($where1){
-                $query->where($where1);
-            }])
-            ->where($where)->first();
-        if($data['info']){
-
-        }
-        $msg['code']=200;
-        $msg['msg']="数据拉取成功";
-        $msg['data']=$data;
-        //dd($msg);
-        return $msg;
-    }
-
-     ///wms/order/editOrder
-    public function editOrder(Request $request){
-
     }
 
     /***    出库订单导入      /wms/order/import
