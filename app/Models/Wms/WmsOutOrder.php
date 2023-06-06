@@ -63,10 +63,10 @@ class WmsOutOrder extends Model{
         return $this->hasMany('App\Models\Wms\WmsOutSige','order_id','self_id');
     }
 
-    public function wmsShop(){
+    public function wmsGroup(){
         //参数：关联模型名称，外键，主键
         //如果主键是id可以省略
-        return $this->hasOne('App\Models\Wms\WmsShop','self_id','shop_id');
+        return $this->hasMany('App\Models\Wms\WmsGroup','self_id','company_id');
     }
 
 }
