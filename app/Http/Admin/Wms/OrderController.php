@@ -286,7 +286,7 @@ class OrderController extends CommonController{
                 $list['cabinet_no']         = $v['cabinet_no'];//柜号
 
                 $datalist[]=$list;
-                foreach($v['other_money'] as $key => $value){
+                foreach($v['more_money'] as $key => $value){
                     $money['self_id'] = generate_id('RF');
                     $money['price']   = $value['price'];
                     $money['order_id'] = $list["self_id"];
