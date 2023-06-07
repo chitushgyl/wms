@@ -428,7 +428,7 @@ class OrderController extends CommonController{
                 return $msg;
             }
 
-            $order_2['self_id']             =generate_id('order_');
+            $order_2['self_id']             =$self_id;
 
             $order_2['group_code']          =$group_info->group_code;
             $order_2['group_name']          =$group_info->group_name;
@@ -503,32 +503,64 @@ class OrderController extends CommonController{
                 $list['expire_time']        = $v['expire_time'];//过期时间
                 $list['cabinet_no']         = $v['cabinet_no'];//柜号
 
-                $datalist[]=$list;
-                foreach($v['more_money'] as $key => $value){
-                    $money['self_id'] = generate_id('RF');
-                    $money['price']   = $value['price'];
-                    $money['order_id'] = $list["self_id"];
-                    $money['money_id']   = $value['money_id'];
-                    $money['number']   = $value['number'];
-                    $money['total_price']   = $value['total_price'];
-                    $money['bill_id']   = $value['bill_id'];
-                    $money['use_flag']  = 'N';
-                    $money['group_code']   = $list['group_code'];
-                    $money['group_name']   = $list['group_name'];
-                    $money['create_user_id']   = $list['create_user_id'];
-                    $money['create_user_name']   = $list['create_user_name'];
-                    $money['create_time']   = $money['update_time'] = $now_time;
-                    $money_list[] = $money;
-                    $money_lists = array_merge($money_list);
+
+                if($v['self_id']){
+                    $list['update_time']  = $now_time;
+                    WmsOutOrderList::where('self_id',$v['self_id'])->update($list);
+                }else{
+                    $list["self_id"]            =generate_id('CD');
+                    $list["group_code"]         =$sku_info->group_code;
+                    $list["group_name"]         =$sku_info->group_name;
+                    $list['create_time']        =$now_time;
+                    $list["update_time"]        =$now_time;
+                    $list['create_user_id']     = $user_info->admin_id;
+                    $list['create_user_name']   = $user_info->name;
+                    $datalist[]=$list;
                 }
+
+                if ($type == 2){
+                    foreach($v['more_money'] as $key => $value){
+                        $money['price']             = $value['price'];
+                        $money['money_id']          = $value['money_id'];
+                        $money['number']            = $value['number'];
+                        $money['total_price']       = $value['total_price'];
+                        $money['bill_id']           = $value['bill_id'];
+                        $money['use_flag']          = 'N';
+                        $money['delete_flag']       = $value['delete_flag'];
+                        if ($value['order_id'] == $v['self_id'] && $value['self_id']){
+                            $money['update_time']   = $now_time;
+                            InoutOtherMoney::where('self_id',$value['self_id'])->update($money);
+                        }else{
+                            $money['self_id']           = generate_id('RF');
+                            if($v['self_id']){
+                                $money['order_id']          = $v["self_id"];
+                            }else{
+                                $money['order_id']          = $list["self_id"];
+                            }
+
+                            $money['group_code']        = $user_info->group_code;
+                            $money['group_name']        = $user_info->group_name;
+                            $money['create_user_id']    = $user_info->admin_id;
+                            $money['create_user_name']  = $user_info->name;
+                            $money['create_time']       = $money['update_time'] = $now_time;
+                            $money_list[] = $money;
+                            $money_lists = array_merge($money_list);
+                        }
+
+                    }
+                }
+
+
             }
 
             $count=count($goods);
             WmsOutOrderList::insert($datalist);
             $id= WmsOutOrder::insert($order_2);
 
+            if ($type == 2){
+                InoutOtherMoney::insert($money_list);
+            }
 
-            InoutOtherMoney::insert($money_list);
 
             if($id){
                 $msg['code']=200;
