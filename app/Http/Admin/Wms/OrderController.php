@@ -71,33 +71,53 @@ class OrderController extends CommonController{
         ];
 
         $where = get_list_where($search);
-
+        $where1=[
+            ['delete_flag','=','Y'],
+        ];
         $select = ['self_id','status','count','total_flag','shop_id','shop_external_id','shop_name','create_time','create_user_name',
             'fuhe_flag','file_id','company_name','warehouse_name','group_name'];
 
         switch ($group_info['group_id']) {
             case 'all':
                 $data['total'] = WmsOutOrder::where($where)->count(); //总的数据量
-                $data['items'] = WmsOutOrder::where($where)
+                $data['items'] = WmsOutOrder::with(['wmsOutOrderList' => function($query) use($where1){
+                    $query->where($where1);
+                    $query->with(['InoutOtherMoney' => function($query) use($where1){
+                        $query->where($where1);
+                    }]);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show'] = 'Y';
                 break;
 
             case 'one':
                 $where[] = ['group_code', '=', $group_info['group_code']];
                 $data['total'] = WmsOutOrder::where($where)->count(); //总的数据量
-                $data['items'] = WmsOutOrder::where($where)
+                $data['items'] = WmsOutOrder::with(['wmsOutOrderList' => function($query) use($where1){
+                    $query->where($where1);
+                    $query->with(['InoutOtherMoney' => function($query) use($where1){
+                        $query->where($where1);
+                    }]);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show'] = 'N';
                 break;
 
             case 'more':
                 $data['total'] = WmsOutOrder::where($where)->whereIn('group_code', $group_info['group_code'])->count(); //总的数据量
-                $data['items'] = WmsOutOrder::where($where)->whereIn('group_code', $group_info['group_code'])
+                $data['items'] = WmsOutOrder::with(['wmsOutOrderList' => function($query) use($where1){
+                    $query->where($where1);
+                    $query->with(['InoutOtherMoney' => function($query) use($where1){
+                        $query->where($where1);
+                    }]);
+                }])->where($where)->whereIn('group_code', $group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
-                    ->select($select)->get();
+//                    ->select($select)
+                    ->get();
                 $data['group_show'] = 'Y';
                 break;
         }
