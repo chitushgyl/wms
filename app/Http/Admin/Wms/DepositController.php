@@ -133,7 +133,7 @@ class DepositController extends CommonController{
         ];
         $where1=[
             ['delete_flag','=','Y'],
-            ['use_flag','=','Y'],
+//            ['use_flag','=','Y'],
         ];
         $data['info']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
             $query->where($where1);
