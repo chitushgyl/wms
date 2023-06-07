@@ -137,8 +137,9 @@ class DepositController extends CommonController{
         ];
         $data['info']=WmsDeposit::with(['WmsDepositGood' => function($query)use($where1){
             $query->where($where1);
-        }])->with(['InoutOtherMoney' => function($query)use($where1){
-            $query->where($where1);
+            $query->with(['InoutOtherMoney' => function($query)use($where1){
+                $query->where($where1);
+            }]);
         }])->where($where)->first();
         if($data['info']){
 
