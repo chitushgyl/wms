@@ -215,10 +215,8 @@ class OrderController extends CommonController{
             $order_2['group_code']          =$group_info->group_code;
             $order_2['group_name']          =$group_info->group_name;
             $order_2['count']               =count($goods);
-//            $order_2['warehouse_id']        =$warehouse_info->self_id;
-//            $order_2['warehouse_name']      =$warehouse_info->warehouse_name;
-            $order_2['company_id']          =$group_info->company_id;
-            $order_2['company_name']        =$group_info->company_name;
+            $order_2['company_id']          =$company_id;
+            $order_2['company_name']        =$company_name;
             $order_2['create_user_id']      =$user_info->admin_id;
             $order_2['create_user_name']    =$user_info->name;
             $order_2['create_time']         =$order_2['update_time']            =$now_time;
@@ -430,8 +428,8 @@ class OrderController extends CommonController{
             $order_2['group_code']          =$group_info->group_code;
             $order_2['group_name']          =$group_info->group_name;
             $order_2['count']               =count($goods);
-            $order_2['company_id']          =$group_info->company_id;
-            $order_2['company_name']        =$group_info->company_name;
+            $order_2['company_id']          =$company_id;
+            $order_2['company_name']        =$company_name;
             $order_2['create_user_id']      =$user_info->admin_id;
             $order_2['create_user_name']    =$user_info->name;
             $order_2['create_time']         =$order_2['update_time']            =$now_time;
@@ -467,7 +465,7 @@ class OrderController extends CommonController{
                     $select_ErpShopGoodsSku=['self_id','group_code','group_name','external_sku_id','wms_unit','good_name','wms_spec'];
                     $sku_info = ErpShopGoodsSku::where($where_sku)->select($select_ErpShopGoodsSku)->first();
 
-                   
+
                     $list['good_name']          = $sku_info->good_name;
                     $list['spec']               = $sku_info->wms_spec;
                     $list['num']                = $v['num'];
