@@ -1331,7 +1331,7 @@ class LibraryController extends CommonController{
                         $list['delete_flag']       = $v['delete_flag'];
 
                         $list['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
-                        $list['weight']             = $v['singe_weight']*$v['now_num'];
+                        $list['weight']             = $v['singe_weight']*$v['now_num']/1000;
                         $bulk+=  $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
                         $weight+=  $getGoods->wms_weight*$v['now_num'];
 

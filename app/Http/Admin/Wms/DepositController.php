@@ -196,10 +196,6 @@ class DepositController extends CommonController{
         $validator=Validator::make($input,$rules,$message);
 
         if($validator->passes()){
-            $contact_list = [];
-            $address_list = [];
-            $contact = [];
-            $address_area = [];
             $deposit_id                         =  generate_id('J');
             $data['total_price']                = $total_price;
             $data['total_plate']                = $total_plate;
@@ -214,9 +210,15 @@ class DepositController extends CommonController{
             $data['car_number']           	    = $car_number;
             $data['deposit_time']               = $deposit_time;
 
+            $deposit_list=[];       //初始化数组为空
+
+            $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
+            $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $a=2;
+            $money_lists=[];
             foreach($good_list as $key => $value){
+
                 $where['self_id']=$value['sku_id'];
                 //查询商品是不是存在
                 $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
@@ -257,7 +259,50 @@ class DepositController extends CommonController{
                 $list['create_time']       =  $now_time;
                 $list['update_time']       =  $now_time;
 
-                $deposit_list[] = $list;
+                if($value['self_id']){
+                    $list['update_time']  = $now_time;
+                    WmsDepositGood::where('self_id',$value['self_id'])->update($list);
+                }else{
+                    $list["self_id"]            =generate_id('DG');
+                    $list["group_code"]         =$getGoods->group_code;
+                    $list["group_name"]         =$getGoods->group_name;
+                    $list['create_time']        =$now_time;
+                    $list["update_time"]        =$now_time;
+                    $list['create_user_id']     = $user_info->admin_id;
+                    $list['create_user_name']   = $user_info->name;
+                    $deposit_list[] = $list;
+                }
+
+
+                foreach($value['more_money'] as $k => $v){
+                    $money['price']             = $v['price'];
+                    $money['money_id']          = $v['money_id'];
+                    $money['number']            = $v['number'];
+                    $money['total_price']       = $v['total_price'];
+                    $money['bill_id']           = $v['bill_id'];
+                    $money['use_flag']          = 'N';
+                    $money['delete_flag']       = $v['delete_flag'];
+                    if ($v['order_id'] == $value['self_id'] && $v['self_id']){
+                        InoutOtherMoney::where('self_id',$v['self_id'])->update($money);
+                    }else{
+                        $money['self_id']           = generate_id('RF');
+                        if($value['self_id']){
+                            $money['order_id']          = $value["self_id"];
+                        }else{
+                            $money['order_id']          = $list["self_id"];
+                        }
+
+                        $money['group_code']        = $user_info->group_code;
+                        $money['group_name']        = $user_info->group_name;
+                        $money['create_user_id']    = $user_info->admin_id;
+                        $money['create_user_name']  = $user_info->name;
+                        $money['create_time']       = $money['update_time'] = $now_time;
+                        $money_list[] = $money;
+                        $money_lists = array_merge($money_list);
+                    }
+
+                }
+
                 $a++;
             }
 
@@ -266,7 +311,9 @@ class DepositController extends CommonController{
             $old_info=WmsDeposit::where($wheres)->first();
 
             if($old_info){
-
+                $id = WmsDeposit::where('self_id',$self_id)->update($data);
+                WmsDepositGood::insert($deposit_list);
+                InoutOtherMoney::insert($money_lists);
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
 
@@ -282,21 +329,6 @@ class DepositController extends CommonController{
 
                 if ($id){
                     WmsDepositGood::insert($deposit_list);
-                }
-                foreach($more_money as $k => $v){
-                    $money['self_id'] = generate_id('CM');
-                    $money['price']   = $v['price'];
-                    $money['order_id'] = $data['self_id'];
-                    $money['money_id']   = $v['money_id'];
-                    $money['number']   = $v['number'];
-                    $money['total_price']   = $v['total_price'];
-                    $money['bill_id']   = $v['bill_id'];
-                    $money['group_code']   = $data['group_code'];
-                    $money['group_name']   = $data['group_name'];
-                    $money['create_user_id']   = $data['create_user_id'];
-                    $money['create_user_name']   = $data['create_user_name'];
-                    $money['create_time']   = $money['update_time'] = $now_time;
-                    $money_list[] = $money;
                 }
                 InoutOtherMoney::insert($money_list);
 
