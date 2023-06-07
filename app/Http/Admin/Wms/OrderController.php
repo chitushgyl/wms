@@ -416,6 +416,8 @@ class OrderController extends CommonController{
         $validator = Validator::make($input, $rules, $message);
 
         if ($validator->passes()) {
+            $datalist = [];
+            $money_list = [];
             $where_company=[
                 ['delete_flag','=','Y'],
                 ['self_id','=',$company_id],
@@ -545,7 +547,7 @@ class OrderController extends CommonController{
                 }
                 $count=count($goods);
                 WmsOutOrderList::insert($datalist);
-                $id= WmsOutOrder::insert($order_2);
+                $id= WmsOutOrder::where('self_id',$self_id)->update($order_2);
 
                 if ($type == 2){
                     InoutOtherMoney::insert($money_list);
