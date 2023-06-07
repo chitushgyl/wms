@@ -85,7 +85,10 @@ class OrderController extends CommonController{
                     $query->with(['InoutOtherMoney' => function($query) use($where1){
                         $query->where($where1);
                     }]);
-                }])->where($where)
+                }])
+                    ->with(['wmsGroup' => function($query) use($where1){
+                        $query->where($where1);
+                    }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
 //                    ->select($select)
                     ->get();
@@ -100,7 +103,10 @@ class OrderController extends CommonController{
                     $query->with(['InoutOtherMoney' => function($query) use($where1){
                         $query->where($where1);
                     }]);
-                }])->where($where)
+                }])
+                    ->with(['wmsGroup' => function($query) use($where1){
+                        $query->where($where1);
+                    }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
 //                    ->select($select)
                     ->get();
@@ -114,7 +120,10 @@ class OrderController extends CommonController{
                     $query->with(['InoutOtherMoney' => function($query) use($where1){
                         $query->where($where1);
                     }]);
-                }])->where($where)->whereIn('group_code', $group_info['group_code'])
+                }])
+                    ->with(['wmsGroup' => function($query) use($where1){
+                        $query->where($where1);
+                    }])->where($where)->whereIn('group_code', $group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
 //                    ->select($select)
                     ->get();
