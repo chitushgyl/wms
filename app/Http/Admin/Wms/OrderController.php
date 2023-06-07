@@ -316,12 +316,9 @@ class OrderController extends CommonController{
                 InoutOtherMoney::insert($money_list);
             }
 
-
             if($id){
                 $msg['code']=200;
-                /** 告诉用户，你一共导入了多少条数据，其中比如插入了多少条，修改了多少条！！！*/
-                $msg['msg']='操作成功，您一共导入'.$count.'条数据';
-
+                $msg['msg']='操作成功';
                 return $msg;
             }else{
                 $msg['code']=301;
@@ -470,7 +467,7 @@ class OrderController extends CommonController{
                     $select_ErpShopGoodsSku=['self_id','group_code','group_name','external_sku_id','wms_unit','good_name','wms_spec'];
                     $sku_info = ErpShopGoodsSku::where($where_sku)->select($select_ErpShopGoodsSku)->first();
 
-                    $list['self_id']            =generate_id('list_');
+                   
                     $list['good_name']          = $sku_info->good_name;
                     $list['spec']               = $sku_info->wms_spec;
                     $list['num']                = $v['num'];
