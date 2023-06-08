@@ -142,8 +142,9 @@ class ChangeController extends CommonController{
         ];
         $data['info']=WmsChangeGood::with(['WmsChangeList' => function($query)use($where1){
             $query->where($where1);
-        }])->with(['InoutOtherMoney' => function($query)use($where1){
-            $query->where($where1);
+            $query->with(['InoutOtherMoney' => function($query)use($where1){
+                $query->where($where1);
+            }]);
         }])->where($where)->first();
         if($data['info']){
 
