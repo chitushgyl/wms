@@ -306,7 +306,7 @@ class ChangeController extends CommonController{
                 }
 
                 $library_sige_list[] = $library_sige;
-                $deposit_list[] = $list;
+//                $deposit_list[] = $list;
                 $a++;
             }
 
