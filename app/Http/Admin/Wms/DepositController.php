@@ -236,9 +236,10 @@ class DepositController extends CommonController{
                     }
                 }
                 if ($value['self_id']){
-
+                    $list['deposit_id']        =  $self_id;//
                 }else{
                     $list['self_id']           =  generate_id('DG');
+                    $list['deposit_id']        =  $deposit_id;//
                 }
 
                 $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
@@ -256,7 +257,7 @@ class DepositController extends CommonController{
                 $list['produce_time']      =  $value['produce_time'];//生产日期
                 $list['shelf_life']        =  $value['shelf_life'];//保质期
                 $list['remark']            =  $value['remark'];//备注
-                $list['deposit_id']        =  $deposit_id;//
+
                 $list['group_code']        =  $group_code;
                 $list['group_name']        =  $user_info->group_name;
                 $list['create_user_id']    =  $user_info->admin_id;
