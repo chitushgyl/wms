@@ -235,8 +235,12 @@ class DepositController extends CommonController{
                         $abcd++;
                     }
                 }
+                if ($value['self_id']){
 
-                $list['self_id']           =  generate_id('DG');
+                }else{
+                    $list['self_id']           =  generate_id('DG');
+                }
+
                 $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
                 $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
                 $list['warehouse_id']      =  $value['warehouse_id'];//仓库self_id
