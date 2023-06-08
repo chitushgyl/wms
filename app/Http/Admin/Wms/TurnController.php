@@ -278,6 +278,50 @@ class TurnController extends CommonController{
                 $wmsLibrarySige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
                 $library_sige['num']       = $wmsLibrarySige->num - $value['num'];
 
+                if($value['self_id']){
+                    $list['update_time']  = $now_time;
+                    WmsDepositGood::where('self_id',$value['self_id'])->update($list);
+                }else{
+                    $list["self_id"]            =generate_id('DG');
+                    $list["group_code"]         =$getGoods->group_code;
+                    $list["group_name"]         =$getGoods->group_name;
+                    $list['create_time']        =$now_time;
+                    $list["update_time"]        =$now_time;
+                    $list['create_user_id']     = $user_info->admin_id;
+                    $list['create_user_name']   = $user_info->name;
+                    $deposit_list[] = $list;
+                }
+
+
+                foreach($value['more_money'] as $k => $v){
+                    $money['price']             = $v['price'];
+                    $money['money_id']          = $v['money_id'];
+                    $money['number']            = $v['number'];
+                    $money['total_price']       = $v['total_price'];
+                    $money['bill_id']           = $v['bill_id'];
+                    $money['use_flag']          = 'N';
+                    $money['delete_flag']       = $v['delete_flag'];
+                    if ($v['order_id'] == $value['self_id'] && $v['self_id']){
+                        InoutOtherMoney::where('self_id',$v['self_id'])->update($money);
+                    }else{
+                        $money['self_id']           = generate_id('RF');
+                        if($value['self_id']){
+                            $money['order_id']          = $value["self_id"];
+                        }else{
+                            $money['order_id']          = $list["self_id"];
+                        }
+
+                        $money['group_code']        = $user_info->group_code;
+                        $money['group_name']        = $user_info->group_name;
+                        $money['create_user_id']    = $user_info->admin_id;
+                        $money['create_user_name']  = $user_info->name;
+                        $money['create_time']       = $money['update_time'] = $now_time;
+                        $money_list[] = $money;
+                        $money_lists = array_merge($money_list);
+                    }
+
+                }
+
                 $library_sige_list[] = $library_sige;
                 $deposit_list[] = $list;
                 $a++;

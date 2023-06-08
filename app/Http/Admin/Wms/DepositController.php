@@ -336,7 +336,7 @@ class DepositController extends CommonController{
                 if ($id){
                     WmsDepositGood::insert($deposit_list);
                 }
-                InoutOtherMoney::insert($money_list);
+                InoutOtherMoney::insert($money_lists);
 
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
