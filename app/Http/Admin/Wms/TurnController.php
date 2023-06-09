@@ -140,7 +140,7 @@ class TurnController extends CommonController{
         ];
         $where1=[
             ['delete_flag','=','Y'],
-            ['use_flag','=','Y'],
+//            ['use_flag','=','Y'],
         ];
         $data['info']=WmsTurnCard::with(['TurnCardGood' => function($query)use($where1){
             $query->where($where1);
