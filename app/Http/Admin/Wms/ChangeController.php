@@ -215,6 +215,7 @@ class ChangeController extends CommonController{
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $a=2;
+            $deposit_list = [];
             foreach($good_list as $key => $value){
                 $where['self_id']=$value['sku_id'];
                 //查询商品是不是存在
