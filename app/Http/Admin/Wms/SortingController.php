@@ -141,8 +141,9 @@ class SortingController extends CommonController{
         ];
         $data['info']=WmsSorting::with(['WmsSortingGood' => function($query)use($where1){
             $query->where($where1);
-        }])->with(['InoutOtherMoney' => function($query)use($where1){
-            $query->where($where1);
+            $query->with(['InoutOtherMoney' => function($query)use($where1){
+                $query->where($where1);
+            }]);
         }])->where($where)->first();
         if($data['info']){
 
@@ -198,11 +199,9 @@ class SortingController extends CommonController{
         $validator=Validator::make($input,$rules,$message);
 
         if($validator->passes()){
-            $contact_list = [];
-            $address_list = [];
-            $contact = [];
-            $address_area = [];
-            $deposit_id                         =  generate_id('J');
+            $deposit_list = [];
+            $money_lists = [];
+            $deposit_id                         =  generate_id('F');
             $data['total_price']                = $total_price;
             $data['total_weight']               = $total_weight;
             $data['porter']                     = $porter;
@@ -243,7 +242,12 @@ class SortingController extends CommonController{
                 $list['num']               =  $value['num'];//计费数量
                 $list['plate_num']         =  $value['plate_num'];//板数
                 $list['remark']            =  $value['remark'];//备注
-                $list['sorting_id']        =  $deposit_id;//
+                if ($self_id){
+                    $list['sorting_id']        =  $self_id;//
+                }else{
+                    $list['sorting_id']        =  $deposit_id;//
+                }
+
                 $list['group_code']        =  $group_code;
                 $list['group_name']        =  $user_info->group_name;
                 $list['create_user_id']    =  $user_info->admin_id;
@@ -251,7 +255,49 @@ class SortingController extends CommonController{
                 $list['create_time']       =  $now_time;
                 $list['update_time']       =  $now_time;
 
-                $deposit_list[] = $list;
+                if($value['self_id']){
+                    $list['update_time']  = $now_time;
+                    WmsSortingGood::where('self_id',$value['self_id'])->update($list);
+                }else{
+                    $list["self_id"]            =generate_id('FJ');
+                    $list["group_code"]         =$getGoods->group_code;
+                    $list["group_name"]         =$getGoods->group_name;
+                    $list['create_time']        =$now_time;
+                    $list["update_time"]        =$now_time;
+                    $list['create_user_id']     = $user_info->admin_id;
+                    $list['create_user_name']   = $user_info->name;
+                    $deposit_list[] = $list;
+                }
+
+
+                foreach($value['more_money'] as $k => $v){
+                    $money['price']             = $v['price'];
+                    $money['money_id']          = $v['money_id'];
+                    $money['number']            = $v['number'];
+                    $money['total_price']       = $v['total_price'];
+                    $money['bill_id']           = $v['bill_id'];
+                    $money['use_flag']          = 'N';
+                    $money['delete_flag']       = $v['delete_flag'];
+                    if ($v['order_id'] == $value['self_id'] && $v['self_id']){
+                        InoutOtherMoney::where('self_id',$v['self_id'])->update($money);
+                    }else{
+                        $money['self_id']           = generate_id('RF');
+                        if($value['self_id']){
+                            $money['order_id']          = $value["self_id"];
+                        }else{
+                            $money['order_id']          = $list["self_id"];
+                        }
+
+                        $money['group_code']        = $user_info->group_code;
+                        $money['group_name']        = $user_info->group_name;
+                        $money['create_user_id']    = $user_info->admin_id;
+                        $money['create_user_name']  = $user_info->name;
+                        $money['create_time']       = $money['update_time'] = $now_time;
+                        $money_list[] = $money;
+                        $money_lists = array_merge($money_list);
+                    }
+
+                }
                 $a++;
             }
 
@@ -260,7 +306,9 @@ class SortingController extends CommonController{
             $old_info=WmsSorting::where($wheres)->first();
 
             if($old_info){
-
+                $data['update_time'] = $now_time;
+                $id = WmsSorting::where($wheres)->update($data);
+                InoutOtherMoney::insert($money_lists);
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
 
@@ -277,22 +325,8 @@ class SortingController extends CommonController{
                 if ($id){
                     WmsSortingGood::insert($deposit_list);
                 }
-                foreach($more_money as $k => $v){
-                    $money['self_id'] = generate_id('CM');
-                    $money['price']   = $v['price'];
-                    $money['order_id'] = $data['self_id'];
-                    $money['money_id']   = $v['money_id'];
-                    $money['number']   = $v['number'];
-                    $money['total_price']   = $v['total_price'];
-                    $money['bill_id']   = $v['bill_id'];
-                    $money['group_code']   = $data['group_code'];
-                    $money['group_name']   = $data['group_name'];
-                    $money['create_user_id']   = $data['create_user_id'];
-                    $money['create_user_name']   = $data['create_user_name'];
-                    $money['create_time']   = $money['update_time'] = $now_time;
-                    $money_list[] = $money;
-                }
-                InoutOtherMoney::insert($money_list);
+
+                InoutOtherMoney::insert($money_lists);
 
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
