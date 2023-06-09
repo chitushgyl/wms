@@ -287,7 +287,9 @@ class TurnController extends CommonController{
 
 
                     $wmsLibrarySige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
-                    $library_sige['num']       = $wmsLibrarySige->num - $value['num'];
+                    $library_sige['num']                = $wmsLibrarySige->num - $value['num'];
+                    $library_sige['warehouse_id']       = $value['warehouse_id'];
+                    $library_sige['warehouse_name']     = $value['warehouse_name'];
 
                     if($value['self_id']){
                         $list['update_time']  = $now_time;
