@@ -9,6 +9,7 @@ use App\Models\Wms\WmsChangeList;
 use App\Models\Wms\WmsDeposit;
 use App\Models\Wms\WmsDepositGood;
 use App\Models\Wms\WmsLibrarySige;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -216,147 +217,157 @@ class ChangeController extends CommonController{
             $errorNum=50;       //控制错误数据的条数
             $a=2;
             $deposit_list = [];
-            foreach($good_list as $key => $value){
-                $where['self_id']=$value['sku_id'];
-                //查询商品是不是存在
-                $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
-                    'wms_length','wms_wide','wms_high','wms_weight','period','period_value'];
-                //dump($goods_select);
+            DB::beginTransaction();
+            try{
+                foreach($good_list as $key => $value){
+                    $where['self_id']=$value['sku_id'];
+                    //查询商品是不是存在
+                    $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
+                        'wms_length','wms_wide','wms_high','wms_weight','period','period_value'];
+                    //dump($goods_select);
 
-                $getGoods=ErpShopGoodsSku::where($where)->select($goods_select)->first();
+                    $getGoods=ErpShopGoodsSku::where($where)->select($goods_select)->first();
 
-                if(empty($getGoods)){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行商品不存在".'</br>';
-                        $cando='N';
-                        $abcd++;
+                    if(empty($getGoods)){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行商品不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
                     }
-                }
-                $list['sige_id']           =  $value['sige_id'];//原库存SELF_ID
-                $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
-                $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
-                $list['yuan_warehouse_id'] =  $value['yuan_warehouse_id'];//转出仓库self_id
-                $list['yuan_warehouse_name'] =  $value['yuan_warehouse_name'];//转出仓库名称
-                $list['warehouse_id']      =  $value['warehouse_id'];//转入仓库self_id
-                $list['warehouse_name']    =  $value['warehouse_name'];//转入仓库名称
-                $list['good_name']         =  $value['good_name'];//商品名称
-                $list['good_spac']         =  $value['good_spac'];//商品规格
-                $list['good_weight']       =  $value['good_weight'];//件重
+                    $list['sige_id']           =  $value['sige_id'];//原库存SELF_ID
+                    $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
+                    $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
+                    $list['yuan_warehouse_id'] =  $value['yuan_warehouse_id'];//转出仓库self_id
+                    $list['yuan_warehouse_name'] =  $value['yuan_warehouse_name'];//转出仓库名称
+                    $list['warehouse_id']      =  $value['warehouse_id'];//转入仓库self_id
+                    $list['warehouse_name']    =  $value['warehouse_name'];//转入仓库名称
+                    $list['good_name']         =  $value['good_name'];//商品名称
+                    $list['good_spac']         =  $value['good_spac'];//商品规格
+                    $list['good_weight']       =  $value['good_weight'];//件重
 //                $list['good_num']          =  $value['good_num'];//件数
-                $list['weight']            =  $value['weight'];//吨重
-                $list['num']               =  $value['num'];//数量
-                $list['plate_num']         =  $value['plate_num'];//板数
-                $list['plate_id']          =  $value['plate_id'];//板位
-                $list['inventory_num']     =  $value['inventory_num'];//库存件数
-                $list['inventory_count_num']  =  $value['inventory_count_num'];//库存计费数量
-                $list['remark']            =  $value['remark'];//备注
-                $list['change_id']         =  $deposit_id;//
-                $list['group_code']        =  $group_code;
-                $list['group_name']        =  $user_info->group_name;
-                $list['create_user_id']    =  $user_info->admin_id;
-                $list['create_user_name']  =  $user_info->name;
-                $list['create_time']       =  $now_time;
-                $list['update_time']       =  $now_time;
+                    $list['weight']            =  $value['weight'];//吨重
+                    $list['num']               =  $value['num'];//数量
+                    $list['plate_num']         =  $value['plate_num'];//板数
+                    $list['plate_id']          =  $value['plate_id'];//板位
+                    $list['inventory_num']     =  $value['inventory_num'];//库存件数
+                    $list['inventory_count_num']  =  $value['inventory_count_num'];//库存计费数量
+                    $list['remark']            =  $value['remark'];//备注
+                    $list['change_id']         =  $deposit_id;//
+                    $list['group_code']        =  $group_code;
+                    $list['group_name']        =  $user_info->group_name;
+                    $list['create_user_id']    =  $user_info->admin_id;
+                    $list['create_user_name']  =  $user_info->name;
+                    $list['create_time']       =  $now_time;
+                    $list['update_time']       =  $now_time;
 
 
-                $wmsLibrarySige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
-                $library_sige['num']       = $wmsLibrarySige->num - $value['num'];
-                $library_sige['warehouse_id']       = $value['warehouse_id'];
-                $library_sige['warehouse_name']       = $value['warehouse_name'];
+                    $wmsLibrarySige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
+                    $library_sige['num']       = $wmsLibrarySige->num - $value['num'];
+                    $library_sige['warehouse_id']       = $value['warehouse_id'];
+                    $library_sige['warehouse_name']       = $value['warehouse_name'];
 
-                if($value['self_id']){
-                    $list['update_time']  = $now_time;
-                    WmsChangeList::where('self_id',$value['self_id'])->update($list);
-                }else{
-                    $list["self_id"]            =generate_id('TG');
-                    $list["group_code"]         =$getGoods->group_code;
-                    $list["group_name"]         =$getGoods->group_name;
-                    $list['create_time']        =$now_time;
-                    $list["update_time"]        =$now_time;
-                    $list['create_user_id']     = $user_info->admin_id;
-                    $list['create_user_name']   = $user_info->name;
-                    $deposit_list[] = $list;
-                }
-
-
-                foreach($value['more_money'] as $k => $v){
-                    $money['price']             = $v['price'];
-                    $money['money_id']          = $v['money_id'];
-                    $money['number']            = $v['number'];
-                    $money['total_price']       = $v['total_price'];
-                    $money['bill_id']           = $v['bill_id'];
-                    $money['use_flag']          = 'N';
-                    $money['delete_flag']       = $v['delete_flag'];
-                    if ($v['order_id'] == $value['self_id'] && $v['self_id']){
-                        InoutOtherMoney::where('self_id',$v['self_id'])->update($money);
+                    if($value['self_id']){
+                        $list['update_time']  = $now_time;
+                        WmsChangeList::where('self_id',$value['self_id'])->update($list);
                     }else{
-                        $money['self_id']           = generate_id('RF');
-                        if($value['self_id']){
-                            $money['order_id']          = $value["self_id"];
+                        $list["self_id"]            =generate_id('TG');
+                        $list["group_code"]         =$getGoods->group_code;
+                        $list["group_name"]         =$getGoods->group_name;
+                        $list['create_time']        =$now_time;
+                        $list["update_time"]        =$now_time;
+                        $list['create_user_id']     = $user_info->admin_id;
+                        $list['create_user_name']   = $user_info->name;
+                        $deposit_list[] = $list;
+                    }
+
+
+                    foreach($value['more_money'] as $k => $v){
+                        $money['price']             = $v['price'];
+                        $money['money_id']          = $v['money_id'];
+                        $money['number']            = $v['number'];
+                        $money['total_price']       = $v['total_price'];
+                        $money['bill_id']           = $v['bill_id'];
+                        $money['use_flag']          = 'N';
+                        $money['delete_flag']       = $v['delete_flag'];
+                        if ($v['order_id'] == $value['self_id'] && $v['self_id']){
+                            InoutOtherMoney::where('self_id',$v['self_id'])->update($money);
                         }else{
-                            $money['order_id']          = $list["self_id"];
+                            $money['self_id']           = generate_id('RF');
+                            if($value['self_id']){
+                                $money['order_id']          = $value["self_id"];
+                            }else{
+                                $money['order_id']          = $list["self_id"];
+                            }
+
+                            $money['group_code']        = $user_info->group_code;
+                            $money['group_name']        = $user_info->group_name;
+                            $money['create_user_id']    = $user_info->admin_id;
+                            $money['create_user_name']  = $user_info->name;
+                            $money['create_time']       = $money['update_time'] = $now_time;
+                            $money_list[] = $money;
+                            $money_lists = array_merge($money_list);
                         }
 
-                        $money['group_code']        = $user_info->group_code;
-                        $money['group_name']        = $user_info->group_name;
-                        $money['create_user_id']    = $user_info->admin_id;
-                        $money['create_user_name']  = $user_info->name;
-                        $money['create_time']       = $money['update_time'] = $now_time;
-                        $money_list[] = $money;
-                        $money_lists = array_merge($money_list);
                     }
 
-                }
-
-                $library_sige_list[] = $library_sige;
+                    $library_sige_list[] = $library_sige;
 //                $deposit_list[] = $list;
-                $a++;
-            }
-
-
-            $wheres['self_id'] = $self_id;
-            $old_info=WmsChangeGood::where($wheres)->first();
-
-            if($old_info){
-                $data['update_time'] = $now_time;
-                $id = WmsChangeGood::where('self_id',$self_id)->update($data);
-                WmsChangeList::insert($deposit_list);
-                InoutOtherMoney::insert($money_lists);
-                $operationing->access_cause='修改业务公司';
-                $operationing->operation_type='update';
-
-            }else{
-
-                $data['self_id']=$deposit_id;		//优惠券表ID
-                $data['group_code'] = $group_code;
-                $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
-                $data['create_user_id']=$user_info->admin_id;
-                $data['create_user_name']=$user_info->name;
-                $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsChangeGood::insert($data);
-
-                if ($id){
-                    WmsChangeList::insert($deposit_list);
+                    $a++;
                 }
 
 
-                $operationing->access_cause='新建调仓表';
-                $operationing->operation_type='create';
+                $wheres['self_id'] = $self_id;
+                $old_info=WmsChangeGood::where($wheres)->first();
 
-            }
+                if($old_info){
+                    $data['update_time'] = $now_time;
+                    $id = WmsChangeGood::where('self_id',$self_id)->update($data);
+                    WmsChangeList::insert($deposit_list);
+                    InoutOtherMoney::insert($money_lists);
+                    $operationing->access_cause='修改业务公司';
+                    $operationing->operation_type='update';
 
-            $operationing->table_id=$old_info?$self_id:$data['self_id'];
-            $operationing->old_info=$old_info;
-            $operationing->new_info=$data;
-            if($id){
-                $msg['code'] = 200;
-                $msg['msg'] = "操作成功";
-                return $msg;
-            }else{
+                }else{
+
+                    $data['self_id']=$deposit_id;		//优惠券表ID
+                    $data['group_code'] = $group_code;
+                    $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
+                    $data['create_user_id']=$user_info->admin_id;
+                    $data['create_user_name']=$user_info->name;
+                    $data['create_time']=$data['update_time']=$now_time;
+                    $id=WmsChangeGood::insert($data);
+
+                    if ($id){
+                        WmsChangeList::insert($deposit_list);
+                    }
+
+                    $operationing->access_cause='新建调仓表';
+                    $operationing->operation_type='create';
+
+                }
+
+                $operationing->table_id=$old_info?$self_id:$data['self_id'];
+                $operationing->old_info=$old_info;
+                $operationing->new_info=$data;
+                if($id){
+                    DB::commit();
+                    $msg['code'] = 200;
+                    $msg['msg'] = "操作成功";
+                    return $msg;
+                }else{
+                    DB::rollBack();
+                    $msg['code'] = 302;
+                    $msg['msg'] = "操作失败";
+                    return $msg;
+                }
+            }catch (\Exception $e){
+                DB::rollBack();
                 $msg['code'] = 302;
                 $msg['msg'] = "操作失败";
                 return $msg;
             }
+
 
 
         }else{
