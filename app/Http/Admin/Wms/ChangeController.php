@@ -253,7 +253,12 @@ class ChangeController extends CommonController{
                     $list['inventory_num']     =  $value['inventory_num'];//库存件数
                     $list['inventory_count_num']  =  $value['inventory_count_num'];//库存计费数量
                     $list['remark']            =  $value['remark'];//备注
-                    $list['change_id']         =  $deposit_id;//
+                    if ($self_id){
+                        $list['change_id']         =  $self_id;//
+                    }else{
+                        $list['change_id']         =  $deposit_id;//
+                    }
+
                     $list['group_code']        =  $group_code;
                     $list['group_name']        =  $user_info->group_name;
                     $list['create_user_id']    =  $user_info->admin_id;
