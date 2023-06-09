@@ -260,6 +260,8 @@ class ChangeController extends CommonController{
 
                 $wmsLibrarySige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
                 $library_sige['num']       = $wmsLibrarySige->num - $value['num'];
+                $library_sige['warehouse_id']       = $value['warehouse_id'];
+                $library_sige['warehouse_name']       = $value['warehouse_name'];
 
                 if($value['self_id']){
                     $list['update_time']  = $now_time;
@@ -315,7 +317,10 @@ class ChangeController extends CommonController{
             $old_info=WmsChangeGood::where($wheres)->first();
 
             if($old_info){
-
+                $data['update_time'] = $now_time;
+                $id = WmsChangeGood::where('self_id',$self_id)->update($data);
+                WmsChangeList::insert($deposit_list);
+                InoutOtherMoney::insert($money_lists);
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
 

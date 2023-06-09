@@ -144,8 +144,9 @@ class TurnController extends CommonController{
         ];
         $data['info']=WmsTurnCard::with(['TurnCardGood' => function($query)use($where1){
             $query->where($where1);
-        }])->with(['InoutOtherMoney' => function($query)use($where1){
-            $query->where($where1);
+            $query->with(['InoutOtherMoney' => function($query)use($where1){
+                $query->where($where1);
+            }]);
         }])->where($where)->first();
         if($data['info']){
 
