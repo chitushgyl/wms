@@ -217,6 +217,7 @@ class ChangeController extends CommonController{
             $errorNum=50;       //控制错误数据的条数
             $a=2;
             $deposit_list = [];
+            $money_lists = [];
             DB::beginTransaction();
             try{
                 foreach($good_list as $key => $value){
