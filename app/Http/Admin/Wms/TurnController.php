@@ -362,7 +362,7 @@ class TurnController extends CommonController{
                             $money_out['create_user_name']  = $user_info->name;
                             $money_out['create_time']       = $money_out['update_time'] = $now_time;
                             $money_list_out[] = $money_out;
-                            $money_out_lists = array_merge($money_list);
+                            $money_out_lists = array_merge($money_list_out);
                         }
                     }
 
