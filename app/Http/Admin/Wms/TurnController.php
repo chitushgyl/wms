@@ -332,7 +332,7 @@ class TurnController extends CommonController{
                     }
                 }
 
-                foreach($value['out_out_money'] as $kk => $vv){
+                foreach($value['out_more_money'] as $kk => $vv){
                     $money_out['price']             = $vv['price'];
                     $money_out['money_id']          = $vv['money_id'];
                     $money_out['number']            = $vv['number'];
@@ -343,7 +343,7 @@ class TurnController extends CommonController{
                     $money_out['use_flag']          = 'N';
                     $money_out['delete_flag']       = $vv['delete_flag'];
                     if ($vv['order_id'] == $value['self_id'] && $vv['self_id']){
-                        InoutOtherMoney::where('self_id',$vv['self_id'])->update($money);
+                        InoutOtherMoney::where('self_id',$vv['self_id'])->update($money_out);
                     }else{
                         $money_out['self_id']           = generate_id('RF');
                         if($value['self_id']){
@@ -386,47 +386,11 @@ class TurnController extends CommonController{
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
                 $id=WmsTurnCard::insert($data);
-
                 if ($id){
                     TurnCardGood::insert($deposit_list);
                 }
-                foreach($in_more_money as $k => $v){
-                    $money['self_id']          = generate_id('TC');
-                    $money['price']            = $v['price'];
-                    $money['order_id']         = $data['self_id'];
-                    $money['money_id']         = $v['money_id'];
-                    $money['number']           = $v['number'];
-                    $money['total_price']      = $v['total_price'];
-                    $money['bill_id']          = $v['bill_id'];
-
-                    $money['group_code']       = $data['group_code'];
-                    $money['group_name']       = $data['group_name'];
-                    $money['create_user_id']   = $data['create_user_id'];
-                    $money['create_user_name'] = $data['create_user_name'];
-                    $money['create_time']      = $money['update_time'] = $now_time;
-                    $money_list[] = $money;
-                }
-                InoutOtherMoney::insert($money_list);
-
-
-                foreach($out_more_money as $kk => $vv){
-                    $out_money['self_id']          = generate_id('TC');
-                    $out_money['price']            = $vv['price'];
-                    $out_money['order_id']         = $data['self_id'];
-                    $out_money['money_id']         = $vv['money_id'];
-                    $out_money['number']           = $vv['number'];
-                    $out_money['total_price']      = $vv['total_price'];
-                    $out_money['bill_id']          = $vv['bill_id'];
-                    $out_money['company_id']   = $out_company_id;
-                    $out_money['company_name'] = $out_company_name;
-                    $out_money['group_code']       = $data['group_code'];
-                    $out_money['group_name']       = $data['group_name'];
-                    $out_money['create_user_id']   = $data['create_user_id'];
-                    $out_money['create_user_name'] = $data['create_user_name'];
-                    $out_money['create_time']      = $out_money['update_time'] = $now_time;
-                    $out_money_list[] = $out_money;
-                }
-                InoutOtherMoney::insert($out_money_list);
+                InoutOtherMoney::insert($money_out_lists);
+                InoutOtherMoney::insert($money_in_lists);
 
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
