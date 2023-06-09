@@ -4,6 +4,7 @@ use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
 use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsHomework;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -124,7 +125,7 @@ class HomeworkController extends CommonController{
         ];
         $where1=[
             ['delete_flag','=','Y'],
-            ['use_flag','=','Y'],
+//            ['use_flag','=','Y'],
         ];
         $data['info']=WmsHomework::with(['InoutOtherMoney' => function($query)use($where1){
             $query->where($where1);
@@ -178,11 +179,8 @@ class HomeworkController extends CommonController{
         $validator=Validator::make($input,$rules,$message);
 
         if($validator->passes()){
-            $contact_list = [];
-            $address_list = [];
-            $contact = [];
-            $address_area = [];
-
+            $money_lists = [];
+            $homework_id = generate_id('ZY');
             $data['company_name']               = $company_name;
             $data['company_id']                 = $company_id;
             $data['add_time']                   = $add_time;
@@ -190,61 +188,85 @@ class HomeworkController extends CommonController{
             $data['porter_id']                  = $porter_id;
             $data['porter']           	        = $porter;
 
-
-            $wheres['self_id'] = $self_id;
-            $old_info=WmsHomework::where($wheres)->first();
-
-            if($old_info){
-                //dd(1111);
-                $data['update_time']=$now_time;
-                $id=WmsHomework::where($wheres)->update($data);
-
-                $operationing->access_cause='修改业务公司';
-                $operationing->operation_type='update';
-
-
-            }else{
-                $data['self_id']=generate_id('ZY');		//优惠券表ID
-                $data['group_code'] = $group_code;
-                $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
-                $data['create_user_id']=$user_info->admin_id;
-                $data['create_user_name']=$user_info->name;
-                $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsHomework::insert($data);
-
+            try {
                 foreach($more_money as $k => $v){
-                    $money['self_id'] = generate_id('CM');
-                    $money['price']   = $v['price'];
-                    $money['order_id'] = $data['self_id'];
-                    $money['money_id']   = $v['money_id'];
-                    $money['number']   = $v['number'];
-                    $money['total_price']   = $v['total_price'];
-                    $money['bill_id']   = $v['bill_id'];
-                    $money['group_code']   = $data['group_code'];
-                    $money['group_name']   = $data['group_name'];
-                    $money['create_user_id']   = $data['create_user_id'];
-                    $money['create_user_name']   = $data['create_user_name'];
-                    $money['create_time']   = $money['update_time'] = $now_time;
-                    $money_list[] = $money;
+                    $money['price']             = $v['price'];
+                    $money['money_id']          = $v['money_id'];
+                    $money['number']            = $v['number'];
+                    $money['total_price']       = $v['total_price'];
+                    $money['bill_id']           = $v['bill_id'];
+                    $money['company_id']        = $company_id;
+                    $money['company_name']      = $company_name;
+                    $money['use_flag']          = 'N';
+                    $money['delete_flag']       = $v['delete_flag'];
+                    if ($v['order_id'] == $self_id && $self_id){
+                        InoutOtherMoney::where('self_id',$v['self_id'])->update($money);
+                    }else{
+                        $money['self_id']           = generate_id('RF');
+                        if($self_id){
+                            $money['order_id']          = $self_id;
+                        }else{
+                            $money['order_id']          = $homework_id;
+                        }
+
+                        $money['group_code']        = $user_info->group_code;
+                        $money['group_name']        = $user_info->group_name;
+                        $money['create_user_id']    = $user_info->admin_id;
+                        $money['create_user_name']  = $user_info->name;
+                        $money['create_time']       = $money['update_time'] = $now_time;
+                        $money_list[] = $money;
+                        $money_lists = array_merge($money_list);
+                    }
                 }
-                InoutOtherMoney::insert($money_list);
-                $operationing->access_cause='新建业务公司';
-                $operationing->operation_type='create';
 
-            }
+                $wheres['self_id'] = $self_id;
+                $old_info=WmsHomework::where($wheres)->first();
 
-            $operationing->table_id=$old_info?$self_id:$data['self_id'];
-            $operationing->old_info=$old_info;
-            $operationing->new_info=$data;
-            if($id){
-                $msg['code'] = 200;
-                $msg['msg'] = "操作成功";
-                return $msg;
-            }else{
+                if($old_info){
+                    //dd(1111);
+                    $data['update_time']=$now_time;
+                    $id=WmsHomework::where($wheres)->update($data);
+                    InoutOtherMoney::insert($money_lists);
+                    $operationing->access_cause='修改业务公司';
+                    $operationing->operation_type='update';
+
+
+                }else{
+                    $data['self_id']= $homework_id;		//优惠券表ID
+                    $data['group_code'] = $group_code;
+                    $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
+                    $data['create_user_id']=$user_info->admin_id;
+                    $data['create_user_name']=$user_info->name;
+                    $data['create_time']=$data['update_time']=$now_time;
+                    $id=WmsHomework::insert($data);
+                    InoutOtherMoney::insert($money_lists);
+                    $operationing->access_cause='新建业务公司';
+                    $operationing->operation_type='create';
+
+                }
+
+                $operationing->table_id=$old_info?$self_id:$data['self_id'];
+                $operationing->old_info=$old_info;
+                $operationing->new_info=$data;
+                if($id){
+                    DB::commit();
+                    $msg['code'] = 200;
+                    $msg['msg'] = "操作成功";
+                    return $msg;
+                }else{
+                    DB::rollBack();
+                    $msg['code'] = 302;
+                    $msg['msg'] = "操作失败";
+                    return $msg;
+                }
+            }catch (\Exception $e){
+                dd($e);
+                DB::rollBack();
                 $msg['code'] = 302;
                 $msg['msg'] = "操作失败";
                 return $msg;
             }
+
 
 
         }else{
