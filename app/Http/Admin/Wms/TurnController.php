@@ -366,7 +366,7 @@ class TurnController extends CommonController{
                         }
                     }
 
-                    $library_sige_list[] = $library_sige;
+//                    $library_sige_list[] = $library_sige;
 //                    $deposit_list[] = $list;
                     $a++;
                 }
