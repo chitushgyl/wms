@@ -277,7 +277,7 @@ class BulkContractController extends CommonController{
 
                 $a++;
             }
-//            dd($money_lists);
+            dd($money_lists);
 
             $wheres['self_id'] = $self_id;
             $old_info=WmsBulkContract::where($wheres)->first();
