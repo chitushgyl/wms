@@ -258,13 +258,6 @@ class DepositController extends CommonController{
                 $list['shelf_life']        =  $value['shelf_life'];//保质期
                 $list['remark']            =  $value['remark'];//备注
 
-                $list['group_code']        =  $group_code;
-                $list['group_name']        =  $user_info->group_name;
-                $list['create_user_id']    =  $user_info->admin_id;
-                $list['create_user_name']  =  $user_info->name;
-                $list['create_time']       =  $now_time;
-                $list['update_time']       =  $now_time;
-
                 if($value['self_id']){
                     $list['update_time']  = $now_time;
                     WmsDepositGood::where('self_id',$value['self_id'])->update($list);

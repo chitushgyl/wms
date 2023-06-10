@@ -10,6 +10,7 @@ use App\Models\Wms\WmsLoading;
 use App\Models\Wms\WmsLoadingList;
 use App\Models\Wms\WmsSend;
 use App\Models\Wms\WmsSendGood;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -213,87 +214,110 @@ class LoadingController extends CommonController{
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $a=2;
-            foreach($good_list as $key => $value){
-                $where['self_id']=$value['sku_id'];
-                //查询商品是不是存在
-                $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
-                    'wms_length','wms_wide','wms_high','wms_weight','period','period_value'];
-                //dump($goods_select);
+            DB::beginTransaction();
+            try{
+                foreach($good_list as $key => $value){
+                    $where['self_id']=$value['sku_id'];
+                    //查询商品是不是存在
+                    $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
+                        'wms_length','wms_wide','wms_high','wms_weight','period','period_value'];
+                    //dump($goods_select);
 
-                $getGoods=ErpShopGoodsSku::where($where)->select($goods_select)->first();
+                    $getGoods=ErpShopGoodsSku::where($where)->select($goods_select)->first();
 
-                if(empty($getGoods)){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行商品不存在".'</br>';
-                        $cando='N';
-                        $abcd++;
+                    if(empty($getGoods)){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行商品不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
                     }
+
+//                $list['self_id']           =  generate_id('DG');
+                    $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
+                    $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
+                    $list['send_number']       =  $value['order_number'];//配送编号
+                    $list['address']           =  $value['receive_address'];//收货地址
+                    $list['good_name']         =  $value['good_name'];//商品名称
+                    $list['good_lot']          =  $value['good_lot'];//商品批号
+                    $list['good_spac']         =  $value['good_spac'];//商品规格
+                    $list['good_weight']       =  $value['good_weight'];//
+                    $list['good_num']          =  $value['good_num'];//
+                    $list['sort']              =  $value['sort'];//排序
+                    if ($value['self_id']){
+                        $list['send_id']           =  $self_id;//
+                    }else{
+                        $list['send_id']           =  $deposit_id;//
+                    }
+                    if($value['self_id']){
+                        $list['update_time']  = $now_time;
+                        WmsLoadingList::where('self_id',$value['self_id'])->update($list);
+                    }else{
+                        $list["self_id"]            =generate_id('ZG');
+                        $list["group_code"]         =$getGoods->group_code;
+                        $list["group_name"]         =$getGoods->group_name;
+                        $list['create_time']        =$now_time;
+                        $list["update_time"]        =$now_time;
+                        $list['create_user_id']     = $user_info->admin_id;
+                        $list['create_user_name']   = $user_info->name;
+                        $deposit_list[] = $list;
+                    }
+
+                    $a++;
                 }
 
-                $list['self_id']           =  generate_id('DG');
-                $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
-                $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
-                $list['send_number']       =  $value['order_number'];//配送编号
-                $list['address']           =  $value['receive_address'];//收货地址
-                $list['good_name']         =  $value['good_name'];//商品名称
-                $list['good_lot']          =  $value['good_lot'];//商品批号
-                $list['good_spac']         =  $value['good_spac'];//商品规格
-                $list['good_weight']       =  $value['good_weight'];//
-                $list['good_num']          =  $value['good_num'];//
-                $list['sort']              =  $value['sort'];//排序
-                $list['send_id']           =  $deposit_id;//
-                $list['group_code']        =  $group_code;
-                $list['group_name']        =  $user_info->group_name;
-                $list['create_user_id']    =  $user_info->admin_id;
-                $list['create_user_name']  =  $user_info->name;
-                $list['create_time']       =  $now_time;
-                $list['update_time']       =  $now_time;
 
-                $deposit_list[] = $list;
-                $a++;
-            }
+                $wheres['self_id'] = $self_id;
+                $old_info=WmsLoading::where($wheres)->first();
 
-
-            $wheres['self_id'] = $self_id;
-            $old_info=WmsLoading::where($wheres)->first();
-
-            if($old_info){
-
-                $operationing->access_cause='修改业务公司';
-                $operationing->operation_type='update';
-
-            }else{
-
-                $data['self_id']=$deposit_id;		//优惠券表ID
-                $data['group_code'] = $group_code;
-                $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
-                $data['create_user_id']=$user_info->admin_id;
-                $data['create_user_name']=$user_info->name;
-                $data['create_time']=$data['update_time']=$now_time;
-                $id=WmsLoading::insert($data);
-
-                if ($id){
+                if($old_info){
+                    $id = WmsLoading::where('self_id',$self_id)->update($data);
                     WmsLoadingList::insert($deposit_list);
+                    $operationing->access_cause='修改业务公司';
+                    $operationing->operation_type='update';
+
+                }else{
+
+                    $data['self_id']=$deposit_id;		//优惠券表ID
+                    $data['group_code'] = $group_code;
+                    $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
+                    $data['create_user_id']=$user_info->admin_id;
+                    $data['create_user_name']=$user_info->name;
+                    $data['create_time']=$data['update_time']=$now_time;
+                    $id=WmsLoading::insert($data);
+
+                    if ($id){
+                        WmsLoadingList::insert($deposit_list);
+                    }
+
+
+                    $operationing->access_cause='新建业务公司';
+                    $operationing->operation_type='create';
+
                 }
 
-
-                $operationing->access_cause='新建业务公司';
-                $operationing->operation_type='create';
-
-            }
-
-            $operationing->table_id=$old_info?$self_id:$data['self_id'];
-            $operationing->old_info=$old_info;
-            $operationing->new_info=$data;
-            if($id){
-                $msg['code'] = 200;
-                $msg['msg'] = "操作成功";
-                return $msg;
-            }else{
+                $operationing->table_id=$old_info?$self_id:$data['self_id'];
+                $operationing->old_info=$old_info;
+                $operationing->new_info=$data;
+                if($id){
+                    DB::commit();
+                    $msg['code'] = 200;
+                    $msg['msg'] = "操作成功";
+                    return $msg;
+                }else{
+                    DB::rollBack();
+                    $msg['code'] = 302;
+                    $msg['msg'] = "操作失败";
+                    return $msg;
+                }
+            }catch(\Exception $e){
+                dd($e);
+                DB::rollBack();
                 $msg['code'] = 302;
                 $msg['msg'] = "操作失败";
                 return $msg;
             }
+
 
 
         }else{

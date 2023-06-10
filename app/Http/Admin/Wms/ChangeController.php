@@ -260,14 +260,6 @@ class ChangeController extends CommonController{
                         $list['change_id']         =  $deposit_id;//
                     }
 
-                    $list['group_code']        =  $group_code;
-                    $list['group_name']        =  $user_info->group_name;
-                    $list['create_user_id']    =  $user_info->admin_id;
-                    $list['create_user_name']  =  $user_info->name;
-                    $list['create_time']       =  $now_time;
-                    $list['update_time']       =  $now_time;
-
-
                     $wmsLibrarySige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
                     $library_sige['num']       = $wmsLibrarySige->num - $value['num'];
                     $library_sige['warehouse_id']       = $value['warehouse_id'];

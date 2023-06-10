@@ -235,6 +235,7 @@ class TurnController extends CommonController{
             $deposit_list = [];
             $money_in_lists = [];
             $money_out_lists = [];
+            DB::beginTransaction();
             try{
                 foreach($good_list as $key => $value){
                     $where['self_id']=$value['sku_id'];
@@ -277,15 +278,6 @@ class TurnController extends CommonController{
                     }else{
                         $list['turn_id']           =  $deposit_id;//
                     }
-
-                    $list['group_code']        =  $group_code;
-                    $list['group_name']        =  $user_info->group_name;
-                    $list['create_user_id']    =  $user_info->admin_id;
-                    $list['create_user_name']  =  $user_info->name;
-                    $list['create_time']       =  $now_time;
-                    $list['update_time']       =  $now_time;
-
-
 //                    $wmsLibrarySige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
 //                    $library_sige['num']                = $wmsLibrarySige->num - $value['num'];
 //                    $library_sige['warehouse_id']       = $value['out_warehouse_id'];
@@ -367,7 +359,7 @@ class TurnController extends CommonController{
                     }
 
 //                    $library_sige_list[] = $library_sige;
-//                    $deposit_list[] = $list;
+
                     $a++;
                 }
 
