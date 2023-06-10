@@ -281,13 +281,15 @@ class BulkContractController extends CommonController{
 
                 $a++;
             }
-            dd($money_lists);
+//            dd($money_lists);
 
             $wheres['self_id'] = $self_id;
             $old_info=WmsBulkContract::where($wheres)->first();
 
             if($old_info){
-
+                WmsBulkContract::where('self_id',$self_id)->update($data);
+                WmsBulkGood::insert($deposit_list);
+                InoutOtherMoney::insert($money_lists);
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
 
@@ -305,8 +307,7 @@ class BulkContractController extends CommonController{
                     WmsBulkGood::insert($deposit_list);
                     InoutOtherMoney::insert($money_lists);
                 }
-
-
+                
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
 
