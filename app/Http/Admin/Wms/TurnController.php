@@ -378,6 +378,7 @@ class TurnController extends CommonController{
                 if($old_info){
                     $data['update_time'] = $now_time;
                     $id = WmsTurnCard::where('self_id',$self_id)->update($data);
+                    TurnCardGood::insert($deposit_list);
                     InoutOtherMoney::insert($money_out_lists);
                     InoutOtherMoney::insert($money_in_lists);
                     $operationing->access_cause='修改业务公司';

@@ -308,6 +308,7 @@ class SortingController extends CommonController{
             if($old_info){
                 $data['update_time'] = $now_time;
                 $id = WmsSorting::where($wheres)->update($data);
+                WmsSortingGood::insert($deposit_list);
                 InoutOtherMoney::insert($money_lists);
                 $operationing->access_cause='修改业务公司';
                 $operationing->operation_type='update';
