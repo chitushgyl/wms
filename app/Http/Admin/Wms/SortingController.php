@@ -137,7 +137,7 @@ class SortingController extends CommonController{
         ];
         $where1=[
             ['delete_flag','=','Y'],
-            ['use_flag','=','Y'],
+//            ['use_flag','=','Y'],
         ];
         $data['info']=WmsSorting::with(['WmsSortingGood' => function($query)use($where1){
             $query->where($where1);
