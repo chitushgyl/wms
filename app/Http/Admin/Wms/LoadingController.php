@@ -141,7 +141,7 @@ class LoadingController extends CommonController{
         ];
         $where1=[
             ['delete_flag','=','Y'],
-            ['use_flag','=','Y'],
+//            ['use_flag','=','Y'],
         ];
         $data['info']=WmsLoading::with(['WmsLoadingList' => function($query)use($where1){
             $query->where($where1);
@@ -198,7 +198,7 @@ class LoadingController extends CommonController{
 
         if($validator->passes()){
 
-            $deposit_id                         =  generate_id('J');
+            $deposit_id                         =  generate_id('ZC');
             $data['logistic_id']                = $logistic_id;
             $data['logistic']                   = $logistic;
             $data['car_id']                     = $car_id;
@@ -225,9 +225,9 @@ class LoadingController extends CommonController{
                     $list['good_info']         =  $value['good_info'];//商品信息
                     $list['delete_flag']       =  $value['delete_flag'];
                     if ($value['self_id']){
-                        $list['send_id']           =  $self_id;//
+                        $list['loading_id']           =  $self_id;//
                     }else{
-                        $list['send_id']           =  $deposit_id;//
+                        $list['loading_id']           =  $deposit_id;//
                     }
                     if($value['self_id']){
                         $list['update_time']  = $now_time;
