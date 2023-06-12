@@ -284,6 +284,7 @@ class contractController extends CommonController{
                         $contact['out_flag'] = $v['out_flag'];
                         $contact['change_flag'] = $v['change_flag'];
                         $contact['delete_flag'] = $v['delete_flag'];
+                        $contact['update_time'] = $now_time;
                         ContractOtherMoney::where('self_id',$v['self_id'])->update($contact);
                     }else{
                         $contact['self_id'] = generate_id('other_');
@@ -298,6 +299,8 @@ class contractController extends CommonController{
                         $contact['group_name'] = $old_info->group_name;
                         $contact['create_user_id'] = $user_info->admin_id;
                         $contact['create_user_name'] = $user_info->name;
+                        $contact['create_time'] = $now_time;
+                        $contact['update_time'] = $now_time;
                         $contact_list[] = $contact;
                     }
                 }
