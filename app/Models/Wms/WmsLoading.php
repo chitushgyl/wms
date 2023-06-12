@@ -60,7 +60,7 @@ class WmsLoading extends Model{
     public function WmsLoadingList(){
         //参数：关联模型名称，外键，主键
         //如果主键是id可以省略
-        return $this->hasMany('App\Models\Wms\WmsLoadingList','send_id','self_id');
+        return $this->hasMany('App\Models\Wms\WmsLoadingList','loading_id','self_id');
     }
 
 }
