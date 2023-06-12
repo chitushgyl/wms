@@ -228,6 +228,25 @@ class CarTypeController extends CommonController{
 
     }
 
+    /*
+    * /wms/carType/getCarType
+    * */
+    public function getCarType(Request $request){
+        $group_code=$request->input('group_code');
+        $where=[
+            ['delete_flag','=','Y'],
+            ['group_code','=',$group_code],
+        ];
+
+        $data['info']=WmsCarType::where($where)->get();
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+    }
+
     /***    商品禁用/启用      /wms/carType/carTypeUseFlag
      */
     public function carTypeUseFlag(Request $request,Status $status){

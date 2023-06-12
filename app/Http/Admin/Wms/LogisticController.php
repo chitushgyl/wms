@@ -220,6 +220,25 @@ class LogisticController extends CommonController{
 
     }
 
+    /*
+     * /wms/logistic/getLogistic
+     * */
+    public function getLogistic(Request $request){
+        $group_code=$request->input('group_code');
+        $where=[
+            ['delete_flag','=','Y'],
+            ['group_code','=',$group_code],
+        ];
+
+        $data['info']=WmsLogistic::where($where)->get();
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+    }
+
     /***    商品禁用/启用      /wms/logistic/logisticUseFlag
      */
     public function logisticUseFlag(Request $request,Status $status){
