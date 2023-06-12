@@ -540,7 +540,7 @@ class WarehouseController extends CommonController{
             ['group_code','=',$group_code],
         ];
 
-	    $select=['id','self_id','warehouse_name','group_code','group_name','delete_flag','use_flag'];
+	    $select=['id','self_id','pid','warehouse_name','group_code','group_name','delete_flag','use_flag'];
 
         $data['info']=WmsWarehouse::with(['allChildren' => function($query)use($select) {
             $query->select($select);
