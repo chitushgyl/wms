@@ -287,7 +287,7 @@ class contractController extends CommonController{
                         $contact['update_time'] = $now_time;
                         ContractOtherMoney::where('self_id',$v['self_id'])->update($contact);
                     }else{
-                        $contact['self_id'] = generate_id('other_');
+                        $contact['self_id'] = generate_id('QF');
                         $contact['contract_id'] = $self_id;
                         $contact['money_type'] = $v['money_type'];
                         $contact['price'] = $v['price'];
