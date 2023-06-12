@@ -206,7 +206,7 @@ class contractController extends CommonController{
         $cycle              =$request->input('cycle');//周期
         $sale_price         =$request->input('sale_price');//冷藏单价
         $remark             =$request->input('remark');//备注
-        $other_money        =$request->input('other_money');//其他费用
+        $other_money        =json_decode($request->input('other_money'),true);//其他费用
         $type               =$request->input('type');//零仓bulk  包仓contract
         $contact_details    =$request->input('contract_details');//包仓明细
         $contract_type      =$request->input('contract_type');//包仓类型
