@@ -400,7 +400,7 @@ class contractController extends CommonController{
                         $contact['group_name'] = $data['group_name'];
                         $contact['create_user_id'] = $user_info->admin_id;
                         $contact['create_user_name'] = $user_info->name;
-                        $contact['create_time'] = $contact['update_time'] = $user_info->name;
+                        $contact['create_time'] = $contact['update_time'] = $now_time;
                         $contact_list[] = $contact;
                     }
                 }
