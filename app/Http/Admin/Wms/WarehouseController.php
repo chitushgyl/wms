@@ -281,7 +281,7 @@ class WarehouseController extends CommonController{
                     $update['remark']     = $v['remark'];
                     $id = WmsWarehouse::update($update);
                 }else{
-                    $data['self_id']            = generate_id('warehouse_');
+                    $data['self_id']            = generate_id('W');
                     if (isset($v['pid'])){
                         $data['pid']                = $v['pid'];
                     }else{
@@ -302,7 +302,7 @@ class WarehouseController extends CommonController{
                 if (count($v['all_children'])>0){
                     self::loop($v['all_children'],$id);
                 }else{
-                    break;
+//                    break;
                 }
 
             }
