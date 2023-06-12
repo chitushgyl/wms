@@ -541,14 +541,14 @@ class WarehouseController extends CommonController{
         ];
 
 	    $select=['id','self_id','warehouse_name','group_code','group_name','delete_flag','use_flag'];
-	    
+
         $data['info']=WmsWarehouse::with(['allChildren' => function($query)use($select) {
             $query->select($select);
             $query->where('delete_flag','Y');
             $query->orderBy('id','asc');
         }])->where($where)
             ->orderBy('id', 'asc')
-            ->select($select);
+            ->select($select)->get();
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
