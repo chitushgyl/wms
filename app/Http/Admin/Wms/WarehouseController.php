@@ -538,6 +538,7 @@ class WarehouseController extends CommonController{
         $where=[
             ['delete_flag','=','Y'],
             ['group_code','=',$group_code],
+            ['pid','=',0],
         ];
 
 	    $select=['id','self_id','pid','warehouse_name','group_code','group_name','delete_flag','use_flag'];
