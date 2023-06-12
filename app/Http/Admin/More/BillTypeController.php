@@ -59,14 +59,14 @@ class BillTypeController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','bill_name','use_flag','group_name','group_code','delete_flag','create_time',
+        $select=['id','self_id','bill_name','use_flag','group_name','group_code','delete_flag','create_time',
             'update_time'];
 
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=WmsBillType::where($where)->count(); //总的数据量
                 $data['items']=WmsBillType::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('id','asc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -75,7 +75,7 @@ class BillTypeController extends CommonController{
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=WmsBillType::where($where)->count(); //总的数据量
                 $data['items']=WmsBillType::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('id','asc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
@@ -83,7 +83,7 @@ class BillTypeController extends CommonController{
             case 'more':
                 $data['total']=WmsBillType::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=WmsBillType::where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('id','asc')->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
