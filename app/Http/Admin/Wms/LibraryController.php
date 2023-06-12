@@ -1144,6 +1144,7 @@ class LibraryController extends CommonController{
         $porter_num         = $request->input('porter_num');//搬运工单号
         $car_number         = $request->input('car_number');//车牌号
         $cupboard_num       = $request->input('cupboard_num');//柜号
+        $customs_num        = $request->input('customs_num');//报关单号
         $total_num          = $request->input('total_num');//总件数
         $total_weight       = $request->input('total_weight');//总吨数
         $total_money        = $request->input('total_money');//总金额
@@ -1420,11 +1421,12 @@ class LibraryController extends CommonController{
                 $data['bulk']               =$bulk;
                 $data['weight']             =$weight;
                 $data['entry_time']         =$entry_time;
-                $data['contract_id']       =$contract_id;
+                $data['contract_id']        =$contract_id;
                 $data['contract_num']       =$contract_num;
                 $data['porter_num']         =$porter_num;
                 $data['car_number']         =$car_number;
                 $data['cupboard_num']       =$cupboard_num;
+                $data['customs_num']        =$customs_num;
                 $data['total_num']          =$total_num;
                 $data['total_weight']       =$total_weight;
                 $data['total_money']        =$total_money;

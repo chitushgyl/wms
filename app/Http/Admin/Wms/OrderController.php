@@ -206,6 +206,8 @@ class OrderController extends CommonController{
         $remark             = $request->input('remark');
         $more_money         = json_decode($request->input('more_money'),true);
         $type               = $request->input('type');
+        $cupboard_num       = $request->input('cupboard_num');//柜号
+        $customs_num        = $request->input('customs_num');//报关单号
         /***
         $input['goods']=$goods=[
         '0'=>[
@@ -251,6 +253,8 @@ class OrderController extends CommonController{
             $order_2['create_time']         =$order_2['update_time']            =$now_time;
             $order_2['out_time']            =$out_time;
             $order_2['car_number']          =$car_number;
+            $order_2['cupboard_num']        =$cupboard_num;
+            $order_2['customs_num']         =$customs_num;
             $order_2['total_weight']        =$total_weight;
             $order_2['total_number']        =$total_number;
             $order_2['total_price']         =$total_price;
