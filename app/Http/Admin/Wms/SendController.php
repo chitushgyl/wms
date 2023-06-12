@@ -210,21 +210,21 @@ class SendController extends CommonController{
             DB::beginTransaction();
             try{
                 foreach($good_list as $key => $value){
-                    $where['self_id']=$value['sku_id'];
-                    //查询商品是不是存在
-                    $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
-                        'wms_length','wms_wide','wms_high','wms_weight','period','period_value'];
-                    //dump($goods_select);
-
-                    $getGoods=ErpShopGoodsSku::where($where)->select($goods_select)->first();
-
-                    if(empty($getGoods)){
-                        if($abcd<$errorNum){
-                            $strs .= '数据中的第'.$a."行商品不存在".'</br>';
-                            $cando='N';
-                            $abcd++;
-                        }
-                    }
+//                    $where['self_id']=$value['sku_id'];
+//                    //查询商品是不是存在
+//                    $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
+//                        'wms_length','wms_wide','wms_high','wms_weight','period','period_value'];
+//                    //dump($goods_select);
+//
+//                    $getGoods=ErpShopGoodsSku::where($where)->select($goods_select)->first();
+//
+//                    if(empty($getGoods)){
+//                        if($abcd<$errorNum){
+//                            $strs .= '数据中的第'.$a."行商品不存在".'</br>';
+//                            $cando='N';
+//                            $abcd++;
+//                        }
+//                    }
 
 //                $list['self_id']           =  generate_id('DG');
                     $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
@@ -250,8 +250,8 @@ class SendController extends CommonController{
                         WmsSendGood::where('self_id',$value['self_id'])->update($list);
                     }else{
                         $list["self_id"]            =generate_id('PG');
-                        $list["group_code"]         =$getGoods->group_code;
-                        $list["group_name"]         =$getGoods->group_name;
+                        $list["group_code"]         =$user_info->group_code;
+                        $list["group_name"]         =$user_info->group_name;
                         $list['create_time']        =$now_time;
                         $list["update_time"]        =$now_time;
                         $list['create_user_id']     = $user_info->admin_id;
