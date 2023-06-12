@@ -294,7 +294,7 @@ class GoodController extends CommonController{
 
             }else{
 
-                $data['self_id']=generate_id('sku_');		//优惠券表ID
+                $data['self_id']=generate_id('G');		//优惠券表ID
                 $data['company_id'] = $company_id;
                 $data['company_name'] = $info2->company_name;
                 $data['group_code'] = $info2->group_code;
