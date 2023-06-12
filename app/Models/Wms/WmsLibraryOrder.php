@@ -73,4 +73,10 @@ class WmsLibraryOrder extends Model{
     }
 
 
+    public function wmsContract(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsContract','self_id','contract_id');
+    }
+
 }

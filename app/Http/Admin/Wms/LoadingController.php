@@ -251,6 +251,7 @@ class LoadingController extends CommonController{
                 $old_info=WmsLoading::where($wheres)->first();
 
                 if($old_info){
+                    $data['update_time'] = $now_time;
                     $id = WmsLoading::where('self_id',$self_id)->update($data);
                     WmsLoadingList::insert($deposit_list);
                     $operationing->access_cause='修改业务公司';
