@@ -508,6 +508,7 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
                     $change_in["warehouse_id"]       =$value['warehouse_id'];
                     $change_in["warehouse_name"]     =$value['warehouse_name'];
                     $change_in["production_date"]    =$old_library_sige->production_date;
+                    $change_in["expire_time"]        =$old_library_sige->expire_time;
                     $change_in['spec']               =$old_library_sige->wms_spec;
                     $change_in['initial_num']        =$value['num'];
                     $change_in['now_num']            =$value['num'];
