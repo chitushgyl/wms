@@ -534,19 +534,33 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
 
                 }
 //                dd($old_change,$new_change_info);
-                foreach ($old_change as $k => $v){
-                    $where=[
-                        ['self_id','=',$v['self_id']],
-                    ];
-                    $data['now_num']            =$v['now_num_new'];
-                    $data['update_time']        =$now_time;
 
-                    $id=WmsLibrarySige::where($where)->update($data);
+                $update['state']  = 'Y';
+                $update['now_time'] = $now_time;
+                $id = WmsChangeGood::where('self_id',$self_id)->update($update);
+                if ($id){
+                    foreach ($old_change as $k => $v){
+                        $where=[
+                            ['self_id','=',$v['self_id']],
+                        ];
+                        $data['now_num']            =$v['now_num_new'];
+                        $data['update_time']        =$now_time;
+
+                        WmsLibrarySige::where($where)->update($data);
+                    }
+                    WmsLibrarySige::insert($new_change_info);
+                    $change->change($old_change,'moveout');
+                    $change->change($new_change_info,'movein');
+                    DB::commit();
+                    $msg['code'] = 200;
+                    $msg['msg'] = "操作成功！";
+                    return $msg;
+                }else{
+                    DB::rollBack();
+                    $msg['code'] = 302;
+                    $msg['msg'] = "操作失败";
+                    return $msg;
                 }
-                WmsLibrarySige::insert($new_change_info);
-
-                $change->change($old_change,'moveout');
-                $change->change($new_change_info,'movein');
             }catch(\Exception $e){
                 dd($e);
                 DB::rollBack();
