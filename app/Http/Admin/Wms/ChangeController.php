@@ -536,7 +536,7 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
 //                dd($old_change,$new_change_info);
 
                 $update['state']  = 'Y';
-                $update['now_time'] = $now_time;
+                $update['update_time'] = $now_time;
                 $id = WmsChangeGood::where('self_id',$self_id)->update($update);
                 if ($id){
                     foreach ($old_change as $k => $v){
