@@ -529,10 +529,10 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
                     $change_in['weight']             = $value['singe_weight']*$value['now_num'];
 
 
-                    $new_change_info = $change_in;
+                    $new_change_info[] = $change_in;
 
                 }
-                dd($old_change,$new_change_info);
+//                dd($old_change,$new_change_info);
                 foreach ($old_change as $k => $v){
                     $where=[
                         ['self_id','=',$v['self_id']],
