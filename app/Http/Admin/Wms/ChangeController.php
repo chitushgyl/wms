@@ -527,7 +527,7 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
                     $change_in["count_number"]       =$value['count_number'];
                     $change_in['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$value['now_num'];
                     $change_in['weight']             = $value['singe_weight']*$value['now_num'];
-                 
+
 
                     $new_change_info = $change_in;
 
