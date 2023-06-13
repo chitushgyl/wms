@@ -509,7 +509,7 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
                     $change_in["warehouse_name"]     =$value['warehouse_name'];
                     $change_in["production_date"]    =$old_library_sige->production_date;
                     $change_in["expire_time"]        =$old_library_sige->expire_time;
-                    $change_in['spec']               =$old_library_sige->wms_spec;
+                    $change_in['spec']               =$old_library_sige->spec;
                     $change_in['initial_num']        =$value['num'];
                     $change_in['now_num']            =$value['num'];
                     $change_in['storage_number']     =$value['num'];
@@ -524,10 +524,10 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
                     $change_in["good_lot"]           =$value['good_lot'];
                     $change_in["plate_number"]       =$value['plate_number'];
                     $change_in["singe_plate_number"] =$value['singe_plate_number'];
-                    $change_in["singe_weight"]       =$value['singe_weight'];
-                    $change_in["count_number"]       =$value['count_number'];
+                    $change_in["singe_weight"]       =$value['good_weight'];
+                    $change_in["count_number"]       =$value['good_weight']*$value['num']/1000;
                     $change_in['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$value['now_num'];
-                    $change_in['weight']             = $value['singe_weight']*$value['now_num'];
+                    $change_in['weight']             = $value['good_weight']*$value['now_num'];
 
 
                     $new_change_info[] = $change_in;
