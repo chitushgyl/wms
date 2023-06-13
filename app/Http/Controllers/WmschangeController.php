@@ -14,11 +14,7 @@ class WmschangeController extends Controller{
             if($type != 'preentry'){
                 $list["warehouse_id"]       =$v['warehouse_id'];
                 $list["warehouse_name"]     =$v['warehouse_name'];
-              
-                $list['area']               =$v['area'];
-                $list['row']                =$v['row'];
-                $list['column']             =$v['column'];
-                $list['tier']               =$v['tier'];
+
             }
 
             $list["sku_id"]             =$v['sku_id'];
