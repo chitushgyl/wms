@@ -9,6 +9,7 @@ use App\Models\Wms\WmsChangeList;
 use App\Models\Wms\WmsDeposit;
 use App\Models\Wms\WmsDepositGood;
 use App\Models\Wms\WmsLibrarySige;
+use App\Models\Wms\WmsWarehouse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
@@ -308,7 +309,118 @@ class ChangeController extends CommonController{
                         }
 
                     }
+                    /***新增一条库存记录 wmsLibrarySige**/
+                    //检查原仓库库存是否满足
+                    $old_library_sige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
+                    if(empty($old_library_sige)){
+                        if($abcd<$errorNum){
+                            $a=$k+1;
+                            $strs .= '数据中的第'.$a."行商品无库存，请检查".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }else{
+                        if($v['num'] >$old_library_sige->now_num){
+                            if($abcd<$errorNum){
+                                $a=$k+1;
+                                $strs .= '数据中的第'.$a."行商品数量不足".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
 
+                    //查询转入库是否存在
+                    $where_sign=[
+                        ['delete_flag','=','Y'],
+                        ['self_id','=',$value['warehouse_id']],
+                    ];
+
+                    $select_sige=['self_id','area','area_id','row','column','tier'];
+                    $warehouse_info=WmsWarehouse::where($where_sign)->select($select_sige)->first();
+
+                    if(empty($warehouse_info)){
+                        if($abcd<$errorNum){
+                            $a=$k+1;
+                            $strs .= '数据中的第'.$a."行转入库不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+
+                    //添加数据
+                    $change_out=$old_library_sige->toArray();
+                    $change_out['create_user_id']     =$user_info->admin_id;
+                    $change_out['create_user_name']   =$user_info->name;
+                    $change_out['create_time']        =$now_time;
+                    $change_out["update_time"]        =$now_time;
+                    $change_out["now_num_new"]        =$old_library_sige->now_num - $value['num'];
+                    $change_out['weight']             =$old_library_sige->weight - $value['weight'];//吨重
+                    $change_out['plate_num']          =$old_library_sige->plate_num - $value['plate_num'];//板数
+                    $change_out['inventory_num']      =$old_library_sige->inventory_num - $value['inventory_num'];//库存件数
+                    $change_out['inventory_count_num']=$old_library_sige->inventory_count_num - $value['inventory_count_num'];//库存计费数量
+                    $change_out["good_target_unit"]   =$old_library_sige->good_target_unit;
+                    $change_out["good_scale"]         =$old_library_sige->good_scale;
+                    $change_out["good_unit"]          =$old_library_sige->good_unit;
+                    $change_out["good_lot"]           =$old_library_sige->good_lot;
+                    $old_change[]=$change_out;
+
+                    $change_in["self_id"]            =generate_id('RK');
+                    $change_in["order_id"]           =$old_library_sige->order_id;
+                    $change_in["sku_id"]             =$value['sku_id'];
+                    $change_in["external_sku_id"]    =$value['external_sku_id'];
+                    $change_in["company_id"]         =$company_id;
+                    $change_in["company_name"]       =$company_name;
+                    $change_in["good_name"]          =$value['good_name'];
+                    $change_in["good_english_name"]  =$old_library_sige->good_english_name;
+                    $change_in["good_target_unit"]   =$old_library_sige->wms_target_unit;
+                    $change_in["good_scale"]         =$old_library_sige->wms_scale;
+                    $change_in["good_unit"]          =$old_library_sige->wms_unit;
+                    $change_in["wms_length"]         =$old_library_sige->wms_length;
+                    $change_in["wms_wide"]           =$old_library_sige->wms_wide;
+                    $change_in["wms_high"]           =$old_library_sige->wms_high;
+                    $change_in["wms_weight"]         =$old_library_sige->wms_weight;
+                    $change_in["good_info"]          =json_encode($getGoods,JSON_UNESCAPED_UNICODE);
+                    $change_in["warehouse_id"]       =$value['warehouse_id'];
+                    $change_in["warehouse_name"]     =$value['warehouse_name'];
+                    $change_in["production_date"]    =$old_library_sige->production_date;
+                    $change_in['spec']               =$old_library_sige->wms_spec;
+                    $change_in['initial_num']        =$value['num'];
+                    $change_in['now_num']            =$value['num'];
+                    $change_in['storage_number']     =$value['num'];
+                    $change_in["group_code"]         =$old_library_sige->group_code;
+                    $change_in["group_name"]         =$old_library_sige->group_name;
+                    $change_in['create_time']        =$now_time;
+                    $change_in["update_time"]        =$now_time;
+                    $change_in['create_user_id']     = $user_info->admin_id;
+                    $change_in['create_user_name']   = $user_info->name;
+                    $change_in["grounding_status"]   ='N';
+
+                    $value['warehouse_name'];//转入仓库名称
+                    $list['good_name']         =  $value['good_name'];//商品名称
+                    $list['good_spac']         =  $value['good_spac'];//商品规格
+                    $list['good_weight']       =  $value['good_weight'];//件重
+//                $list['good_num']          =  $value['good_num'];//件数
+                    $list['weight']            =  $value['weight'];//吨重
+                    $list['num']               =  $value['num'];//数量
+                    $list['plate_num']         =  $value['plate_num'];//板数
+                    $list['plate_id']          =  $value['plate_id'];//板位
+                    $list['inventory_num']     =  $value['inventory_num'];//库存件数
+                    $list['inventory_count_num']  =  $value['inventory_count_num'];//库存计费数量
+                    $list['remark']            =  $value['remark'];//备注
+
+                    $change_in["good_remark"]        =$value['remark'];
+                    $change_in["good_lot"]           =$v['good_lot'];
+                    $change_in["plate_number"]       =$value['plate_number'];
+                    $change_in["singe_plate_number"] =$v['singe_plate_number'];
+                    $change_in["singe_weight"]       =$v['singe_weight'];
+                    $change_in["count_number"]       =$v['count_number'];
+                    $change_in['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
+                    $change_in['weight']             = $v['singe_weight']*$v['now_num'];
+                    $bulk+=  $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
+                    $weight+=  $getGoods->wms_weight*$v['now_num'];
+
+                    $new_change_info = $change_in;
                     $library_sige_list[] = $library_sige;
 //                $deposit_list[] = $list;
                     $a++;
@@ -323,6 +435,7 @@ class ChangeController extends CommonController{
                     $id = WmsChangeGood::where('self_id',$self_id)->update($data);
                     WmsChangeList::insert($deposit_list);
                     InoutOtherMoney::insert($money_lists);
+
                     $operationing->access_cause='修改业务公司';
                     $operationing->operation_type='update';
 
@@ -381,6 +494,52 @@ class ChangeController extends CommonController{
             return $msg;
         }
 
+    }
+
+
+    /**
+     * 审核  /wms/change/updateChange
+     * */
+    public function updateChange(Request $request){
+$operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='wms_library_order';
+
+        $operationing->access_cause     ='修改入库状态';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+
+        $user_info          = $request->get('user_info');//接收中间件产生的参数
+        $input              = $request->all();
+        $self_id = $request->input('self_id');
+        $group_code = $request->input('group_code');
+        $order_status = $request->input('order_status');
+
+        //第一步，验证数据
+        $rules=[
+            'self_id'=>'required',
+//            'order_status'=>'required',
+        ];
+        $message=[
+            'self_id.required'=>'请选择入库订单',
+//            'order_status.required'=>'请选择要做的操作',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()) {
+
+            
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
     }
 
     /***    业务公司启用禁用      /wms/change/changeUseFlag

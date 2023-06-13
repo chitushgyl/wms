@@ -313,6 +313,7 @@ Route::group([
     Route::any('/change/createChange','ChangeController@createChange');
     Route::any('/change/addChange', 'ChangeController@addChange');
     Route::any('/change/changeDelFlag','ChangeController@changeDelFlag');
+    Route::any('/change/updateChange','ChangeController@updateChange');
 
     Route::any('/turn/turnList', 'TurnController@turnList');
     Route::any('/turn/turnPage', 'TurnController@turnPage');
