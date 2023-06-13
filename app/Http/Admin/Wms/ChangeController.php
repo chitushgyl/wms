@@ -259,7 +259,7 @@ class ChangeController extends CommonController{
                     }
 
                     $wmsLibrarySige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
-                    $library_sige['num']       = $wmsLibrarySige->num - $value['num'];
+                    $library_sige['num']       = $wmsLibrarySige->num - $value['number'];
                     $library_sige['warehouse_id']       = $value['warehouse_id'];
                     $library_sige['warehouse_name']       = $value['warehouse_name'];
 
