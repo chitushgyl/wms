@@ -246,7 +246,7 @@ class ChangeController extends CommonController{
                     $list['good_weight']       =  $value['good_weight'];//件重
 //                $list['good_num']          =  $value['good_num'];//件数
                     $list['weight']            =  $value['weight'];//吨重
-                    $list['num']               =  $value['num'];//数量
+                    $list['num']               =  $value['number'];//数量
                     $list['plate_num']         =  $value['plate_num'];//板数
                     $list['plate_id']          =  $value['plate_id'];//板位
                     $list['inventory_num']     =  $value['inventory_num'];//库存件数
