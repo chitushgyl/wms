@@ -532,7 +532,7 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
                     $new_change_info = $change_in;
 
                 }
-
+                dd($old_change,$new_change_info);
                 foreach ($old_change as $k => $v){
                     $where=[
                         ['self_id','=',$v['self_id']],
