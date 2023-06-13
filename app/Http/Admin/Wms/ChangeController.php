@@ -461,8 +461,7 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
                         ['self_id','=',$value['warehouse_id']],
                     ];
 
-                    $select_sige=['self_id','area','area_id','row','column','tier'];
-                    $warehouse_info=WmsWarehouse::where($where_sign)->select($select_sige)->first();
+                    $warehouse_info=WmsWarehouse::where($where_sign)->first();
 
                     if(empty($warehouse_info)){
                         if($abcd<$errorNum){
