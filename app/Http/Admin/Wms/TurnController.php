@@ -491,6 +491,18 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
              DB::beginTransaction();
              try{
                  foreach ($turnCardGood as $key => $value){
+                     //判断商品是否存在
+                     $where['self_id']=$value['sku_id'];
+                     $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
+                         'wms_length','wms_wide','wms_high','wms_weight','period','period_value'];
+                     $getGoods=ErpShopGoodsSku::where($where)->select($goods_select)->first();
+                     if(empty($getGoods)){
+                         if($abcd<$errorNum){
+                             $strs .= '数据中的第'.$a."行商品不存在".'</br>';
+                             $cando='N';
+                             $abcd++;
+                         }
+                     }
                      //检查原仓库库存是否满足
                      $old_library_sige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
                      if(empty($old_library_sige)){
