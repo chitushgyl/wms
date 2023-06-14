@@ -321,7 +321,7 @@ Route::group([
     Route::any('/turn/addTurn', 'TurnController@addTurn');
     Route::any('/turn/turnDelFlag','TurnController@turnDelFlag');
     Route::any('/turn/updateTurn','TurnController@updateTurn');
-  
+
     Route::any('/homework/homeworkList', 'HomeworkController@homeworkList');
     Route::any('/homework/homeworkPage', 'HomeworkController@homeworkPage');
     Route::any('/homework/createHomework','HomeworkController@createHomework');
