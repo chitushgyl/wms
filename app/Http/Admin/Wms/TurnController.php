@@ -556,8 +556,8 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
                      $turn_in["order_id"]           = $old_library_sige->order_id;
                      $turn_in["sku_id"]             = $value['sku_id'];
                      $turn_in["external_sku_id"]    = $value['external_sku_id'];
-                     $turn_in["company_id"]         = $old_info->company_id;
-                     $turn_in["company_name"]       = $old_info->company_name;
+                     $turn_in["company_id"]         = $old_info->in_company_id;
+                     $turn_in["company_name"]       = $old_info->in_company_name;
                      $turn_in["good_name"]          = $value['good_name'];
                      $turn_in["good_english_name"]  = $old_library_sige->good_english_name;
                      $turn_in["good_target_unit"]   = $old_library_sige->wms_target_unit;
@@ -578,6 +578,8 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
                      $turn_in['storage_number']     = $value['num'];
                      //判断当天冷藏费结算对象
                      if ($old_info->cold_day == 'in'){
+                         $turn_in['enter_time']     = $old_info->entry_time;
+                     }elseif($old_info->cold_day == 'out'){
                          $turn_in['enter_time']     = $old_info->entry_time;
                      }else{
                          $turn_in['enter_time']     = $old_info->entry_time;
