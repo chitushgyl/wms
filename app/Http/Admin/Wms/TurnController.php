@@ -1,14 +1,8 @@
 <?php
 namespace App\Http\Admin\Wms;
 use App\Models\Shop\ErpShopGoodsSku;
-use App\Models\Wms\CompanyContact;
-use App\Models\Wms\ContactAddress;
 use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\TurnCardGood;
-use App\Models\Wms\WmsChangeGood;
-use App\Models\Wms\WmsChangeList;
-use App\Models\Wms\WmsDeposit;
-use App\Models\Wms\WmsDepositGood;
 use App\Models\Wms\WmsLibrarySige;
 use App\Models\Wms\WmsTurnCard;
 use App\Models\Wms\WmsWarehouse;
@@ -24,6 +18,7 @@ use App\Http\Controllers\FileController as File;
 use App\Http\Controllers\DetailsController as Details;
 use App\Models\Wms\WmsGroup;
 use App\Models\Group\SystemGroup;
+use App\Http\Controllers\WmschangeController as Change;
 
 class TurnController extends CommonController{
     /***    业务公司列表      /wms/turn/turnList
@@ -449,7 +444,7 @@ class TurnController extends CommonController{
     /**
      * 转卡复核  /wms/trun/updateTurn
      * */
-    public function updateTurn(Request $request){
+    public function updateTurn(Request $request,Change $change){
 $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='wms_library_order';
@@ -622,7 +617,7 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
                          $data['now_num']            =$v['now_num_new'];
                          $data['update_time']        =$now_time;
 
-                         TurnCardGood::where($where)->update($data);
+                         WmsLibrarySige::where($where)->update($data);
                      }
                      WmsLibrarySige::insert($new_change_info);
                      $change->change($old_change,'moveout');
