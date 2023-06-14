@@ -486,6 +486,7 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
                  return $msg;
              }
              $turnCardGood = TurnCardGood::where('turn_id',$self_id)->get();
+             dd($turnCardGood);
              DB::beginTransaction();
              try{
                  foreach ($turnCardGood as $key => $value){
