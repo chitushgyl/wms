@@ -57,6 +57,11 @@ class WmsTurnCard extends Model{
         return $this->hasMany('App\Models\Wms\TurnCardGood','turn_id','self_id');
     }
 
+    public function WmsContract(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsContract','contract_id','self_id');
+    }
 
 
 

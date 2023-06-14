@@ -148,7 +148,10 @@ class TurnController extends CommonController{
             $query->with(['InoutOtherMoney' => function($query)use($where1){
                 $query->where($where1);
             }]);
-        }])->where($where)->first();
+        }])
+            ->with(['WmsContract' => function($query)use($where1){
+                $query->where($where1);
+            }])->where($where)->first();
         if($data['info']){
 
         }
@@ -431,6 +434,13 @@ class TurnController extends CommonController{
             }
             return $msg;
         }
+
+    }
+
+    /**
+     * 转卡复核  /wms/trun/updateTurn
+     * */
+    public function updateTurn(Request $request){
 
     }
 
