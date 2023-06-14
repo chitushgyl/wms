@@ -268,9 +268,9 @@ class TurnController extends CommonController{
                     $list['sku_id']            =  $value['sku_id'];//商品SELF_ID
                     $list['external_sku_id']   =  $value['external_sku_id'];//商品编号
                     $list['out_warehouse_id']  =  $value['out_warehouse_id'];//转出仓库
-                    $list['out_warehouse_name'] =  $value['out_warehouse_name'];//转出仓库名称
-                    $list['in_warehouse_id']    =  $value['in_warehouse_id'];//转入仓库名称
-                    $list['in_warehouse_name']    =  $value['in_warehouse_name'];//转入仓库名称
+                    $list['out_warehouse_name']=  $value['out_warehouse_name'];//转出仓库名称
+                    $list['in_warehouse_id']   =  $value['in_warehouse_id'];//转入仓库名称
+                    $list['in_warehouse_name'] =  $value['in_warehouse_name'];//转入仓库名称
                     $list['good_name']         =  $value['good_name'];//商品名称
                     $list['good_spac']         =  $value['good_spac'];//商品规格
                     $list['inventory_num']     =  $value['inventory_num'];//库存件数
@@ -298,11 +298,11 @@ class TurnController extends CommonController{
                         $list['update_time']  = $now_time;
                         TurnCardGood::where('self_id',$value['self_id'])->update($list);
                     }else{
-                        $list["self_id"]            =generate_id('ZK');
-                        $list["group_code"]         =$getGoods->group_code;
-                        $list["group_name"]         =$getGoods->group_name;
-                        $list['create_time']        =$now_time;
-                        $list["update_time"]        =$now_time;
+                        $list["self_id"]            = generate_id('ZK');
+                        $list["group_code"]         = $user_info->group_code;
+                        $list["group_name"]         = $user_info->group_name;
+                        $list['create_time']        = $now_time;
+                        $list["update_time"]        = $now_time;
                         $list['create_user_id']     = $user_info->admin_id;
                         $list['create_user_name']   = $user_info->name;
                         $deposit_list[] = $list;
@@ -354,9 +354,9 @@ class TurnController extends CommonController{
                         }else{
                             $money_out['self_id']           = generate_id('RF');
                             if($value['self_id']){
-                                $money_out['order_id']          = $value["self_id"];
+                                $money_out['order_id']      = $value["self_id"];
                             }else{
-                                $money_out['order_id']          = $list["self_id"];
+                                $money_out['order_id']      = $list["self_id"];
                             }
 
                             $money_out['group_code']        = $user_info->group_code;
@@ -449,7 +449,66 @@ class TurnController extends CommonController{
      * 转卡复核  /wms/trun/updateTurn
      * */
     public function updateTurn(Request $request){
+$operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='wms_library_order';
 
+        $operationing->access_cause     ='修改入库状态';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+
+        $user_info          = $request->get('user_info');//接收中间件产生的参数
+        $input              = $request->all();
+        $self_id            = $request->input('self_id');
+        $group_code         = $request->input('group_code');
+        $order_status       = $request->input('order_status');
+
+        //第一步，验证数据
+        $rules=[
+            'self_id'=>'required',
+//            'order_status'=>'required',
+        ];
+        $message=[
+            'self_id.required'=>'请选择入库订单',
+//            'order_status.required'=>'请选择要做的操作',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()) {
+             $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
+             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
+             $errorNum=50;       //控制错误数据的条数
+             $a=2;
+             $old_info = WmsTurnCard::where('self_id',$self_id)->first();
+             if ($old_info->state == 'Y'){
+                 $msg['code'] = 302;
+                 $msg['msg'] = "已复核，请勿重复操作！";
+                 return $msg;
+             }
+             $turnCardGood = TurnCardGood::where('turn_id',$self_id)->get();
+             DB::beginTransaction();
+             try{
+                 foreach ($turnCardGood as $key => $value){
+
+                 }
+             }catch(\Exception $e){
+                 dd($e);
+                 DB::rollBack();
+                 $msg['code'] = 302;
+                 $msg['msg'] = "操作失败";
+                 return $msg;
+             }
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
     }
 
     /***    业务公司启用禁用      /wms/turn/turnUseFlag

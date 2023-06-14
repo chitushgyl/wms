@@ -864,13 +864,10 @@ class LibraryController extends CommonController{
             $a=2;
             $money_lists=[];
             foreach($library_sige as $k => $v){
-                //dump($v);
-                //$where100['company_id']=$company_id;
                 $where100['self_id']=$v['sku_id'];
                 //查询商品是不是存在
                 $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
                     'wms_length','wms_wide','wms_high','wms_weight','period','period_value','group_code','group_name'];
-					//dump($goods_select);
 
                 $getGoods=ErpShopGoodsSku::where($where100)->select($goods_select)->first();
 
@@ -881,12 +878,6 @@ class LibraryController extends CommonController{
                         $abcd++;
                     }
                 }
-
-
-//                $where2k['self_id']=$v['warehouse_sign_id'];
-//                $warehouse_select=['warehouse_id','warehouse_name','self_id','area_id','area','row','column','tier','group_code','group_name'];
-//                $getWmsWarehouse=WmsWarehouseSign::where($where2k)->select($warehouse_select)->first();
-
 
                 /** 计算商品的有效期**/
                 $expire_time=null;
@@ -913,7 +904,6 @@ class LibraryController extends CommonController{
 //                    $pull[]=$getWmsWarehouse->self_id;
                     $pull[] = '';
 
-		    //dd($getGoods->toArray());
                     $list["self_id"]            =generate_id('RK');
                     $list["order_id"]           =$seld;
                     $list["sku_id"]             =$getGoods->self_id;
@@ -932,23 +922,14 @@ class LibraryController extends CommonController{
                     $list["good_info"]          =json_encode($getGoods,JSON_UNESCAPED_UNICODE);
                     $list["warehouse_id"]       =$v['warehouse_id'];
                     $list["warehouse_name"]     =$v['warehouse_name'];
-//                    $list['warehouse_sign_id']  =$getWmsWarehouse->self_id;
-//                    $list['area_id']            =$getWmsWarehouse->area_id;
-//                    $list['area']               =$getWmsWarehouse->area;
-//                    $list['row']                =$getWmsWarehouse->row;
-//                    $list['column']             =$getWmsWarehouse->column;
-//                    $list['tier']               =$getWmsWarehouse->tier;
                     $list["production_date"]    =$v['production_date'];
                     $list["expire_time"]        =$expire_time;
                     $list['spec']               =$getGoods->wms_spec;
                     $list['initial_num']        =$v['now_num'];
                     $list['now_num']            =$v['now_num'];
                     $list['storage_number']     =$v['now_num'];
-//                    $list["group_code"]         =$getWmsWarehouse->group_code;
-//                    $list["group_name"]         =$getWmsWarehouse->group_name;
                     $list["group_code"]         =$getGoods->group_code;
                     $list["group_name"]         =$getGoods->group_name;
-
                     $list['create_time']        =$now_time;
                     $list["update_time"]        =$now_time;
                     $list['create_user_id']     = $user_info->admin_id;
@@ -961,7 +942,7 @@ class LibraryController extends CommonController{
                     $list["singe_plate_number"] =$v['singe_plate_number'];
                     $list["singe_weight"]       =$v['singe_weight'];
                     $list["count_number"]       =$v['count_number'];
-                    $list["enter_time"]         =$v['entry_time'];
+                    $list["enter_time"]         =$entry_time;
 
                     $list['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
                     $list['weight']             = $v['singe_weight']*$v['now_num']/1000;
@@ -970,21 +951,21 @@ class LibraryController extends CommonController{
 
                     $datalist[]=$list;
                     foreach($v['other_money'] as $key => $value){
-                           $money['self_id'] = generate_id('RF');
-                           $money['price']   = $value['price'];
-                           $money['order_id'] = $list["self_id"];
-                           $money['money_id']   = $value['money_id'];
-                           $money['number']   = $value['number'];
-                           $money['total_price']   = $value['total_price'];
-                           $money['bill_id']   = $value['bill_id'];
-                           $money['use_flag']  = 'N';
-                           $money['group_code']   = $list['group_code'];
-                           $money['group_name']   = $list['group_name'];
-                           $money['create_user_id']   = $list['create_user_id'];
-                           $money['create_user_name']   = $list['create_user_name'];
-                           $money['create_time']   = $money['update_time'] = $now_time;
-                           $money_list[] = $money;
-                           $money_lists = array_merge($money_list);
+                        $money['self_id']          = generate_id('RF');
+                        $money['price']            = $value['price'];
+                        $money['order_id']         = $list["self_id"];
+                        $money['money_id']         = $value['money_id'];
+                        $money['number']           = $value['number'];
+                        $money['total_price']      = $value['total_price'];
+                        $money['bill_id']          = $value['bill_id'];
+                        $money['use_flag']         = 'N';
+                        $money['group_code']       = $list['group_code'];
+                        $money['group_name']       = $list['group_name'];
+                        $money['create_user_id']   = $list['create_user_id'];
+                        $money['create_user_name'] = $list['create_user_name'];
+                        $money['create_time']      = $money['update_time'] = $now_time;
+                        $money_list[] = $money;
+                        $money_lists = array_merge($money_list);
                     }
 
                 }
@@ -1050,8 +1031,7 @@ class LibraryController extends CommonController{
                 $change->change($datalist,'preentry');
                 InoutOtherMoney::insert($money_lists);
 //                $money->moneyCompute($data,$datalist,$now_time,$company_info,$user_info,'in');
-
-
+                
                 $msg['code']=200;
                 $msg['msg']='操作成功，您一共手工入库'.$count.'条数据，共计'.$pull_count.'托盘';
 

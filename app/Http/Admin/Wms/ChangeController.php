@@ -387,7 +387,7 @@ class ChangeController extends CommonController{
      * 审核  /wms/change/updateChange
      * */
     public function updateChange(Request $request,Change $change){
-$operationing   = $request->get('operationing');//接收中间件产生的参数
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='wms_library_order';
 

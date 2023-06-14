@@ -277,26 +277,26 @@ class contractController extends CommonController{
                 $id=WmsContract::where($wheres)->update($data);
                 foreach ($other_money as $k => $v){
                     if ($v['self_id']){
-                        $contact['money_type'] = $v['money_type'];
-                        $contact['price'] = $v['price'];
-                        $contact['bill_id'] = $v['bill_id'];
-                        $contact['in_flag'] = $v['in_flag'];
-                        $contact['out_flag'] = $v['out_flag'];
+                        $contact['money_type']  = $v['money_type'];
+                        $contact['price']       = $v['price'];
+                        $contact['bill_id']     = $v['bill_id'];
+                        $contact['in_flag']     = $v['in_flag'];
+                        $contact['out_flag']    = $v['out_flag'];
                         $contact['change_flag'] = $v['change_flag'];
                         $contact['delete_flag'] = $v['delete_flag'];
                         $contact['update_time'] = $now_time;
                         ContractOtherMoney::where('self_id',$v['self_id'])->update($contact);
                     }else{
-                        $contact['self_id'] = generate_id('QF');
+                        $contact['self_id']     = generate_id('QF');
                         $contact['contract_id'] = $self_id;
-                        $contact['money_type'] = $v['money_type'];
-                        $contact['price'] = $v['price'];
-                        $contact['bill_id'] = $v['bill_id'];
-                        $contact['in_flag'] = $v['in_flag'];
-                        $contact['out_flag'] = $v['out_flag'];
+                        $contact['money_type']  = $v['money_type'];
+                        $contact['price']       = $v['price'];
+                        $contact['bill_id']     = $v['bill_id'];
+                        $contact['in_flag']     = $v['in_flag'];
+                        $contact['out_flag']    = $v['out_flag'];
                         $contact['change_flag'] = $v['change_flag'];
-                        $contact['group_code'] = $group_code;
-                        $contact['group_name'] = $old_info->group_name;
+                        $contact['group_code']  = $group_code;
+                        $contact['group_name']  = $old_info->group_name;
                         $contact['create_user_id'] = $user_info->admin_id;
                         $contact['create_user_name'] = $user_info->name;
                         $contact['create_time'] = $now_time;
@@ -525,10 +525,12 @@ class contractController extends CommonController{
     /***    业务公司获取     /base/contract/getContract
      */
     public function getContract(Request $request){
-        $group_code=$request->input('group_code');
+        $group_code = $request->input('group_code');
+        $company_id = $request->input('company_id');
         $where=[
             ['delete_flag','=','Y'],
             ['group_code','=',$group_code],
+            ['company_id','=',$company_id]
         ];
 
         $data['info']=WmsContract::where($where)->get();
