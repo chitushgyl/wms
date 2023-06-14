@@ -224,7 +224,7 @@ class LoadingController extends CommonController{
                     $list['sort']              =  $value['sort'];//排序
                     $list['good_info']         =  $value['good_info'];//商品信息
                     $list['delete_flag']       =  $value['delete_flag'];
-                    if ($value['self_id']){
+                    if ($self_id){
                         $list['loading_id']           =  $self_id;//
                     }else{
                         $list['loading_id']           =  $deposit_id;//
