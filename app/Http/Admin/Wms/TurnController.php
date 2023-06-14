@@ -11,6 +11,7 @@ use App\Models\Wms\WmsDeposit;
 use App\Models\Wms\WmsDepositGood;
 use App\Models\Wms\WmsLibrarySige;
 use App\Models\Wms\WmsTurnCard;
+use App\Models\Wms\WmsWarehouse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
@@ -490,7 +491,139 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
              DB::beginTransaction();
              try{
                  foreach ($turnCardGood as $key => $value){
+                     //检查原仓库库存是否满足
+                     $old_library_sige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
+                     if(empty($old_library_sige)){
+                         if($abcd<$errorNum){
+                             $a=$key+1;
+                             $strs .= '数据中的第'.$a."行商品无库存，请检查".'</br>';
+                             $cando='N';
+                             $abcd++;
+                         }
+                     }else{
+                         if($value['num'] >$old_library_sige->now_num){
+                             if($abcd<$errorNum){
+                                 $a=$key+1;
+                                 $strs .= '数据中的第'.$a."行商品数量不足".'</br>';
+                                 $cando='N';
+                                 $abcd++;
+                             }
+                         }
+                     }
 
+                     //查询转入库是否存在
+                     $where_sign=[
+                         ['delete_flag','=','Y'],
+                         ['self_id','=',$value['warehouse_id']],
+                     ];
+
+                     $warehouse_info=WmsWarehouse::where($where_sign)->first();
+
+                     if(empty($warehouse_info)){
+                         if($abcd<$errorNum){
+                             $a=$key+1;
+                             $strs .= '数据中的第'.$a."行转入库不存在".'</br>';
+                             $cando='N';
+                             $abcd++;
+                         }
+                     }
+
+                     //添加数据
+                     $turn_out=$old_library_sige->toArray();
+                     $turn_out['create_user_id']     = $user_info->admin_id;
+                     $turn_out['create_user_name']   = $user_info->name;
+                     $turn_out['create_time']        = $now_time;
+                     $turn_out["update_time"]        = $now_time;
+                     $turn_out["now_num_new"]        = $old_library_sige->now_num - $value['num'];
+                     $turn_out['weight']             = $old_library_sige->weight - $value['weight'];//吨重
+                     $turn_out['plate_num']          = $old_library_sige->plate_num - $value['plate_num'];//板数
+                     $turn_out['inventory_num']      = $old_library_sige->inventory_num - $value['inventory_num'];//库存件数
+                     $turn_out['inventory_count_num']= $old_library_sige->inventory_count_num - $value['inventory_count_num'];//库存计费数量
+                     $turn_out["good_target_unit"]   = $old_library_sige->good_target_unit;
+                     $turn_out["good_scale"]         = $old_library_sige->good_scale;
+                     $turn_out["good_unit"]          = $old_library_sige->good_unit;
+                     $turn_out["good_lot"]           = $old_library_sige->good_lot;
+                     $old_change[]=$turn_out;
+
+                     $turn_in["self_id"]            = generate_id('RK');
+                     $turn_in["order_id"]           = $old_library_sige->order_id;
+                     $turn_in["sku_id"]             = $value['sku_id'];
+                     $turn_in["external_sku_id"]    = $value['external_sku_id'];
+                     $turn_in["company_id"]         = $old_info->company_id;
+                     $turn_in["company_name"]       = $old_info->company_name;
+                     $turn_in["good_name"]          = $value['good_name'];
+                     $turn_in["good_english_name"]  = $old_library_sige->good_english_name;
+                     $turn_in["good_target_unit"]   = $old_library_sige->wms_target_unit;
+                     $turn_in["good_scale"]         = $old_library_sige->wms_scale;
+                     $turn_in["good_unit"]          = $old_library_sige->wms_unit;
+                     $turn_in["wms_length"]         = $old_library_sige->wms_length;
+                     $turn_in["wms_wide"]           = $old_library_sige->wms_wide;
+                     $turn_in["wms_high"]           = $old_library_sige->wms_high;
+                     $turn_in["wms_weight"]         = $old_library_sige->wms_weight;
+                     $turn_in["good_info"]          = json_encode($getGoods,JSON_UNESCAPED_UNICODE);
+                     $turn_in["warehouse_id"]       = $value['warehouse_id'];
+                     $turn_in["warehouse_name"]     = $value['warehouse_name'];
+                     $turn_in["production_date"]    = $old_library_sige->production_date;
+                     $turn_in["expire_time"]        = $old_library_sige->expire_time;
+                     $turn_in['spec']               = $old_library_sige->spec;
+                     $turn_in['initial_num']        = $value['num'];
+                     $turn_in['now_num']            = $value['num'];
+                     $turn_in['storage_number']     = $value['num'];
+                     //判断当天冷藏费结算对象
+                     if ($old_info->cold_day == 'in'){
+                         $turn_in['enter_time']     = $old_info->entry_time;
+                     }else{
+                         $turn_in['enter_time']     = $old_info->entry_time;
+                     }
+
+                     $turn_in["group_code"]         = $old_library_sige->group_code;
+                     $turn_in["group_name"]         = $old_library_sige->group_name;
+                     $turn_in['create_time']        = $now_time;
+                     $turn_in["update_time"]        = $now_time;
+                     $turn_in['create_user_id']     = $user_info->admin_id;
+                     $turn_in['create_user_name']   = $user_info->name;
+                     $turn_in["grounding_status"]   = 'N';
+                     $turn_in["good_remark"]        = $value['remark'];
+                     $turn_in["good_lot"]           = $value['good_lot'];
+                     $turn_in["plate_number"]       = $value['plate_number'];
+                     $turn_in["singe_plate_number"] = $value['singe_plate_number'];
+                     $turn_in["singe_weight"]       = $value['good_weight'];
+                     $turn_in["count_number"]       = $value['good_weight']*$value['num']/1000;
+                     $turn_in['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$value['now_num'];
+                     $turn_in['weight']             = $value['good_weight']*$value['now_num'];
+
+                     $new_change_info[] = $turn_in;
+
+                     //保存费用
+                     InoutOtherMoney::where('order_id',$value['self_id'])->get();
+
+                 }
+
+                 $update['state']  = 'Y';
+                 $update['update_time'] = $now_time;
+                 $id = WmsTurnCard::where('self_id',$self_id)->update($update);
+                 if ($id){
+                     foreach ($old_change as $k => $v){
+                         $where=[
+                             ['self_id','=',$v['self_id']],
+                         ];
+                         $data['now_num']            =$v['now_num_new'];
+                         $data['update_time']        =$now_time;
+
+                         TurnCardGood::where($where)->update($data);
+                     }
+                     WmsLibrarySige::insert($new_change_info);
+                     $change->change($old_change,'moveout');
+                     $change->change($new_change_info,'movein');
+                     DB::commit();
+                     $msg['code'] = 200;
+                     $msg['msg'] = "操作成功！";
+                     return $msg;
+                 }else{
+                     DB::rollBack();
+                     $msg['code'] = 302;
+                     $msg['msg'] = "操作失败";
+                     return $msg;
                  }
              }catch(\Exception $e){
                  dd($e);
