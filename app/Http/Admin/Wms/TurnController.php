@@ -132,7 +132,10 @@ class TurnController extends CommonController{
     /***    业务公司创建      /wms/turn/createTurn
      */
     public function createTurn(Request $request){
-
+        $contract_settle_type = array_column(config('wms.contract_settle_type'),'name','key');
+        $contract_type = array_column(config('wms.contract_type'),'name','key');
+        $contract_warehouse_type = array_column(config('wms.contract_warehouse_type'),'name','key');
+        $settle_type = array_column(config('wms.settle_type'),'name','key');
         /** 接收数据*/
         $self_id=$request->input('self_id');
         $where=[
@@ -153,7 +156,12 @@ class TurnController extends CommonController{
                 $query->where($where1);
             }])->where($where)->first();
         if($data['info']){
-
+            if ($data['info']->WmsContract){
+                $data['info']->WmsContract->contract_type = $contract_warehouse_type[$data['info']->WmsContract->contract_type]??null;
+                $data['info']->WmsContract->contract_settle_type = $contract_settle_type[$data['info']->WmsContract->contract_settle_type]??null;
+                $data['info']->WmsContract->type = $contract_type[$data['info']->WmsContract->type]??null;
+                $data['info']->WmsContract->cold_settle = $settle_type[$data['info']->WmsContract->cold_settle]??null;
+            }
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
