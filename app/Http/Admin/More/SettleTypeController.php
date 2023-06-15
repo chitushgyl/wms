@@ -176,7 +176,7 @@ class SettleTypeController extends CommonController{
 
             }else{
 
-                $data['self_id']=generate_id('settle_');		//优惠券表ID
+                $data['self_id']=generate_id('JS');		//优惠券表ID
                 $data['group_code'] = $group_code;
                 $data['group_name'] = SystemGroup::where('group_code','=',$group_code)->value('group_name');
                 $data['create_user_id']=$user_info->admin_id;

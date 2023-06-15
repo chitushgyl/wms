@@ -217,7 +217,7 @@ class LabourController extends CommonController{
                 $id=WmsLabour::insert($data);
 
                 foreach($more_money as $k => $v){
-                    $money['self_id'] = generate_id('CM');
+                    $money['self_id'] = generate_id('RF');
                     $money['price']   = $v['price'];
                     $money['order_id'] = $data['self_id'];
                     $money['money_id']   = $v['money_id'];

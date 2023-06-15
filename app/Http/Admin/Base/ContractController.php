@@ -374,9 +374,9 @@ class contractController extends CommonController{
 
             }else{
                 if ($type == 'bulk'){
-                    $data['self_id']                = generate_num('LH');
+                    $data['self_id']                = generate_id('LH');
                 }else{
-                    $data['self_id']                = generate_num('BH');
+                    $data['self_id']                = generate_id('BH');
                 }
                 $data['self_id']=generate_id('L');		//优惠券表ID
                 $data['group_code'] = $group_code;
@@ -388,7 +388,7 @@ class contractController extends CommonController{
 
                 if ($other_money){
                     foreach ($other_money as $k => $v){
-                        $contact['self_id'] = generate_id('other_');
+                        $contact['self_id'] = generate_id('M');
                         $contact['contract_id'] = $data['self_id'];
                         $contact['money_type'] = $v['money_type'];
                         $contact['price'] = $v['price'];
