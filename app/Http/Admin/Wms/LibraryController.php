@@ -526,9 +526,15 @@ class LibraryController extends CommonController{
             ['company_id','=',$company_id],
             ['group_code','=',$group_code],
         ];
-
+        $where1=[
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+        ];
         //dd($where);
-        $data['info']=WmsLibrarySige::where($where)->get();
+        $data['info']=WmsLibrarySige::with(['WmsContract' => function($query)use($where1){
+            $query->where($where1);
+        }])
+          ->where($where)->get();
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
@@ -943,7 +949,8 @@ class LibraryController extends CommonController{
                     $list["singe_weight"]       =$v['singe_weight'];
                     $list["count_number"]       =$v['count_number'];
                     $list["enter_time"]         =$entry_time;
-
+                    $list["contract_id"]        = $contract_id;//合同编号
+                    $list["contract_num"]       = $contract_num;//合同编号
                     $list['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
                     $list['weight']             = $v['singe_weight']*$v['now_num']/1000;
                     $bulk+=  $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
