@@ -533,8 +533,17 @@ class LibraryController extends CommonController{
         //dd($where);
         $data['info']=WmsLibrarySige::with(['WmsContract' => function($query)use($where1){
             $query->where($where1);
+            $query->with(['ContractOtherMoney' => function($query)use($where1){
+                $query->where($where1);
+            }]);
         }])
           ->where($where)->get();
+        $data['info']->contract  = [];
+        if ($data['info']->WmsContract){
+            if ($data['info']->WmsContract->ContractOtherMoney){
+                $data['info']->contract = $data['info']->WmsContract->ContractOtherMoney;
+            }
+        }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
