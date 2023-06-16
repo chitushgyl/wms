@@ -277,6 +277,7 @@ class contractController extends CommonController{
                 $id=WmsContract::where($wheres)->update($data);
                 foreach ($other_money as $k => $v){
                     if ($v['self_id']){
+                        $contact['money_id']    = $v['money_id'];
                         $contact['money_type']  = $v['money_type'];
                         $contact['price']       = $v['price'];
                         $contact['bill_id']     = $v['bill_id'];
@@ -289,6 +290,7 @@ class contractController extends CommonController{
                     }else{
                         $contact['self_id']     = generate_id('QF');
                         $contact['contract_id'] = $self_id;
+                        $contact['money_id']    = $v['money_id'];
                         $contact['money_type']  = $v['money_type'];
                         $contact['price']       = $v['price'];
                         $contact['bill_id']     = $v['bill_id'];
