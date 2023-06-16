@@ -300,6 +300,7 @@ Route::group([
 	Route::any('/settle/createGathering','SettleController@createGathering');
     Route::any('/settle/addGathering','SettleController@addGathering');
     Route::any('/settle/updateMoney','SettleController@updateMoney');
+    Route::any('/settle/getSettleOrder','SettleController@getSettleOrder');
 
     Route::any('/deposit/depositList', 'DepositController@depositList');
     Route::any('/deposit/depositPage', 'DepositController@depositPage');

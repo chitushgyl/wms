@@ -684,7 +684,7 @@ class LibraryController extends CommonController{
         $warehouse_id       = $request->input('warehouse_id');
         $entry_time         = $request->input('entry_time');//入库时间
         $company_id         = $request->input('company_id');
-        $company_name         = $request->input('company_name');//客户名称
+        $company_name       = $request->input('company_name');//客户名称
         $library_sige       = json_decode($request->input('library_sige'), true);
         $voucher            = json_decode($request->input('voucher'),true);
         $contract_id        = $request->input('contract_id');//合同编号

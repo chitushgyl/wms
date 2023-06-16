@@ -532,8 +532,12 @@ class contractController extends CommonController{
             ['group_code','=',$group_code],
             ['company_id','=',$company_id]
         ];
-
-        $data['info']=WmsContract::where($where)->get();
+        $where1=[
+            ['delete_flag','=','Y'],
+        ];
+        $data['info']=WmsContract::with(['ContractOtherMoney' => function($query)use($where1){
+            $query->where($where1);
+        }])->where($where)->get();
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";

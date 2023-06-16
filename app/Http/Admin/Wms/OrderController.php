@@ -771,7 +771,7 @@ class OrderController extends CommonController{
                 $shop_info = wmsShop::where($where_shop)->select($select_wmsShop)->first();
                 if($cando == 'Y'){
                     $order_2=[];
-                    $order_2['self_id']             =generate_id('order_');
+                    $order_2['self_id']             =generate_id('CK');
                     $order_2['shop_id']             =$shop_info['self_id'];
                     $order_2['shop_external_id']    =$shop_info['external_id'];
                     $order_2['shop_name']           =$shop_info['name'];
@@ -822,7 +822,7 @@ class OrderController extends CommonController{
                     $list=[];
                     if($cando =='Y'){
                         //dd($vv);
-                        $list['self_id']            =generate_id('list_');
+                        $list['self_id']            =generate_id('CX');
                         $list['shop_id']            = $orderdata[$v['shop_external_id']]['shop_id'];
                         $list['shop_name']          = $orderdata[$v['shop_external_id']]['shop_name'];
                         $list['good_name']          = $sku_info->good_name;
