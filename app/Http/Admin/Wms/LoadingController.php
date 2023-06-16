@@ -145,6 +145,7 @@ class LoadingController extends CommonController{
         ];
         $data['info']=WmsLoading::with(['WmsLoadingList' => function($query)use($where1){
             $query->where($where1);
+            $query->orderBy('sort','asc');
         }])->where($where)->first();
         if($data['info']){
 

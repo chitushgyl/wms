@@ -59,7 +59,7 @@ class BillTypeController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['id','self_id','bill_name','use_flag','group_name','group_code','delete_flag','create_time',
+        $select=['id','self_id','bill_name','use_flag','group_name','group_code','delete_flag','create_time','system_flag',
             'update_time'];
 
         switch ($group_info['group_id']){

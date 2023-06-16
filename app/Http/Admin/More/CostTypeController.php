@@ -60,7 +60,7 @@ class CostTypeController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','cost_name','use_flag','group_name','group_code','create_time','update_time','bill_id','bill_name',
+        $select=['self_id','cost_name','use_flag','group_name','group_code','create_time','update_time','bill_id','bill_name','bill_type',
             'use_flag','delete_flag','create_user_id','create_user_name','price','type','remark','system_flag','system_type'];
 
         switch ($group_info['group_id']){
