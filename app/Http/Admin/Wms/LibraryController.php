@@ -1120,7 +1120,6 @@ class LibraryController extends CommonController{
             ->where($where)->first();
         if($data['info']){
             if ($data['info']->WmsContract){
-                dd($data['info']->WmsContract);
                 $data['info']->WmsContract->contract_type = $contract_warehouse_type[$data['info']->WmsContract->contract_type]??null;
                 $data['info']->WmsContract->contract_settle_type = $contract_settle_type[$data['info']->WmsContract->contract_settle_type]??null;
                 $data['info']->WmsContract->type = $contract_type[$data['info']->WmsContract->type]??null;
