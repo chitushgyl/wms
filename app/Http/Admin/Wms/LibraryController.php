@@ -512,6 +512,10 @@ class LibraryController extends CommonController{
      * 获取商品库存
      * */
     public function getLibrarySige(Request $request){
+        $contract_settle_type = array_column(config('wms.contract_settle_type'),'name','key');
+        $contract_type = array_column(config('wms.contract_type'),'name','key');
+        $contract_warehouse_type = array_column(config('wms.contract_warehouse_type'),'name','key');
+        $settle_type = array_column(config('wms.settle_type'),'name','key');
         /** 接收数据*/
         $company_id       =$request->input('company_id');
         $group_code       =$request->input('group_code');
@@ -545,6 +549,10 @@ class LibraryController extends CommonController{
                 if ($value->WmsContract->ContractOtherMoney){
                     $value->contract = $value->WmsContract->ContractOtherMoney;
                 }
+                $value->WmsContract->contract_type = $contract_warehouse_type[$value->WmsContract->contract_type]??null;
+                $value->WmsContract->contract_settle_type = $contract_settle_type[$value->WmsContract->contract_settle_type]??null;
+                $value->WmsContract->type = $contract_type[$value->WmsContract->type]??null;
+                $value->WmsContract->cold_settle = $settle_type[$value->WmsContract->cold_settle]??null;
             }
         }
 
@@ -1080,6 +1088,10 @@ class LibraryController extends CommonController{
      * */
     public function createLibrary(Request $request){
         /** 接收数据*/
+        $contract_settle_type = array_column(config('wms.contract_settle_type'),'name','key');
+        $contract_type = array_column(config('wms.contract_type'),'name','key');
+        $contract_warehouse_type = array_column(config('wms.contract_warehouse_type'),'name','key');
+        $settle_type = array_column(config('wms.settle_type'),'name','key');
         $self_id=$request->input('self_id');
         $where=[
             ['delete_flag','=','Y'],
@@ -1107,7 +1119,12 @@ class LibraryController extends CommonController{
             }])
             ->where($where)->first();
         if($data['info']){
-
+            if ($data['info']->WmsContract){
+                $data['info']->WmsContract->contract_type = $contract_warehouse_type[$data['info']->WmsContract->contract_type]??null;
+                $data['info']->WmsContract->contract_settle_type = $contract_settle_type[$data['info']->WmsContract->contract_settle_type]??null;
+                $data['info']->WmsContract->type = $contract_type[$data['info']->WmsContract->type]??null;
+                $data['info']->WmsContract->cold_settle = $settle_type[$data['info']->WmsContract->cold_settle]??null;
+            }
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";

@@ -139,6 +139,10 @@ class contractController extends CommonController{
      */
     public function createContract(Request $request){
         /** 接收数据*/
+        $contract_settle_type = array_column(config('wms.contract_settle_type'),'name','key');
+        $contract_type = array_column(config('wms.contract_type'),'name','key');
+        $contract_warehouse_type = array_column(config('wms.contract_warehouse_type'),'name','key');
+        $settle_type = array_column(config('wms.settle_type'),'name','key');
         $self_id=$request->input('self_id');
         $type   =$request->input('type');
         if ($type == 'bulk'){
@@ -165,7 +169,10 @@ class contractController extends CommonController{
             ->where($where)->first();
 
         if($data['info']){
-
+//            $data['info']->contract_type = $contract_warehouse_type[$data['info']->contract_type]??null;
+//            $data['info']->contract_settle_type = $contract_settle_type[$data['info']->contract_settle_type]??null;
+//            $data['info']->type = $contract_type[$data['info']->type]??null;
+//            $data['info']->cold_settle = $settle_type[$data['info']->cold_settle]??null;
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -527,6 +534,10 @@ class contractController extends CommonController{
     /***    业务公司获取     /base/contract/getContract
      */
     public function getContract(Request $request){
+        $contract_settle_type = array_column(config('wms.contract_settle_type'),'name','key');
+        $contract_type = array_column(config('wms.contract_type'),'name','key');
+        $contract_warehouse_type = array_column(config('wms.contract_warehouse_type'),'name','key');
+        $settle_type = array_column(config('wms.settle_type'),'name','key');
         $group_code = $request->input('group_code');
         $company_id = $request->input('company_id');
         $where=[
@@ -540,6 +551,13 @@ class contractController extends CommonController{
         $data['info']=WmsContract::with(['ContractOtherMoney' => function($query)use($where1){
             $query->where($where1);
         }])->where($where)->get();
+
+        foreach ($data['info'] as $k => $v){
+            $v->contract_type = $contract_warehouse_type[$v->contract_type]??null;
+            $v->contract_settle_type = $contract_settle_type[$v->contract_settle_type]??null;
+            $v->type = $contract_type[$v->type]??null;
+            $v->cold_settle = $settle_type[$v->cold_settle]??null;
+        }
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
