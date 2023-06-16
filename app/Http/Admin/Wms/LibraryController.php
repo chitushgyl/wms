@@ -539,11 +539,11 @@ class LibraryController extends CommonController{
         }])
           ->where($where)->get();
         $data['info']->contract  = [];
-        if ($data['info']->WmsContract){
-            if ($data['info']->WmsContract->ContractOtherMoney){
-                $data['info']->contract = $data['info']->WmsContract->ContractOtherMoney;
-            }
-        }
+//        if ($data['info']->WmsContract){
+//            if ($data['info']->WmsContract->ContractOtherMoney){
+//                $data['info']->contract = $data['info']->WmsContract->ContractOtherMoney;
+//            }
+//        }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
