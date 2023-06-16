@@ -18,7 +18,7 @@ class WmsGroup extends Model{
 
     //指定主键字段 默认为id
     //protected $primaryKey = 'id';
-    
+
     //删除时间字段定义 自定义命名
     //const DELETED_AT = 'updated_at';
     //创建时间字段定义 自定义命名
@@ -56,6 +56,53 @@ class WmsGroup extends Model{
 //        //如果主键是id可以省略
 //        return $this->hasOne('App\Models\User\UserCapital','user_id','self_id');
 //    }
+
+    public function WmsDepositGood(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsDepositGood','company_id','self_id');
+    }
+    public function WmsLibrarySige(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsLibrarySige','company_id','self_id');
+    }
+
+    public function WmsOutOrderList(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsOutOrderList','company_id','self_id');
+    }
+
+    public function WmsChangeList(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsChangeList','company_id','self_id');
+    }
+
+    public function WmsBulkGood(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsBulkGood','company_id','self_id');
+    }
+
+    public function TurnCardGood(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\TurnCardGood','company_id','self_id');
+    }
+
+    public function WmsHomework(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsHomework','company_id','self_id');
+    }
+
+    public function WmsSortingGood(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsSortingGood','company_id','self_id');
+    }
 
 
 

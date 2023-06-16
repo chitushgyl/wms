@@ -266,20 +266,27 @@ class CostTypeController extends CommonController{
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';
 
-        $status_info=$status->changeFlag($table_name,$medol_name,$self_id,$flag,$now_time);
+        $old_info = WmsCostType::where('self_id',$self_id)->first();
+        if ($old_info->system_flag == 'Y'){
+            $msg['code']=301;
+            $msg['msg']="系统设置类型，不能删除";
+            return $msg;
+        }
+        $update['delete_flag'] = 'N';
+        $update['update_time'] = $now_time;
+        WmsCostType::where('self_id',$self_id)->update($update);
+
 
         $operationing->access_cause='删除';
         $operationing->table=$table_name;
         $operationing->table_id=$self_id;
         $operationing->now_time=$now_time;
-        $operationing->old_info=$status_info['old_info'];
-        $operationing->new_info=$status_info['new_info'];
+        $operationing->old_info=$old_info;
+        $operationing->new_info=(object)$update;
         $operationing->operation_type=$flag;
 
-        $msg['code']=$status_info['code'];
-        $msg['msg']=$status_info['msg'];
-        $msg['data']=$status_info['new_info'];
-
+        $msg['code']=200;
+        $msg['msg']='操作成功';
         return $msg;
 
 

@@ -3,7 +3,8 @@ namespace App\Http\Admin\Wms;
 
 use App\Http\Controllers\CommonController;
 use App\Models\Wms\InoutOtherMoney;
-use http\Env\Request;
+use App\Models\Wms\WmsGroup;
+use Illuminate\Http\Request;
 
 class SettleController extends CommonController{
 
@@ -34,16 +35,18 @@ class SettleController extends CommonController{
         $where=[
             ['delete_flag','=','Y'],
             ['group_code','=',$group_code],
+            ['self_id','=',$company_id],
         ];
         $where1=[
             ['delete_flag','=','Y'],
         ];
-        $data['info']=InoutOtherMoney::with(['WmsDepositGood' => function($query)use($where1){
-            $query->where($where1);
-        }])
-            ->with(['WmsLibrarySige' => function($query)use($where1){
+        $data['info']=WmsGroup::
+            with(['WmsLibrarySige' => function($query)use($where1){
                 $query->where($where1);
             }])
+//            ->with(['WmsDepositGood' => function($query)use($where1){
+//                $query->where($where1);
+//            }])
             ->with(['WmsOutOrderList' => function($query)use($where1){
                 $query->where($where1);
             }])

@@ -977,6 +977,10 @@ class LibraryController extends CommonController{
                     $bulk+=  $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
                     $weight+=  $getGoods->wms_weight*$v['now_num'];
 
+                    /**保存结算费用表**/
+                    $settle['company_id']          = $company_id;
+                    $settle['company_name']        = $company_name;
+
                     $datalist[]=$list;
                     foreach($v['other_money'] as $key => $value){
                         $money['self_id']          = generate_id('RF');
