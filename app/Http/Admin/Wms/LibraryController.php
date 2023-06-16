@@ -1101,7 +1101,7 @@ class LibraryController extends CommonController{
             ['delete_flag','=','Y'],
         ];
         $group_select = ['self_id','company_name','company_num'];
-        $contract_select = ['self_id','contract_num','insufficient','sale_price','type','cycle','contract_type','number'];
+        $contract_select = ['self_id','contract_num','insufficient','cold_settle','sale_price','type','cycle','contract_type','number','contract_settle_type'];
         $data['info']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query) use($where1){
             $query->where($where1);
             $query->with(['InoutOtherMoney' => function($query) use($where1){
@@ -1120,6 +1120,7 @@ class LibraryController extends CommonController{
             ->where($where)->first();
         if($data['info']){
             if ($data['info']->WmsContract){
+                dd($data['info']->WmsContract);
                 $data['info']->WmsContract->contract_type = $contract_warehouse_type[$data['info']->WmsContract->contract_type]??null;
                 $data['info']->WmsContract->contract_settle_type = $contract_settle_type[$data['info']->WmsContract->contract_settle_type]??null;
                 $data['info']->WmsContract->type = $contract_type[$data['info']->WmsContract->type]??null;
