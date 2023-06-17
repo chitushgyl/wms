@@ -2,6 +2,7 @@
 namespace App\Http\Admin\Wms;
 use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsLibraryChange;
+use App\Models\Wms\WmsSettleMoney;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\DB;
@@ -725,6 +726,7 @@ class LibraryController extends CommonController{
         $total_plate_num    = $request->input('total_plate_num');//总板数
         $remark             = $request->input('remark');//总板数
         $railway            = $request->input('railway');//月台号
+        $sale_price         = $request->input('sale_price');//月台号
         $insufficient       = $request->input('insufficient');//不足N吨按吨算
         $other_money        = json_decode($request->input('other_money'),true);//其他费用
         $type               = $request->input('type');
@@ -980,21 +982,34 @@ class LibraryController extends CommonController{
                     /**保存结算费用表**/
                     $settle['company_id']          = $company_id;
                     $settle['company_name']        = $company_name;
-                    $settle['start_time']          = $company_name;
-                    $settle['end_time']            = $company_name;
-                    $settle['good_name']           = $company_name;
-                    $settle['sku_id']              = $company_name;
-                    $settle['type']                = $company_name;
+                    $settle['start_time']          = $entry_time;
+                    $settle['end_time']            = $entry_time;
+                    $settle['good_name']           = $getGoods->good_name;
+                    $settle['sku_id']              = $getGoods->sku_id;
+                    $settle['type']                = 'in';
                     $settle['cabinet_num']         = $company_name;
-                    $settle['good_weight']         = $company_name;
-                    $settle['good_num']            = $company_name;
-                    $settle['plate_num']           = $company_name;
+                    $settle['good_weight']         = $v['singe_weight'];
+                    $settle['good_num']            = $v['now_num'];
+                    $settle['plate_num']           = $v['plate_number'];
                     $settle['area']                = $company_name;
-                    $settle['weight']              = $company_name;
-                    $settle['sale_price']          = $company_name;
+                    $settle['weight']              = $list['weight'];
+                    $settle['sale_price']          = $sale_price;
                     $settle['order_id']            = $company_name;
                     $settle['list_id']             = $company_name;
                     $settle['money_id']            = $company_name;
+
+                    $settle['cold_money']          = $v['cold_money'];
+                    $settle['dispose_money']       = $v['dispose_money'];
+                    $settle['transport_money']     = $v['transport_money'];
+                    $settle['overtime_money']      = $v['overtime_money'];
+                    $settle['sorting_money']       = $v['sorting_money'];
+                    $settle['freezing_money']      = $v['freezing_money'];
+                    $settle['send_money']          = $v['send_money'];
+                    $settle['other_money']         = $v['other_money'];
+                    $settle['total_money']         = $v['cold_money'] + $v['dispose_money'] + $v['transport_money'] + $v['overtime_money']
+                                                   + $v['sorting_money'] + $v['freezing_money'] + $v['send_money'] + $v['other_money'];
+
+                    $settle_list[]                 = $settle;
 
                     $datalist[]=$list;
                     foreach($v['other_money'] as $key => $value){
@@ -1030,44 +1045,44 @@ class LibraryController extends CommonController{
             $pull=array_unique($pull);
             $pull_count=count($pull);
 
-            $data['self_id']            =$seld;
+            $data['self_id']            = $seld;
             $data['create_user_id']     = $user_info->admin_id;
             $data['create_user_name']   = $user_info->name;
-            $data['create_time']        =$now_time;
-            $data["update_time"]        =$now_time;
-            $data["grounding_status"]   ='N';
-            $data["group_code"]         =$getGoods->group_code;
-            $data["group_name"]         =$getGoods->group_name;
-            $data['count']              =$count;
-            $data['type']               ='preentry';
-            $data['company_id']         =$company_info->self_id;
-            $data["company_name"]       =$company_info->company_name;
-            $data["pull_count"]         =$pull_count;
+            $data['create_time']        = $now_time;
+            $data["update_time"]        = $now_time;
+            $data["grounding_status"]   = 'N';
+            $data["group_code"]         = $getGoods->group_code;
+            $data["group_name"]         = $getGoods->group_name;
+            $data['count']              = $count;
+            $data['type']               = 'preentry';
+            $data['company_id']         = $company_info->self_id;
+            $data["company_name"]       = $company_info->company_name;
+            $data["pull_count"]         = $pull_count;
             $data['check_user_id']      = $user_info->admin_id;
             $data['check_user_name']    = $user_info->name;
-            $data['check_time']         =$now_time;
-            $data['bulk']               =$bulk;
-            $data['weight']             =$weight;
-            $data['entry_time']         =$entry_time;
-            $data['contract_id']       =$contract_id;
-            $data['contract_num']       =$contract_num;
-            $data['porter_num']         =$porter_num;
-            $data['car_number']         =$car_number;
-            $data['cupboard_num']       =$cupboard_num;
-            $data['total_num']          =$total_num;
-            $data['total_weight']       =$total_weight;
-            $data['total_money']        =$total_money;
-            $data['total_plate_num']    =$total_plate_num;
-            $data['remark']             =$remark;
-            $data['railway']            =$railway;
-            $data['insufficient']       =$insufficient;
+            $data['check_time']         = $now_time;
+            $data['bulk']               = $bulk;
+            $data['weight']             = $weight;
+            $data['entry_time']         = $entry_time;
+            $data['contract_id']        = $contract_id;
+            $data['contract_num']       = $contract_num;
+            $data['porter_num']         = $porter_num;
+            $data['car_number']         = $car_number;
+            $data['cupboard_num']       = $cupboard_num;
+            $data['total_num']          = $total_num;
+            $data['total_weight']       = $total_weight;
+            $data['total_money']        = $total_money;
+            $data['total_plate_num']    = $total_plate_num;
+            $data['remark']             = $remark;
+            $data['railway']            = $railway;
+            $data['insufficient']       = $insufficient;
 //            $data['other_money']        =$other_money;
-            $data['voucher']            =img_for($voucher,'in');
+            $data['voucher']            = img_for($voucher,'in');
             $data['order_status']       = $type;
-           //dd($data);
+          
 
             $id=WmsLibraryOrder::insert($data);
-
+            WmsSettleMoney::insert($settle_list);
             $operationing->table_id=$data['self_id'];
             $operationing->old_info=null;
             $operationing->new_info=$data;
