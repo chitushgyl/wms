@@ -448,7 +448,8 @@ Route::group([
     Route::any('/contract/contractPage', 'ContractController@contractPage');
     Route::any('/contract/createContract', 'ContractController@createContract');
     Route::any('/contract/addContract', 'ContractController@addContract');
-    Route::any('/contract/delContract', 'ContractController@delContract');
+    Route::any('/contract/ContractUseFlag', 'ContractController@ContractUseFlag');
+    Route::any('/contract/ContractDelFlag', 'ContractController@ContractDelFlag');
     Route::any('/contract/getContract', 'ContractController@getContract');
 
 

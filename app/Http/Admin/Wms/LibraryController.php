@@ -980,6 +980,21 @@ class LibraryController extends CommonController{
                     /**保存结算费用表**/
                     $settle['company_id']          = $company_id;
                     $settle['company_name']        = $company_name;
+                    $settle['start_time']          = $company_name;
+                    $settle['end_time']            = $company_name;
+                    $settle['good_name']           = $company_name;
+                    $settle['sku_id']              = $company_name;
+                    $settle['type']                = $company_name;
+                    $settle['cabinet_num']         = $company_name;
+                    $settle['good_weight']         = $company_name;
+                    $settle['good_num']            = $company_name;
+                    $settle['plate_num']           = $company_name;
+                    $settle['area']                = $company_name;
+                    $settle['weight']              = $company_name;
+                    $settle['sale_price']          = $company_name;
+                    $settle['order_id']            = $company_name;
+                    $settle['list_id']             = $company_name;
+                    $settle['money_id']            = $company_name;
 
                     $datalist[]=$list;
                     foreach($v['other_money'] as $key => $value){

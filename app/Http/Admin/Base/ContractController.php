@@ -474,13 +474,13 @@ class contractController extends CommonController{
 
     }
 
-    /***    业务公司启用禁用      /wms/group/groupUseFlag
+    /***    业务公司启用禁用      /wms/contract/ContractUseFlag
      */
-    public function groupUseFlag(Request $request,Status $status){
+    public function ContractUseFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_group';
-        $medol_name='wmsGroup';
+        $table_name='wms_contract';
+        $medol_name='wmsContract';
         $self_id=$request->input('self_id');
         $flag='useFlag';
         //$self_id='group_202007311841426065800243';
@@ -502,13 +502,13 @@ class contractController extends CommonController{
         return $msg;
     }
 
-    /***    业务公司删除      /wms/group/groupDelFlag
+    /***    业务公司删除      /wms/contract/ContractDelFlag
      */
-    public function groupDelFlag(Request $request,Status $status){
+    public function ContractDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='wms_group';
-        $medol_name='wmsGroup';
+        $table_name='wms_contract';
+        $medol_name='wmsContract';
         $self_id=$request->input('self_id');
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';
