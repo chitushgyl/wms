@@ -152,6 +152,7 @@ class CostTypeController extends CommonController{
         $system_flag        =$request->input('system_flag');//系统费用 Y  N
         $bill_id            =$request->input('bill_id');//系统费用 Y  N
         $bill_name          =$request->input('bill_name');//系统费用 Y  N
+        $bill_type          =$request->input('bill_type');//系统费用 Y  N
 
         $rules=[
             'group_code'=>'required',
@@ -172,6 +173,7 @@ class CostTypeController extends CommonController{
             $data['system_flag']      		 =$system_flag;
             $data['bill_id']      		     =$bill_id;
             $data['bill_name']      		 =$bill_name;
+            $data['bill_type']      		 =$bill_type;
 
 
             $wheres['self_id'] = $self_id;
