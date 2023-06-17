@@ -399,6 +399,7 @@ class contractController extends CommonController{
                     foreach ($other_money as $k => $v){
                         $contact['self_id'] = generate_id('M');
                         $contact['contract_id'] = $data['self_id'];
+                        $contact['money_id']    = $v['money_id'];
                         $contact['money_type'] = $v['money_type'];
                         $contact['price'] = $v['price'];
                         $contact['bill_id'] = $v['bill_id'];
