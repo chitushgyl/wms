@@ -1005,8 +1005,8 @@ class LibraryController extends CommonController{
                     $settle['freezing_money']      = $v['freezing_money'];
                     $settle['send_money']          = $v['send_money'];
                     $settle['other_money']         = $v['other_money'];
-                    $settle['total_money']         = $v['cold_money'] + $v['dispose_money'] + $v['transport_money'] + $v['overtime_money']
-                                                   + $v['sorting_money'] + $v['freezing_money'] + $v['send_money'] + $v['other_money'];
+//                    $settle['total_money']         = $v['cold_money'] + $v['dispose_money'] + $v['transport_money'] + $v['overtime_money']
+//                                                   + $v['sorting_money'] + $v['freezing_money'] + $v['send_money'] + $v['other_money'];
 
                     $settle_list[]                 = $settle;
 
