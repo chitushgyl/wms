@@ -997,7 +997,6 @@ class LibraryController extends CommonController{
                     $settle['order_id']            = $company_name;
                     $settle['list_id']             = $company_name;
                     $settle['money_id']            = $company_name;
-
                     $settle['cold_money']          = $v['cold_money'];
                     $settle['dispose_money']       = $v['dispose_money'];
                     $settle['transport_money']     = $v['transport_money'];
@@ -1079,7 +1078,7 @@ class LibraryController extends CommonController{
 //            $data['other_money']        =$other_money;
             $data['voucher']            = img_for($voucher,'in');
             $data['order_status']       = $type;
-          
+
 
             $id=WmsLibraryOrder::insert($data);
             WmsSettleMoney::insert($settle_list);

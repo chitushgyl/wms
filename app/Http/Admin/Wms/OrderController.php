@@ -301,7 +301,7 @@ class OrderController extends CommonController{
 //                $list['price']              = $v['price'];
 //                $list['total_price']        = $v['total_price'];
                 $list['remarks']            = $v['remark'];
-//                $list['out_library_state']  = $v['out_library_state'];
+
 
                 $list['singe_weight']       = $v['singe_weight'];//件重
                 $list['plate_num']          = $v['plate_num'];//板数
@@ -317,21 +317,52 @@ class OrderController extends CommonController{
                 $list['cabinet_no']         = $v['cabinet_no'];//柜号
 
                 $datalist[]=$list;
+
+                /**保存结算费用表**/
+//                $settle['company_id']          = $company_id;
+//                $settle['company_name']        = $company_name;
+//                $settle['start_time']          = $out_time;
+//                $settle['end_time']            = $out_time;
+//                $settle['good_name']           = $sku_info->good_name;
+//                $settle['sku_id']              = $sku_info->sku_id;
+//                $settle['type']                = 'in';
+//                $settle['cabinet_num']         = $company_name;
+//                $settle['good_weight']         = $v['singe_weight'];
+//                $settle['good_num']            = $v['now_num'];
+//                $settle['plate_num']           = $v['plate_number'];
+//                $settle['area']                = $company_name;
+//                $settle['weight']              = $list['weight'];
+//                $settle['sale_price']          = $sale_price;
+//                $settle['order_id']            = $company_name;
+//                $settle['list_id']             = $company_name;
+//                $settle['money_id']            = $company_name;
+//                $settle['cold_money']          = $v['cold_money'];
+//                $settle['dispose_money']       = $v['dispose_money'];
+//                $settle['transport_money']     = $v['transport_money'];
+//                $settle['overtime_money']      = $v['overtime_money'];
+//                $settle['sorting_money']       = $v['sorting_money'];
+//                $settle['freezing_money']      = $v['freezing_money'];
+//                $settle['send_money']          = $v['send_money'];
+//                $settle['other_money']         = $v['other_money'];
+//                $settle['total_money']         = $v['cold_money'] + $v['dispose_money'] + $v['transport_money'] + $v['overtime_money']
+//                    + $v['sorting_money'] + $v['freezing_money'] + $v['send_money'] + $v['other_money'];
+//
+//                $settle_list[]                 = $settle;
                 if ($type == 2){
                     foreach($v['more_money'] as $key => $value){
-                        $money['self_id'] = generate_id('RF');
-                        $money['price']   = $value['price'];
-                        $money['order_id'] = $list["self_id"];
-                        $money['money_id']   = $value['money_id'];
-                        $money['number']   = $value['number'];
-                        $money['total_price']   = $value['total_price'];
-                        $money['bill_id']   = $value['bill_id'];
-                        $money['use_flag']  = 'N';
-                        $money['group_code']   = $list['group_code'];
-                        $money['group_name']   = $list['group_name'];
-                        $money['create_user_id']   = $list['create_user_id'];
-                        $money['create_user_name']   = $list['create_user_name'];
-                        $money['create_time']   = $money['update_time'] = $now_time;
+                        $money['self_id']           = generate_id('RF');
+                        $money['price']             = $value['price'];
+                        $money['order_id']          = $list["self_id"];
+                        $money['money_id']          = $value['money_id'];
+                        $money['number']            = $value['number'];
+                        $money['total_price']       = $value['total_price'];
+                        $money['bill_id']           = $value['bill_id'];
+                        $money['use_flag']          = 'N';
+                        $money['group_code']        = $list['group_code'];
+                        $money['group_name']        = $list['group_name'];
+                        $money['create_user_id']    = $list['create_user_id'];
+                        $money['create_user_name']  = $list['create_user_name'];
+                        $money['create_time']       = $money['update_time'] = $now_time;
                         $money_list[] = $money;
                         $money_lists = array_merge($money_list);
                     }
@@ -612,6 +643,11 @@ class OrderController extends CommonController{
             $msg['code'] = 300;
             return $msg;
         }
+    }
+
+    /***出库订单复核 **/
+    public function updateOrderState(Request $request){
+
     }
 
     /***    出库订单导入      /wms/order/import
