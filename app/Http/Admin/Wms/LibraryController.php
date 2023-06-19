@@ -1063,7 +1063,6 @@ class LibraryController extends CommonController{
 
 
             $id=WmsLibraryOrder::insert($data);
-            WmsSettleMoney::insert($settle_list);
             $operationing->table_id=$data['self_id'];
             $operationing->old_info=null;
             $operationing->new_info=$data;
