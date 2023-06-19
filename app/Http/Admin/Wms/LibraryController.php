@@ -1632,11 +1632,42 @@ class LibraryController extends CommonController{
             $update['update_time'] = $now_time;
             $id =  WmsLibraryOrder::whereIn('self_id',explode(',',$self_id))->update($data);
             WmsLibraryChange::whereIn('order_id',explode(',',$self_id))->update($update);
-            foreach (explode(',',$self_id) as $key => $value){
-                $WmsLibraryOrder = WmsLibraryOrder::where('self_id',$value)->first();
+            $wmsLibrarySige = WmsLibrarySige::where('order_id',explode(',',$self_id))->get();
+
+            foreach ($wmsLibrarySige as $key => $value){
+                $settle['company_id']          = $value->company_id;
+                $settle['company_name']        = $value->company_name;
+                $settle['start_time']          = $value->enter_time;
+                $settle['end_time']            = $value->enter_time;
+                $settle['good_name']           = $value->good_name;
+                $settle['sku_id']              = $value->sku_id;
+                $settle['type']                = 'in';
+//                $settle['cabinet_num']         = $company_name;
+                $settle['good_weight']         = $value->singe_weight;
+                $settle['good_num']            = $value->now_num;
+                $settle['plate_num']           = $value->plate_number;
+//                $settle['area']                = $company_name;
+                $settle['weight']              = $value->weight;
+//                $settle['sale_price']          = $sale_price;
+                $settle['order_id']            = $value->order_id;
+                $settle['list_id']             = $value->self_id;
+
+                $settle['cold_money']          = $value->cold_money;
+                $settle['dispose_money']       = $value->dispose_money;
+                $settle['transport_money']     = $value->transport_money;
+                $settle['overtime_money']      = $value->overtime_money;
+                $settle['sorting_money']       = $value->sorting_money;
+                $settle['freezing_money']      = $value->freezing_money;
+                $settle['send_money']          = $value->send_money;
+                $settle['other_money']         = $value->other_money;
+                $settle['total_money']         = $value->cold_money + $value->dispose_money + $value->transport_money + $value->overtime_money
+                    + $value->sorting_money + $value->freezing_money + $value->send_money + $value->other_money;
+
+                $settle_list[]                 = $settle;
             }
 
             if($id){
+                WmsSettleMoney::insert($settle_list);
                 $msg['code'] = 200;
                 $msg['msg'] = '操作成功';
                 return $msg;
