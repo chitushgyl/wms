@@ -728,7 +728,7 @@ class LibraryController extends CommonController{
         $railway            = $request->input('railway');//月台号
         $sale_price         = $request->input('sale_price');//月台号
         $insufficient       = $request->input('insufficient');//不足N吨按吨算
-        $other_money        = json_decode($request->input('other_money'),true);//其他费用
+        $more_money         = json_decode($request->input('more_money'),true);//其他费用
         $type               = $request->input('type');
 	//dd($library_sige);
         /*** 虚拟数据
@@ -993,7 +993,7 @@ class LibraryController extends CommonController{
 
 
                     $datalist[]=$list;
-                    foreach($v['other_money'] as $key => $value){
+                    foreach($v['more_money'] as $key => $value){
                         $money['self_id']          = generate_id('RF');
                         $money['price']            = $value['price'];
                         $money['order_id']         = $list["self_id"];
@@ -1185,7 +1185,7 @@ class LibraryController extends CommonController{
         $remark             = $request->input('remark');//总板数
         $railway            = $request->input('railway');//月台号
         $insufficient       = $request->input('insufficient');//不足N吨按吨算
-        $other_money        = json_decode($request->input('other_money'),true);//其他费用
+        $more_money         = json_decode($request->input('more_money'),true);//其他费用
         $type               = $request->input('type');
 
         $rules=[
@@ -1403,7 +1403,7 @@ class LibraryController extends CommonController{
                         }
 
 
-                        foreach($v['other_money'] as $key => $value){
+                        foreach($v['more_money'] as $key => $value){
                             $money['price']             = $value['price'];
                             $money['money_id']          = $value['money_id'];
                             $money['number']            = $value['number'];
