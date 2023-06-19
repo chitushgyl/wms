@@ -979,36 +979,18 @@ class LibraryController extends CommonController{
                     $bulk+=  $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
                     $weight+=  $getGoods->wms_weight*$v['now_num'];
 
-                    /**保存结算费用表**/
-                    $settle['company_id']          = $company_id;
-                    $settle['company_name']        = $company_name;
-                    $settle['start_time']          = $entry_time;
-                    $settle['end_time']            = $entry_time;
-                    $settle['good_name']           = $getGoods->good_name;
-                    $settle['sku_id']              = $getGoods->sku_id;
-                    $settle['type']                = 'in';
-                    $settle['cabinet_num']         = $company_name;
-                    $settle['good_weight']         = $v['singe_weight'];
-                    $settle['good_num']            = $v['now_num'];
-                    $settle['plate_num']           = $v['plate_number'];
-                    $settle['area']                = $company_name;
-                    $settle['weight']              = $list['weight'];
-                    $settle['sale_price']          = $sale_price;
-                    $settle['order_id']            = $company_name;
-                    $settle['list_id']             = $company_name;
-                    $settle['money_id']            = $company_name;
-                    $settle['cold_money']          = $v['cold_money'];
-                    $settle['dispose_money']       = $v['dispose_money'];
-                    $settle['transport_money']     = $v['transport_money'];
-                    $settle['overtime_money']      = $v['overtime_money'];
-                    $settle['sorting_money']       = $v['sorting_money'];
-                    $settle['freezing_money']      = $v['freezing_money'];
-                    $settle['send_money']          = $v['send_money'];
-                    $settle['other_money']         = $v['other_money'];
-//                    $settle['total_money']         = $v['cold_money'] + $v['dispose_money'] + $v['transport_money'] + $v['overtime_money']
-//                                                   + $v['sorting_money'] + $v['freezing_money'] + $v['send_money'] + $v['other_money'];
 
-                    $settle_list[]                 = $settle;
+                    $list['cold_money']          = $v['cold_money'];
+                    $list['dispose_money']       = $v['dispose_money'];
+                    $list['transport_money']     = $v['transport_money'];
+                    $list['overtime_money']      = $v['overtime_money'];
+                    $list['sorting_money']       = $v['sorting_money'];
+                    $list['freezing_money']      = $v['freezing_money'];
+                    $list['send_money']          = $v['send_money'];
+                    $list['other_money']         = $v['other_money'];
+                    $list['total_money']         = $v['cold_money'] + $v['dispose_money'] + $v['transport_money'] + $v['overtime_money']
+                        + $v['sorting_money'] + $v['freezing_money'] + $v['send_money'] + $v['other_money'];
+
 
                     $datalist[]=$list;
                     foreach($v['other_money'] as $key => $value){
@@ -1395,6 +1377,17 @@ class LibraryController extends CommonController{
                         $bulk+=  $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
                         $weight+=  $getGoods->wms_weight*$v['now_num'];
 
+                        $list['cold_money']          = $v['cold_money'];
+                        $list['dispose_money']       = $v['dispose_money'];
+                        $list['transport_money']     = $v['transport_money'];
+                        $list['overtime_money']      = $v['overtime_money'];
+                        $list['sorting_money']       = $v['sorting_money'];
+                        $list['freezing_money']      = $v['freezing_money'];
+                        $list['send_money']          = $v['send_money'];
+                        $list['other_money']         = $v['other_money'];
+                        $list['total_money']         = $v['cold_money'] + $v['dispose_money'] + $v['transport_money'] + $v['overtime_money']
+                            + $v['sorting_money'] + $v['freezing_money'] + $v['send_money'] + $v['other_money'];
+
                         if($v['self_id']){
                               $list['update_time']  = $now_time;
                               WmsLibrarySige::where('self_id',$v['self_id'])->update($list);
@@ -1640,6 +1633,9 @@ class LibraryController extends CommonController{
             $update['update_time'] = $now_time;
             $id =  WmsLibraryOrder::whereIn('self_id',explode(',',$self_id))->update($data);
             WmsLibraryChange::whereIn('order_id',explode(',',$self_id))->update($update);
+            foreach (explode(',',$self_id) as $key => $value){
+                $WmsLibraryOrder = WmsLibraryOrder::where('self_id',$value)->first();
+            }
 
             if($id){
                 $msg['code'] = 200;
