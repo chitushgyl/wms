@@ -1632,9 +1632,10 @@ class LibraryController extends CommonController{
             $update['update_time'] = $now_time;
             $id =  WmsLibraryOrder::whereIn('self_id',explode(',',$self_id))->update($data);
             WmsLibraryChange::whereIn('order_id',explode(',',$self_id))->update($update);
-            $wmsLibrarySige = WmsLibrarySige::where('order_id',explode(',',$self_id))->get();
+            $wmsLibrarySige = WmsLibrarySige::whereIn('order_id',explode(',',$self_id))->get();
 
             foreach ($wmsLibrarySige as $key => $value){
+                $settle['self_id']             = generate_id('S');
                 $settle['company_id']          = $value->company_id;
                 $settle['company_name']        = $value->company_name;
                 $settle['start_time']          = $value->enter_time;
@@ -1651,6 +1652,8 @@ class LibraryController extends CommonController{
 //                $settle['sale_price']          = $sale_price;
                 $settle['order_id']            = $value->order_id;
                 $settle['list_id']             = $value->self_id;
+                $settle['create_time']         = $now_time;
+                $settle['update_time']         = $now_time;
 
                 $settle['cold_money']          = $value->cold_money;
                 $settle['dispose_money']       = $value->dispose_money;

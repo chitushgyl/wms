@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Admin\Wms;
 use App\Models\Wms\InoutOtherMoney;
+use App\Models\Wms\WmsContract;
 use App\Models\Wms\WmsLibraryChange;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
@@ -302,7 +303,7 @@ class OrderController extends CommonController{
 //                $list['total_price']        = $v['total_price'];
                 $list['remarks']            = $v['remark'];
 
-
+                $list['sige_id']            = $v['sige_id'];
                 $list['singe_weight']       = $v['singe_weight'];//件重
                 $list['plate_num']          = $v['plate_num'];//板数
                 $list['count_num']          = $v['count_num'];//计费数量
@@ -315,38 +316,22 @@ class OrderController extends CommonController{
                 $list['produce_time']       = $v['produce_time'];//生产时间
                 $list['expire_time']        = $v['expire_time'];//过期时间
                 $list['cabinet_no']         = $v['cabinet_no'];//柜号
-
-                $datalist[]=$list;
+                $list['contract_id']        = $v['contract_id'];//合同
+                $list['contract_num']       = $v['contract_num'];//合同
 
                 /**保存结算费用表**/
-//                $settle['company_id']          = $company_id;
-//                $settle['company_name']        = $company_name;
-//                $settle['start_time']          = $out_time;
-//                $settle['end_time']            = $out_time;
-//                $settle['good_name']           = $sku_info->good_name;
-//                $settle['sku_id']              = $sku_info->sku_id;
-//                $settle['type']                = 'in';
-//                $settle['cabinet_num']         = $company_name;
-//                $settle['good_weight']         = $v['singe_weight'];
-//                $settle['good_num']            = $v['now_num'];
-//                $settle['plate_num']           = $v['plate_number'];
-//                $settle['area']                = $company_name;
-//                $settle['weight']              = $list['weight'];
-//                $settle['sale_price']          = $sale_price;
-//                $settle['order_id']            = $company_name;
-//                $settle['list_id']             = $company_name;
-//                $settle['money_id']            = $company_name;
-//                $settle['cold_money']          = $v['cold_money'];
-//                $settle['dispose_money']       = $v['dispose_money'];
-//                $settle['transport_money']     = $v['transport_money'];
-//                $settle['overtime_money']      = $v['overtime_money'];
-//                $settle['sorting_money']       = $v['sorting_money'];
-//                $settle['freezing_money']      = $v['freezing_money'];
-//                $settle['send_money']          = $v['send_money'];
-//                $settle['other_money']         = $v['other_money'];
-//                $settle['total_money']         = $v['cold_money'] + $v['dispose_money'] + $v['transport_money'] + $v['overtime_money']
-//                    + $v['sorting_money'] + $v['freezing_money'] + $v['send_money'] + $v['other_money'];
-//
+                $list['cold_money']          = $v['cold_money'];
+                $list['dispose_money']       = $v['dispose_money'];
+                $list['transport_money']     = $v['transport_money'];
+                $list['overtime_money']      = $v['overtime_money'];
+                $list['sorting_money']       = $v['sorting_money'];
+                $list['freezing_money']      = $v['freezing_money'];
+                $list['send_money']          = $v['send_money'];
+                $list['other_money']         = $v['other_money'];
+                $datalist[]=$list;
+
+
+
 //                $settle_list[]                 = $settle;
                 if ($type == 2){
                     foreach($v['more_money'] as $key => $value){
@@ -536,6 +521,7 @@ class OrderController extends CommonController{
                     $list['group_code']         = $sku_info->group_code;
                     $list['group_name']         = $sku_info->group_name;
                     $list['order_id']           = $order_2['self_id'];
+                    $list['sige_id']            = $v['sige_id'];
                     $list['sku_id']             = $sku_info->self_id;
                     $list['external_sku_id']    = $sku_info->external_sku_id;
                     $list['create_user_id']     = $user_info->admin_id;
@@ -554,6 +540,17 @@ class OrderController extends CommonController{
                     $list['produce_time']       = $v['produce_time'];//生产时间
                     $list['expire_time']        = $v['expire_time'];//过期时间
                     $list['cabinet_no']         = $v['cabinet_no'];//柜号
+                    $list['contract_id']        = $v['contract_id'];//合同
+                    $list['contract_num']       = $v['contract_num'];//合同
+
+                    $list['cold_money']          = $v['cold_money'];
+                    $list['dispose_money']       = $v['dispose_money'];
+                    $list['transport_money']     = $v['transport_money'];
+                    $list['overtime_money']      = $v['overtime_money'];
+                    $list['sorting_money']       = $v['sorting_money'];
+                    $list['freezing_money']      = $v['freezing_money'];
+                    $list['send_money']          = $v['send_money'];
+                    $list['other_money']         = $v['other_money'];
 
 
                     if($v['self_id']){
@@ -1303,6 +1300,47 @@ class OrderController extends CommonController{
 //            foreach (json_decode($self_id,true) as $key => $value){
                 WmsLibraryChange::whereIn('order_id',explode(',',$self_id))->update($data);
 //            }
+            $WmsOutOrderList = WmsOutOrderList::whereIn('order_id',explode(',',$self_id))->get();
+
+            //计算冷藏费
+
+            //保存出库费用
+            foreach ($WmsOutOrderList as $key => $value){
+                $settle['self_id']             = generate_id('S');
+                $settle['company_id']          = $value->company_id;
+                $settle['company_name']        = $value->company_name;
+                $settle['start_time']          = $value->enter_time;
+                $settle['end_time']            = $value->enter_time;
+                $settle['good_name']           = $value->good_name;
+                $settle['sku_id']              = $value->sku_id;
+                $settle['type']                = 'out';
+//                $settle['cabinet_num']         = $company_name;
+                $settle['good_weight']         = $value->singe_weight;
+                $settle['good_num']            = $value->now_num;
+                $settle['plate_num']           = $value->plate_number;
+//                $settle['area']                = $company_name;
+                $settle['weight']              = $value->weight;
+//                $settle['sale_price']          = $sale_price;
+                $settle['order_id']            = $value->order_id;
+                $settle['list_id']             = $value->self_id;
+                $settle['create_time']         = $now_time;
+                $settle['update_time']         = $now_time;
+
+                $settle['cold_money']          = $value->cold_money;
+                $settle['dispose_money']       = $value->dispose_money;
+                $settle['transport_money']     = $value->transport_money;
+                $settle['overtime_money']      = $value->overtime_money;
+                $settle['sorting_money']       = $value->sorting_money;
+                $settle['freezing_money']      = $value->freezing_money;
+                $settle['send_money']          = $value->send_money;
+                $settle['other_money']         = $value->other_money;
+                $settle['total_money']         = $value->cold_money + $value->dispose_money + $value->transport_money + $value->overtime_money
+                    + $value->sorting_money + $value->freezing_money + $value->send_money + $value->other_money;
+
+                $settle_list[]                 = $settle;
+
+                $wmsContract = WmsContract::where('self_id',$value['contract_id'])->first();
+            }
 
             DB::commit();
             $msg['code']=200;
@@ -1354,9 +1392,9 @@ class OrderController extends CommonController{
         $delivery_time    = $request->input('delivery_time');//发货时间
         $sanitation       = $request->input('sanitation');//卫检
         $remark           = $request->input('remark');//备注
-        $wms_spec           = $request->input('wms_spec');//备注
-        $group_code           = $request->input('group_code');//备注
-        $group_name           = $request->input('group_name');//备注
+        $wms_spec         = $request->input('wms_spec');//备注
+        $group_code       = $request->input('group_code');//备注
+        $group_name       = $request->input('group_name');//备注
         $rules = [
 
         ];
