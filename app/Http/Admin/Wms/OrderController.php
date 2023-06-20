@@ -319,7 +319,7 @@ class OrderController extends CommonController{
                 $list['cabinet_no']         = $v['cabinet_no'];//柜号
                 $list['contract_id']        = $v['contract_id'];//合同
                 $list['contract_num']       = $v['contract_num'];//合同
-                $list['out_time']           = $v['out_time'];//出库时间
+                $list['out_time']           = $out_time;//出库时间
 
                 /**保存结算费用表**/
                 $list['cold_money']          = $v['cold_money'];
@@ -544,6 +544,7 @@ class OrderController extends CommonController{
                     $list['cabinet_no']         = $v['cabinet_no'];//柜号
                     $list['contract_id']        = $v['contract_id'];//合同
                     $list['contract_num']       = $v['contract_num'];//合同
+                    $list['out_time']           = $out_time;//合同
 
                     $list['cold_money']          = $v['cold_money'];
                     $list['dispose_money']       = $v['dispose_money'];
