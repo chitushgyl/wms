@@ -3,6 +3,7 @@ namespace App\Http\Admin\Wms;
 use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsContract;
 use App\Models\Wms\WmsLibraryChange;
+use App\Models\Wms\WmsSettleMoney;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\DB;
@@ -318,6 +319,7 @@ class OrderController extends CommonController{
                 $list['cabinet_no']         = $v['cabinet_no'];//柜号
                 $list['contract_id']        = $v['contract_id'];//合同
                 $list['contract_num']       = $v['contract_num'];//合同
+                $list['out_time']           = $v['out_time'];//出库时间
 
                 /**保存结算费用表**/
                 $list['cold_money']          = $v['cold_money'];
@@ -1300,8 +1302,8 @@ class OrderController extends CommonController{
 //            foreach (json_decode($self_id,true) as $key => $value){
                 WmsLibraryChange::whereIn('order_id',explode(',',$self_id))->update($data);
 //            }
-            $WmsOutOrderList = WmsOutOrderList::whereIn('order_id',explode(',',$self_id))->get();
 
+            $WmsOutOrderList = WmsOutOrderList::whereIn('order_id',explode(',',$self_id))->get();
             //计算冷藏费
 
             //保存出库费用
@@ -1310,7 +1312,7 @@ class OrderController extends CommonController{
                 $settle['company_id']          = $value->company_id;
                 $settle['company_name']        = $value->company_name;
                 $settle['start_time']          = $value->enter_time;
-                $settle['end_time']            = $value->enter_time;
+                $settle['end_time']            = $value->out_time;
                 $settle['good_name']           = $value->good_name;
                 $settle['sku_id']              = $value->sku_id;
                 $settle['type']                = 'out';
@@ -1339,9 +1341,34 @@ class OrderController extends CommonController{
 
                 $settle_list[]                 = $settle;
 
-                $wmsContract = WmsContract::where('self_id',$value['contract_id'])->first();
-            }
+                $WmsLibrarySige  = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
+                $WmsContract     = WmsContract::where('self_id',$value['contract_id'])->first();
+                $cold['self_id']             = generate_id('S');
+                $cold['company_id']          = $value->company_id;
+                $cold['company_name']        = $value->company_name;
+                $cold['start_time']          = $WmsLibrarySige->enter_time;
+                $cold['end_time']            = $value->enter_time;
+                $cold['good_name']           = $value->good_name;
+                $cold['sku_id']              = $value->sku_id;
+                $cold['type']                = 'cold';
+//                $settle['cabinet_num']         = $company_name;
+                $cold['good_weight']         = $value->singe_weight;
+                $cold['good_num']            = $WmsLibrarySige->now_num;
+                $cold['plate_num']           = $value->plate_number;
+//                $settle['area']                = $company_name;
+                $cold['weight']              = $WmsLibrarySige->weight;
+//                $settle['sale_price']          = $sale_price;
+                $cold['order_id']            = $value->order_id;
+                $cold['list_id']             = $value->self_id;
+                $cold['create_time']         = $now_time;
+                $cold['update_time']         = $now_time;
 
+                $cold['cold_money']          = $WmsContract->sale_price*$WmsLibrarySige->now_num;
+                $cold['total_money']         = $value->cold_money;
+                $cold_list[]                 = $cold;
+            }
+            WmsSettleMoney::insert($settle_list);
+            WmsSettleMoney::insert($cold_list);
             DB::commit();
             $msg['code']=200;
             $msg['msg']='操作成功';
