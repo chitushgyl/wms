@@ -520,6 +520,8 @@ class OrderController extends CommonController{
                     $list['good_name']          = $sku_info->good_name;
                     $list['spec']               = $sku_info->wms_spec;
                     $list['num']                = $v['num'];
+                    $list['company_id']         = $company_id;
+                    $list['company_name']       = $company_name;
                     $list['group_code']         = $sku_info->group_code;
                     $list['group_name']         = $sku_info->group_name;
                     $list['order_id']           = $order_2['self_id'];
@@ -1309,6 +1311,7 @@ class OrderController extends CommonController{
 
             //保存出库费用
             foreach ($WmsOutOrderList as $key => $value){
+                $WmsContract     = WmsContract::where('self_id',$value['contract_id'])->first();
                 $settle['self_id']             = generate_id('S');
                 $settle['company_id']          = $value->company_id;
                 $settle['company_name']        = $value->company_name;
@@ -1319,6 +1322,7 @@ class OrderController extends CommonController{
                 $settle['type']                = 'out';
 //                $settle['cabinet_num']         = $company_name;
                 $settle['good_weight']         = $value->singe_weight;
+                $settle['sale_price']          = $WmsContract->sale_price;
                 $settle['good_num']            = $value->now_num;
                 $settle['plate_num']           = $value->plate_number;
 //                $settle['area']                = $company_name;
@@ -1343,12 +1347,12 @@ class OrderController extends CommonController{
                 $settle_list[]                 = $settle;
 
                 $WmsLibrarySige  = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
-                $WmsContract     = WmsContract::where('self_id',$value['contract_id'])->first();
+
                 $cold['self_id']             = generate_id('S');
                 $cold['company_id']          = $value->company_id;
                 $cold['company_name']        = $value->company_name;
                 $cold['start_time']          = $WmsLibrarySige->enter_time;
-                $cold['end_time']            = $value->enter_time;
+                $cold['end_time']            = $value->out_time;
                 $cold['good_name']           = $value->good_name;
                 $cold['sku_id']              = $value->sku_id;
                 $cold['type']                = 'cold';
@@ -1356,6 +1360,7 @@ class OrderController extends CommonController{
                 $cold['good_weight']         = $value->singe_weight;
                 $cold['good_num']            = $WmsLibrarySige->now_num;
                 $cold['plate_num']           = $value->plate_number;
+                $cold['sale_price']          = $WmsContract->sale_price;
 //                $settle['area']                = $company_name;
                 $cold['weight']              = $WmsLibrarySige->weight;
 //                $settle['sale_price']          = $sale_price;
