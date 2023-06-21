@@ -285,15 +285,15 @@ class SortingController extends CommonController{
                     $settle['order_id']            = $deposit_id;
                     $settle['list_id']             = $list['self_id'];
 
-                    $settle['dispose_money']       = $value->dispose_money;
-                    $settle['transport_money']     = $value->transport_money;
-                    $settle['overtime_money']      = $value->overtime_money;
-                    $settle['sorting_money']       = $value->sorting_money;
-                    $settle['freezing_money']      = $value->freezing_money;
-                    $settle['send_money']          = $value->send_money;
-                    $settle['other_money']         = $value->other_money;
-                    $settle['total_money']         = $value->dispose_money + $value->transport_money + $value->overtime_money
-                        + $value->sorting_money + $value->freezing_money + $value->send_money + $value->other_money;
+                    $settle['dispose_money']       = $value['dispose_money'];
+                    $settle['transport_money']     = $value['transport_money'];
+                    $settle['overtime_money']      = $value['overtime_money'];
+                    $settle['sorting_money']       = $value['sorting_money'];
+                    $settle['freezing_money']      = $value['freezing_money'];
+                    $settle['send_money']          = $value['send_money'];
+                    $settle['other_money']         = $value['other_money'];
+                    $settle['total_money']         = $value['dispose_money'] + $value['transport_money'] + $value['overtime_money']
+                        + $value['sorting_money'] + $value['freezing_money'] + $value['send_money'] + $value['other_money'];
                     if ($value['self_id']){
                         $settle['update_time']         = $now_time;
                         WmsSettleMoney::where('list_id',$value['self_id'])->update($settle);
