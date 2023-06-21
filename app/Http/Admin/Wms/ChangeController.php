@@ -5,6 +5,7 @@ use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsChangeGood;
 use App\Models\Wms\WmsChangeList;
 use App\Models\Wms\WmsLibrarySige;
+use App\Models\Wms\WmsSettleMoney;
 use App\Models\Wms\WmsWarehouse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
@@ -198,6 +199,7 @@ class ChangeController extends CommonController{
         if($validator->passes()){
             $contact_list = [];
             $address_list = [];
+            $settle_list = [];
             $contact = [];
             $address_area = [];
             $deposit_id                         = generate_id('TC');
@@ -276,7 +278,48 @@ class ChangeController extends CommonController{
                         $list['create_user_name']   = $user_info->name;
                         $deposit_list[] = $list;
                     }
+                    $settle['company_id']          = $company_id;
+                    $settle['company_name']        = $company_name;
+                    $settle['start_time']          = $change_time;
+                    $settle['end_time']            = $change_time;
+                    $settle['good_name']           = $value['good_name'];
+                    $settle['sku_id']              = $value['sku_id'];
+                    $settle['type']                = 'change';
+//                $settle['cabinet_num']         = $company_name;
+                    $settle['good_weight']         = $value['good_weight'];
+                    $settle['good_num']            = $value['num'];
+                    $settle['weight']              = $value['weight'];
+                    if ($value['self_id']){
+                        $settle['list_id']             = $value['self_id'];
+                    }else{
+                        $settle['list_id']             = $list['self_id'];
+                    }
+                    if ($self_id){
+                        $settle['order_id']            = $self_id;
+                    }else{
+                        $settle['order_id']            = $deposit_id;
+                    }
 
+                    $settle['dispose_money']       = $value['dispose_money'];
+                    $settle['transport_money']     = $value['transport_money'];
+                    $settle['overtime_money']      = $value['overtime_money'];
+                    $settle['sorting_money']       = $value['sorting_money'];
+                    $settle['freezing_money']      = $value['freezing_money'];
+                    $settle['send_money']          = $value['send_money'];
+                    $settle['other_money']         = $value['other_money'];
+                    $settle['total_money']         = $value['dispose_money'] + $value['transport_money'] + $value['overtime_money']
+                        + $value['sorting_money'] + $value['freezing_money'] + $value['send_money'] + $value['other_money'];
+                    if ($value['self_id']){
+                        $settle['update_time']         = $now_time;
+                        WmsSettleMoney::where('list_id',$value['self_id'])->update($settle);
+                    }else{
+                        $settle['self_id']             = generate_id('S');
+                        $settle['create_time']         = $now_time;
+                        $settle['update_time']         = $now_time;
+                        $settle['create_user_id']      = $user_info->admin_id;
+                        $settle['create_user_name']    = $user_info->admin_name;
+                        $settle_list[]                 = $settle;
+                    }
 
                     foreach($value['more_money'] as $k => $v){
                         $money['price']             = $v['price'];
@@ -321,6 +364,7 @@ class ChangeController extends CommonController{
                     $id = WmsChangeGood::where('self_id',$self_id)->update($data);
                     WmsChangeList::insert($deposit_list);
                     InoutOtherMoney::insert($money_lists);
+                    WmsSettleMoney::insert($settle_list);
 
                     $operationing->access_cause='修改业务公司';
                     $operationing->operation_type='update';
@@ -337,8 +381,9 @@ class ChangeController extends CommonController{
 
                     if ($id){
                         WmsChangeList::insert($deposit_list);
+                        InoutOtherMoney::insert($money_lists);
                     }
-
+                    WmsSettleMoney::insert($settle_list);
                     $operationing->access_cause='新建调仓表';
                     $operationing->operation_type='create';
 
