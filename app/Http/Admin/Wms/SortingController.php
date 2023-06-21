@@ -311,7 +311,7 @@ class SortingController extends CommonController{
                         $settle['create_time']         = $now_time;
                         $settle['update_time']         = $now_time;
                         $settle['create_user_id']      = $user_info->admin_id;
-                        $settle['create_user_name']    = $user_info->admin_name;
+                        $settle['create_user_name']    = $user_info->name;
                         $settle_list[]                 = $settle;
                     }
 
