@@ -205,6 +205,7 @@ class SortingController extends CommonController{
         if($validator->passes()){
             $deposit_list = [];
             $money_lists = [];
+            $settle_list = [];
             $deposit_id                         =  generate_id('F');
             $data['total_price']                = $total_price;
             $data['total_weight']               = $total_weight;
@@ -347,6 +348,7 @@ class SortingController extends CommonController{
                     $id = WmsSorting::where($wheres)->update($data);
                     WmsSortingGood::insert($deposit_list);
                     InoutOtherMoney::insert($money_lists);
+                    WmsSettleMoney::insert($settle_list);
                     $operationing->access_cause='修改业务公司';
                     $operationing->operation_type='update';
 
@@ -365,6 +367,7 @@ class SortingController extends CommonController{
                     }
 
                     InoutOtherMoney::insert($money_lists);
+                    WmsSettleMoney::insert($settle_list);
 
                     $operationing->access_cause='新建业务公司';
                     $operationing->operation_type='create';
