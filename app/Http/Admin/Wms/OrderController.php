@@ -1332,7 +1332,8 @@ class OrderController extends CommonController{
                 $settle['list_id']             = $value->self_id;
                 $settle['create_time']         = $now_time;
                 $settle['update_time']         = $now_time;
-
+                $settle['create_user_id']      = $value->create_user_id;
+                $settle['create_user_name']    = $value->create_user_name;
                 $settle['cold_money']          = $value->cold_money;
                 $settle['dispose_money']       = $value->dispose_money;
                 $settle['transport_money']     = $value->transport_money;
@@ -1368,7 +1369,8 @@ class OrderController extends CommonController{
                 $cold['list_id']             = $value->self_id;
                 $cold['create_time']         = $now_time;
                 $cold['update_time']         = $now_time;
-
+                $cold['create_user_id']      = $value->create_user_id;
+                $cold['create_user_name']    = $value->create_user_name;
                 $cold['cold_money']          = $WmsContract->sale_price*$WmsLibrarySige->now_num;
                 $cold['total_money']         = $value->cold_money;
                 $cold_list[]                 = $cold;

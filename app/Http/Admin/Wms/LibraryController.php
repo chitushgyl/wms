@@ -1654,6 +1654,8 @@ class LibraryController extends CommonController{
                 $settle['list_id']             = $value->self_id;
                 $settle['create_time']         = $now_time;
                 $settle['update_time']         = $now_time;
+                $settle['create_user_id']      = $user_info->admin_id;
+                $settle['create_user_name']    = $user_info->name;
 
                 $settle['cold_money']          = $value->cold_money;
                 $settle['dispose_money']       = $value->dispose_money;

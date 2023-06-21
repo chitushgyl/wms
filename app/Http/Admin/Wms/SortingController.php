@@ -6,6 +6,7 @@ use App\Models\Wms\ContactAddress;
 use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsDeposit;
 use App\Models\Wms\WmsDepositGood;
+use App\Models\Wms\WmsSettleMoney;
 use App\Models\Wms\WmsSorting;
 use App\Models\Wms\WmsSortingGood;
 use Illuminate\Support\Facades\DB;
@@ -187,6 +188,8 @@ class SortingController extends CommonController{
         $sorting_time       =$request->input('sorting_time');//寄存时间
         $more_money         =json_decode($request->input('more_money'),true);//其他费用
         $good_list          =json_decode($request->input('good_list'),true);
+        $cupboard_num       =$request->input('cupboard_num');//柜号
+        $customs_num        =$request->input('customs_num');//报关单号
 
 
         $rules=[
@@ -214,6 +217,8 @@ class SortingController extends CommonController{
             $data['in_car_number']              = $in_car_number;
             $data['out_car_number']           	= $out_car_number;
             $data['sorting_time']               = $sorting_time;
+            $data['cupboard_num']               = $cupboard_num;
+            $data['customs_num']                = $customs_num;
 
             $errorNum=50;       //控制错误数据的条数
             $a=2;
@@ -263,6 +268,42 @@ class SortingController extends CommonController{
                         $list['create_user_id']     = $user_info->admin_id;
                         $list['create_user_name']   = $user_info->name;
                         $deposit_list[] = $list;
+                    }
+
+
+                    $settle['company_id']          = $company_id;
+                    $settle['company_name']        = $company_name;
+                    $settle['start_time']          = $sorting_time;
+                    $settle['end_time']            = $sorting_time;
+                    $settle['good_name']           = $value['good_name'];
+                    $settle['sku_id']              = $value['sku_id'];
+                    $settle['type']                = 'sorting';
+//                $settle['cabinet_num']         = $company_name;
+                    $settle['good_weight']         = $value['good_weight'];
+                    $settle['good_num']            = $value['num'];
+                    $settle['weight']              = $value['weight'];
+                    $settle['order_id']            = $deposit_id;
+                    $settle['list_id']             = $list['self_id'];
+
+                    $settle['dispose_money']       = $value->dispose_money;
+                    $settle['transport_money']     = $value->transport_money;
+                    $settle['overtime_money']      = $value->overtime_money;
+                    $settle['sorting_money']       = $value->sorting_money;
+                    $settle['freezing_money']      = $value->freezing_money;
+                    $settle['send_money']          = $value->send_money;
+                    $settle['other_money']         = $value->other_money;
+                    $settle['total_money']         = $value->dispose_money + $value->transport_money + $value->overtime_money
+                        + $value->sorting_money + $value->freezing_money + $value->send_money + $value->other_money;
+                    if ($value['self_id']){
+                        $settle['update_time']         = $now_time;
+                        WmsSettleMoney::where('list_id',$value['self_id'])->update($settle);
+                    }else{
+                        $settle['self_id']             = generate_id('S');
+                        $settle['create_time']         = $now_time;
+                        $settle['update_time']         = $now_time;
+                        $settle['create_user_id']      = $user_info->admin_id;
+                        $settle['create_user_name']    = $user_info->admin_name;
+                        $settle_list[]                 = $settle;
                     }
 
 
@@ -367,6 +408,7 @@ class SortingController extends CommonController{
         }
 
     }
+
 
     /***    业务公司启用禁用      /wms/sorting/sortingUseFlag
      */
