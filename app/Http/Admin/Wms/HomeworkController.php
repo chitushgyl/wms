@@ -4,6 +4,7 @@ use App\Models\Wms\CompanyContact;
 use App\Models\Wms\ContactAddress;
 use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsHomework;
+use App\Models\Wms\WmsSettleMoney;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
@@ -165,6 +166,13 @@ class HomeworkController extends CommonController{
         $total_price        =$request->input('total_price');//总金额
         $porter_id          =$request->input('porter_id');//搬运工
         $porter             =$request->input('porter');//搬运工
+        $dispose_money      =$request->input('dispose_money');//
+        $transport_money    =$request->input('transport_money');//
+        $overtime_money     =$request->input('overtime_money');//
+        $sorting_money      =$request->input('sorting_money');//
+        $freezing_money     =$request->input('freezing_money');//
+        $send_money         =$request->input('send_money');//
+        $other_money        =$request->input('other_money');//
         $more_money         =json_decode($request->input('more_money'),true);//其他费用
 
 
@@ -180,6 +188,7 @@ class HomeworkController extends CommonController{
 
         if($validator->passes()){
             $money_lists = [];
+            $settle_list = [];
             $homework_id = generate_id('ZY');
             $data['company_name']               = $company_name;
             $data['company_id']                 = $company_id;
@@ -187,6 +196,40 @@ class HomeworkController extends CommonController{
             $data['total_price']                = $total_price;
             $data['porter_id']                  = $porter_id;
             $data['porter']           	        = $porter;
+
+            $settle['company_id']          = $company_id;
+            $settle['company_name']        = $company_name;
+            $settle['start_time']          = $add_time;
+            $settle['end_time']            = $add_time;
+            $settle['type']                = 'homework';
+//                $settle['cabinet_num']         = $company_name;
+
+            if ($self_id){
+                $settle['order_id']            = $self_id;
+            }else{
+                $settle['order_id']            = $homework_id;
+            }
+
+            $settle['dispose_money']       = $dispose_money;
+            $settle['transport_money']     = $transport_money;
+            $settle['overtime_money']      = $overtime_money;
+            $settle['sorting_money']       = $sorting_money;
+            $settle['freezing_money']      = $freezing_money;
+            $settle['send_money']          = $send_money;
+            $settle['other_money']         = $other_money;
+            $settle['total_money']         = $dispose_money + $transport_money + $overtime_money
+                + $sorting_money + $freezing_money + $send_money + $other_money;
+            if ($self_id){
+                $settle['update_time']         = $now_time;
+                WmsSettleMoney::where('order_id',$self_id)->update($settle);
+            }else{
+                $settle['self_id']             = generate_id('S');
+                $settle['create_time']         = $now_time;
+                $settle['update_time']         = $now_time;
+                $settle['create_user_id']      = $user_info->admin_id;
+                $settle['create_user_name']    = $user_info->admin_name;
+                $settle_list[]                 = $settle;
+            }
 
             try {
                 foreach($more_money as $k => $v){
@@ -227,6 +270,7 @@ class HomeworkController extends CommonController{
                     $data['update_time']=$now_time;
                     $id=WmsHomework::where($wheres)->update($data);
                     InoutOtherMoney::insert($money_lists);
+                    WmsSettleMoney::insert($settle_list);
                     $operationing->access_cause='修改业务公司';
                     $operationing->operation_type='update';
 
@@ -240,6 +284,7 @@ class HomeworkController extends CommonController{
                     $data['create_time']=$data['update_time']=$now_time;
                     $id=WmsHomework::insert($data);
                     InoutOtherMoney::insert($money_lists);
+                    WmsSettleMoney::insert($settle_list);
                     $operationing->access_cause='新建业务公司';
                     $operationing->operation_type='create';
 
