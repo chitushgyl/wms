@@ -283,8 +283,16 @@ class SortingController extends CommonController{
                     $settle['good_weight']         = $value['good_weight'];
                     $settle['good_num']            = $value['num'];
                     $settle['weight']              = $value['weight'];
-                    $settle['order_id']            = $deposit_id;
-                    $settle['list_id']             = $list['self_id'];
+                    if ($value['self_id']){
+                        $settle['list_id']             = $value['self_id'];
+                    }else{
+                        $settle['list_id']             = $list['self_id'];
+                    }
+                    if ($self_id){
+                        $settle['order_id']            = $self_id;
+                    }else{
+                        $settle['order_id']            = $deposit_id;
+                    }
 
                     $settle['dispose_money']       = $value['dispose_money'];
                     $settle['transport_money']     = $value['transport_money'];
@@ -306,6 +314,8 @@ class SortingController extends CommonController{
                         $settle['create_user_name']    = $user_info->admin_name;
                         $settle_list[]                 = $settle;
                     }
+
+
 
 
                     foreach($value['more_money'] as $k => $v){
