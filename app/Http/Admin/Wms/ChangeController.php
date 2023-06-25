@@ -278,48 +278,17 @@ class ChangeController extends CommonController{
                         $list['create_user_name']   = $user_info->name;
                         $deposit_list[] = $list;
                     }
-                    $settle['company_id']          = $company_id;
-                    $settle['company_name']        = $company_name;
-                    $settle['start_time']          = $change_time;
-                    $settle['end_time']            = $change_time;
-                    $settle['good_name']           = $value['good_name'];
-                    $settle['sku_id']              = $value['sku_id'];
-                    $settle['type']                = 'change';
-//                $settle['cabinet_num']         = $company_name;
-                    $settle['good_weight']         = $value['good_weight'];
-                    $settle['good_num']            = $value['num'];
-                    $settle['weight']              = $value['weight'];
-                    if ($value['self_id']){
-                        $settle['list_id']             = $value['self_id'];
-                    }else{
-                        $settle['list_id']             = $list['self_id'];
-                    }
-                    if ($self_id){
-                        $settle['order_id']            = $self_id;
-                    }else{
-                        $settle['order_id']            = $deposit_id;
-                    }
 
-                    $settle['dispose_money']       = $value['dispose_money'];
-                    $settle['transport_money']     = $value['transport_money'];
-                    $settle['overtime_money']      = $value['overtime_money'];
-                    $settle['sorting_money']       = $value['sorting_money'];
-                    $settle['freezing_money']      = $value['freezing_money'];
-                    $settle['send_money']          = $value['send_money'];
-                    $settle['other_money']         = $value['other_money'];
-                    $settle['total_money']         = $value['dispose_money'] + $value['transport_money'] + $value['overtime_money']
+                    $list['dispose_money']       = $value['dispose_money'];
+                    $list['transport_money']     = $value['transport_money'];
+                    $list['overtime_money']      = $value['overtime_money'];
+                    $list['sorting_money']       = $value['sorting_money'];
+                    $list['freezing_money']      = $value['freezing_money'];
+                    $list['send_money']          = $value['send_money'];
+                    $list['other_money']         = $value['other_money'];
+                    $list['total_money']         = $value['dispose_money'] + $value['transport_money'] + $value['overtime_money']
                         + $value['sorting_money'] + $value['freezing_money'] + $value['send_money'] + $value['other_money'];
-                    if ($value['self_id']){
-                        $settle['update_time']         = $now_time;
-                        WmsSettleMoney::where('list_id',$value['self_id'])->update($settle);
-                    }else{
-                        $settle['self_id']             = generate_id('S');
-                        $settle['create_time']         = $now_time;
-                        $settle['update_time']         = $now_time;
-                        $settle['create_user_id']      = $user_info->admin_id;
-                        $settle['create_user_name']    = $user_info->name;
-                        $settle_list[]                 = $settle;
-                    }
+
 
                     foreach($value['more_money'] as $k => $v){
                         $money['price']             = $v['price'];
@@ -584,6 +553,7 @@ class ChangeController extends CommonController{
                 $update['update_time'] = $now_time;
                 $id = WmsChangeGood::where('self_id',$self_id)->update($update);
                 if ($id){
+                    $settle_list = [];
                     foreach ($old_change as $k => $v){
                         $where=[
                             ['self_id','=',$v['self_id']],
@@ -596,6 +566,43 @@ class ChangeController extends CommonController{
                     WmsLibrarySige::insert($new_change_info);
                     $change->change($old_change,'moveout');
                     $change->change($new_change_info,'movein');
+                    foreach ($wms_change_list as $key => $value){
+                        $settle['self_id']             = generate_id('S');
+                        $settle['company_id']          = $wms_change_good->company_id;
+                        $settle['company_name']        = $wms_change_good->company_name;
+                        $settle['start_time']          = $wms_change_good->change_time;
+                        $settle['end_time']            = $wms_change_good->change_time;
+                        $settle['good_name']           = $value->good_name;
+                        $settle['sku_id']              = $value->sku_id;
+                        $settle['type']                = 'change';
+//                $settle['cabinet_num']         = $company_name;
+                        $settle['good_weight']         = $value->good_weight;
+                        $settle['good_num']            = $value->num;
+                        $settle['plate_num']           = $value->plate_num;
+//                $settle['area']                = $company_name;
+                        $settle['weight']              = $value->weight;
+//                $settle['sale_price']          = $sale_price;
+                        $settle['order_id']            = $value->change_id;
+                        $settle['list_id']             = $value->self_id;
+                        $settle['create_time']         = $now_time;
+                        $settle['update_time']         = $now_time;
+                        $settle['create_user_id']      = $user_info->admin_id;
+                        $settle['create_user_name']    = $user_info->name;
+
+                        $settle['cold_money']          = $value->cold_money;
+                        $settle['dispose_money']       = $value->dispose_money;
+                        $settle['transport_money']     = $value->transport_money;
+                        $settle['overtime_money']      = $value->overtime_money;
+                        $settle['sorting_money']       = $value->sorting_money;
+                        $settle['freezing_money']      = $value->freezing_money;
+                        $settle['send_money']          = $value->send_money;
+                        $settle['other_money']         = $value->other_money;
+                        $settle['total_money']         = $value->cold_money + $value->dispose_money + $value->transport_money + $value->overtime_money
+                            + $value->sorting_money + $value->freezing_money + $value->send_money + $value->other_money;
+
+                        $settle_list[]                 = $settle;
+                    }
+                    WmsSettleMoney::insert($settle_list);
                     DB::commit();
                     $msg['code'] = 200;
                     $msg['msg'] = "操作成功！";
