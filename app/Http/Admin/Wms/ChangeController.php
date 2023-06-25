@@ -260,6 +260,16 @@ class ChangeController extends CommonController{
                         $list['change_id']         =  $deposit_id;//
                     }
 
+                    $list['dispose_money']       = $value['dispose_money'];
+                    $list['transport_money']     = $value['transport_money'];
+                    $list['overtime_money']      = $value['overtime_money'];
+                    $list['sorting_money']       = $value['sorting_money'];
+                    $list['freezing_money']      = $value['freezing_money'];
+                    $list['send_money']          = $value['send_money'];
+                    $list['other_money']         = $value['other_money'];
+                    $list['total_money']         = $value['dispose_money'] + $value['transport_money'] + $value['overtime_money']
+                        + $value['sorting_money'] + $value['freezing_money'] + $value['send_money'] + $value['other_money'];
+
                     $wmsLibrarySige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
                     $library_sige['num']       = $wmsLibrarySige->num - $value['num'];
                     $library_sige['warehouse_id']       = $value['warehouse_id'];
@@ -278,17 +288,6 @@ class ChangeController extends CommonController{
                         $list['create_user_name']   = $user_info->name;
                         $deposit_list[] = $list;
                     }
-
-                    $list['dispose_money']       = $value['dispose_money'];
-                    $list['transport_money']     = $value['transport_money'];
-                    $list['overtime_money']      = $value['overtime_money'];
-                    $list['sorting_money']       = $value['sorting_money'];
-                    $list['freezing_money']      = $value['freezing_money'];
-                    $list['send_money']          = $value['send_money'];
-                    $list['other_money']         = $value['other_money'];
-                    $list['total_money']         = $value['dispose_money'] + $value['transport_money'] + $value['overtime_money']
-                        + $value['sorting_money'] + $value['freezing_money'] + $value['send_money'] + $value['other_money'];
-
 
                     foreach($value['more_money'] as $k => $v){
                         $money['price']             = $v['price'];
