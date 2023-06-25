@@ -1633,6 +1633,7 @@ class LibraryController extends CommonController{
             $update['update_time'] = $now_time;
             $id =  WmsLibraryOrder::whereIn('self_id',explode(',',$self_id))->update($data);
             WmsLibraryChange::whereIn('order_id',explode(',',$self_id))->update($update);
+            WmsLibrarySige::whereIn('order_id',explode(',',$self_id))->update($update);
             $wmsLibrarySige = WmsLibrarySige::whereIn('order_id',explode(',',$self_id))->get();
 
             foreach ($wmsLibrarySige as $key => $value){
