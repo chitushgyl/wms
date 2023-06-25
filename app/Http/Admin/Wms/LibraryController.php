@@ -964,6 +964,7 @@ class LibraryController extends CommonController{
                     $list['create_user_id']     = $user_info->admin_id;
                     $list['create_user_name']   = $user_info->name;
                     $list["grounding_status"]   ='N';
+                    $list["use_flag"]           ='N';
                     $list["good_remark"]        =$v['good_remark'];
                     $list["good_lot"]           =$v['good_lot'];
 //                    $list["in_library_state"]   =$v['in_library_state'];
