@@ -4,6 +4,7 @@ use App\Models\Shop\ErpShopGoodsSku;
 use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\TurnCardGood;
 use App\Models\Wms\WmsLibrarySige;
+use App\Models\Wms\WmsSettleMoney;
 use App\Models\Wms\WmsTurnCard;
 use App\Models\Wms\WmsWarehouse;
 use Illuminate\Support\Facades\DB;
@@ -285,6 +286,24 @@ class TurnController extends CommonController{
                     }else{
                         $list['turn_id']           =  $deposit_id;//
                     }
+                    $list['dispose_money']       = $value['dispose_money'];
+                    $list['transport_money']     = $value['transport_money'];
+                    $list['overtime_money']      = $value['overtime_money'];
+                    $list['sorting_money']       = $value['sorting_money'];
+                    $list['freezing_money']      = $value['freezing_money'];
+                    $list['send_money']          = $value['send_money'];
+                    $list['other_money']         = $value['other_money'];
+                    $list['total_money']         = $value['dispose_money'] + $value['transport_money'] + $value['overtime_money']
+                        + $value['sorting_money'] + $value['freezing_money'] + $value['send_money'] + $value['other_money'];
+                    $list['in_dispose_money']       = $value['in_dispose_money'];
+                    $list['in_transport_money']     = $value['in_transport_money'];
+                    $list['in_overtime_money']      = $value['in_overtime_money'];
+                    $list['in_sorting_money']       = $value['in_sorting_money'];
+                    $list['in_freezing_money']      = $value['in_freezing_money'];
+                    $list['in_send_money']          = $value['in_send_money'];
+                    $list['in_other_money']         = $value['in_other_money'];
+                    $list['in_total_money']         = $value['in_dispose_money'] + $value['in_transport_money'] + $value['in_overtime_money']
+                        + $value['in_sorting_money'] + $value['in_freezing_money'] + $value['in_send_money'] + $value['in_other_money'];
 //                    $wmsLibrarySige = WmsLibrarySige::where('self_id',$value['sige_id'])->first();
 //                    $library_sige['num']                = $wmsLibrarySige->num - $value['num'];
 //                    $library_sige['warehouse_id']       = $value['out_warehouse_id'];
@@ -624,6 +643,56 @@ $operationing   = $request->get('operationing');//接收中间件产生的参数
                      WmsLibrarySige::insert($new_change_info);
                      $change->change($old_change,'moveout');
                      $change->change($new_change_info,'movein');
+
+                     foreach ($turnCardGood as $key => $value){
+                         $settleIn['self_id']            = $settle['self_id']             = generate_id('S');
+                         $settle['company_id']           = $old_info->in_company_id;
+                         $settle['company_name']         = $old_info->in_company_name;
+                         $settleIn['company_id']         = $old_info->out_company_id;
+                         $settleIn['company_name']       = $old_info->out_company_name;
+                         $settleIn['start_time']         = $settle['start_time']          = $old_info->change_time;
+                         $settleIn['end_time']           = $settle['end_time']            = $old_info->change_time;
+                         $settleIn['good_name']          = $settle['good_name']           = $value->good_name;
+                         $settleIn['sku_id']             = $settle['sku_id']              = $value->sku_id;
+                         $settle['type']                 = 'turnIn';
+                         $settleIn['type']               = 'turnOut';
+                         $settleIn['good_weight']        = $settle['good_weight']         = $value->good_weight;
+                         $settleIn['good_num']           = $settle['good_num']            = $value->num;
+                         $settleIn['plate_num']          = $settle['plate_num']           = $value->plate_num;
+                         $settleIn['weight']             = $settle['weight']              = $value->weight;
+                         $settleIn['order_id']           = $settle['order_id']            = $value->turn_id;
+                         $settleIn['list_id']            = $settle['list_id']             = $value->self_id;
+                         $settleIn['create_time']        = $settle['create_time']         = $now_time;
+                         $settleIn['update_time']        = $settle['update_time']         = $now_time;
+                         $settleIn['create_user_id']     = $settle['create_user_id']      = $user_info->admin_id;
+                         $settleIn['create_user_name']   = $settle['create_user_name']    = $user_info->name;
+
+                         $settle['cold_money']           = $value->in_cold_money;
+                         $settle['dispose_money']        = $value->in_dispose_money;
+                         $settle['transport_money']      = $value->in_transport_money;
+                         $settle['overtime_money']       = $value->in_overtime_money;
+                         $settle['sorting_money']        = $value->in_sorting_money;
+                         $settle['freezing_money']       = $value->in_freezing_money;
+                         $settle['send_money']           = $value->in_send_money;
+                         $settle['other_money']          = $value->in_other_money;
+                         $settle['total_money']          = $value->in_cold_money + $value->in_dispose_money + $value->in_transport_money + $value->in_overtime_money
+                             + $value->in_sorting_money + $value->in_freezing_money + $value->in_send_money + $value->in_other_money;
+
+                         $settleIn['cold_money']         = $value->cold_money;
+                         $settleIn['dispose_money']      = $value->dispose_money;
+                         $settleIn['transport_money']    = $value->transport_money;
+                         $settleIn['overtime_money']     = $value->overtime_money;
+                         $settleIn['sorting_money']      = $value->sorting_money;
+                         $settleIn['freezing_money']     = $value->freezing_money;
+                         $settleIn['send_money']         = $value->send_money;
+                         $settleIn['other_money']        = $value->other_money;
+                         $settleIn['total_money']        = $value->cold_money + $value->dispose_money + $value->transport_money + $value->overtime_money
+                             + $value->sorting_money + $value->freezing_money + $value->send_money + $value->other_money;
+                         $settle_list[]                 = $settle;
+                         $settle_in_list[]                 = $settleIn;
+                     }
+                     WmsSettleMoney::insert($settle_list);
+                     WmsSettleMoney::insert($settle_in_list);
                      DB::commit();
                      $msg['code'] = 200;
                      $msg['msg'] = "操作成功！";

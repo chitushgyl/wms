@@ -67,7 +67,7 @@ class WmsRailwayController extends CommonController{
             case 'all':
                 $data['total']=WmsRailway::where($where)->count(); //总的数据量
                 $data['items']=WmsRailway::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -76,7 +76,7 @@ class WmsRailwayController extends CommonController{
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=WmsRailway::where($where)->count(); //总的数据量
                 $data['items']=WmsRailway::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
@@ -84,7 +84,7 @@ class WmsRailwayController extends CommonController{
             case 'more':
                 $data['total']=WmsRailway::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=WmsRailway::where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;

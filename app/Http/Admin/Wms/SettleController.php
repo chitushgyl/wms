@@ -4,6 +4,7 @@ namespace App\Http\Admin\Wms;
 use App\Http\Controllers\CommonController;
 use App\Models\Wms\InoutOtherMoney;
 use App\Models\Wms\WmsGroup;
+use App\Models\Wms\WmsSettleMoney;
 use Illuminate\Http\Request;
 
 class SettleController extends CommonController{
@@ -40,32 +41,11 @@ class SettleController extends CommonController{
         $where1=[
             ['delete_flag','=','Y'],
         ];
-        $data['info']=WmsGroup::
-            with(['WmsLibrarySige' => function($query)use($where1){
-                $query->where($where1);
-            }])
-//            ->with(['WmsDepositGood' => function($query)use($where1){
-//                $query->where($where1);
-//            }])
-            ->with(['WmsOutOrderList' => function($query)use($where1){
-                $query->where($where1);
-            }])
-            ->with(['WmsChangeList' => function($query)use($where1){
-                $query->where($where1);
-            }])
-            ->with(['WmsBulkGood' => function($query)use($where1){
-                $query->where($where1);
-            }])
-            ->with(['TurnCardGood' => function($query)use($where1){
-                $query->where($where1);
-            }])
-            ->with(['WmsHomework' => function($query)use($where1){
-                $query->where($where1);
-            }])
-            ->with(['WmsSortingGood' => function($query)use($where1){
-                $query->where($where1);
-            }])
-           ->where($where)->get();
+        $data['info']=WmsSettleMoney::where($where)->get();
+
+        foreach($data['info'] as $key => $value){
+
+        }
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
