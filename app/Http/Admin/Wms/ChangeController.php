@@ -522,6 +522,7 @@ class ChangeController extends CommonController{
                     $change_in["warehouse_name"]     =$value['warehouse_name'];
                     $change_in["production_date"]    =$old_library_sige->production_date;
                     $change_in["expire_time"]        =$old_library_sige->expire_time;
+                    $change_in["enter_time"]         =$old_library_sige->change_time;
                     $change_in['spec']               =$old_library_sige->spec;
                     $change_in['initial_num']        =$value['num'];
                     $change_in['now_num']            =$value['num'];
@@ -541,7 +542,16 @@ class ChangeController extends CommonController{
                     $change_in["count_number"]       =$value['good_weight']*$value['num']/1000;
                     $change_in['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$value['now_num'];
                     $change_in['weight']             = $value['good_weight']*$value['now_num'];
-
+                    $change_in['cold_money']         = $value->cold_money;
+                    $change_in['dispose_money']      = $value->dispose_money;
+                    $change_in['transport_money']    = $value->transport_money;
+                    $change_in['overtime_money']     = $value->overtime_money;
+                    $change_in['sorting_money']      = $value->sorting_money;
+                    $change_in['freezing_money']     = $value->freezing_money;
+                    $change_in['send_money']         = $value->send_money;
+                    $change_in['other_money']        = $value->other_money;
+                    $change_in['total_money']        = $value->cold_money + $value->dispose_money + $value->transport_money + $value->overtime_money
+                        + $value->sorting_money + $value->freezing_money + $value->send_money + $value->other_money;
 
                     $new_change_info[] = $change_in;
 
